@@ -36,19 +36,12 @@ class Environment extends Component {
 
         // Set Scene
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xefd1b5)
-        this.scene.fog = new THREE.FogExp2(0xefd1b5, 0.005)
+        this.scene.background = new THREE.Color(0x72869d)
+        this.scene.fog = new THREE.FogExp2(0x72869d, 0.002)
 
         //Set Camera
-        this.camera = new THREE.PerspectiveCamera(
-            55, // fov = field of view
-            width / height, // aspect ratio
-            1, // near plane
-            20000 // far plane
-        );
-        this.camera.position.set(50, 50, 188); // is used here to set some distance from a cube that is located at z = 0
-        
-
+        this.setupCamera(height, width)
+    
         // Set Light
 
         this.light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -68,7 +61,7 @@ class Environment extends Component {
                 alpha: 1.0,
                 sunDirection: this.light.position,
                 sunColor: 0xffffff,
-                waterColor: 0x001e0f,
+                waterColor: 0x72869d,
                 distortionScale: 3.7,
                 fog: this.scene.fog !== undefined
             }
@@ -134,12 +127,7 @@ class Environment extends Component {
 
         //
 
-        this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-        this.controls.maxPolarAngle = Math.PI * 0.495;
-        this.controls.target.set( 0, 10, 0 );
-        this.controls.minDistance = 40.0;
-        this.controls.maxDistance = 200.0;
-        this.controls.update();
+        this.setupControls()
 
         //
 
@@ -148,6 +136,25 @@ class Environment extends Component {
 
         window.addEventListener( 'resize', this.onWindowResize, false );
     };
+
+    setupCamera = (width, height) => {
+        this.camera = new THREE.PerspectiveCamera(
+            55, // fov = field of view
+            width / height, // aspect ratio
+            1, // near plane
+            20000 // far plane
+        );
+        this.camera.position.set(50, 50, 188); // is used here to set some distance from a cube that is located at z = 0
+    }
+
+    setupControls = () => {
+        this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+        this.controls.maxPolarAngle = Math.PI * 0.495;
+        this.controls.target.set( 0, 10, 0 );
+        this.controls.minDistance = 40.0;
+        this.controls.maxDistance = 200.0;
+        this.controls.update();
+    }
 
     updateSun = () => {
 
