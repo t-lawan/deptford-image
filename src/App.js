@@ -1,14 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import TestEnvironment from './Components/Environment/TestEnvironment';
-import Environment from './Components/Environment/Environment';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { reducer } from './Store/reducer';
+import Home from './Pages/Home/Home';
 
+const store = createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 function App() {
   return (
-    <div>
-      <Environment />
-    </div>
+    <Provider store={store}>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={Home} />
+        </Switch>
+      </Router>
+    </Provider>
   );
 }
 

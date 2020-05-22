@@ -150,7 +150,7 @@ class Environment extends Component {
 
         this.sphere = new THREE.Mesh( geometry, material );
         this.sphere.position.x = 0
-        this.sphere.position.y = 10
+        this.sphere.position.y = 40
         this.sphere.position.z = 10
         this.sphere.name = 'Sphere'
         this.sphere.callback = () => this.objectSelected();
