@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {FlyControls} from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Water/Water";
 import waternormals from '../../Assets/waternormals.jpg'
 import { Sky } from "../../Utility/Objects/Sky";
@@ -17,6 +18,7 @@ class Environment extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onWindowResize);
+        document.removeEventListener( 'mousemove', this.onDocumentMouseDown );
         window.cancelAnimationFrame(this.requestID);
         this.controls.dispose();
     }
@@ -42,6 +44,9 @@ class Environment extends Component {
         //Set Camera
         this.setupCamera(height, width)
     
+        // Create Mouse 
+
+        this.createMouse()
         // Set Light
 
         this.light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -96,44 +101,20 @@ class Environment extends Component {
         // this.updateSun();
 
         // 
-        var geometry = new THREE.IcosahedronBufferGeometry( 20, 1 );
-        var count = geometry.attributes.position.count;
 
-        var colors = [];
-        var color = new THREE.Color();
 
-        for ( var i = 0; i < count; i += 3 ) {
 
-            color.setHex( Math.random() * 0xffffff );
-
-            colors.push( color.r, color.g, color.b );
-            colors.push( color.r, color.g, color.b );
-            colors.push( color.r, color.g, color.b );
-
-        }
-
-        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-        var material = new THREE.MeshStandardMaterial( {
-            vertexColors: true,
-            roughness: 0.0,
-            flatShading: true,
-            envMap: this.cubeCamera.renderTarget.texture,
-            side: THREE.DoubleSide
-        } );
-
-        this.sphere = new THREE.Mesh( geometry, material );
-        this.scene.add( this.sphere );
+        this.createSphere()
 
         //
-
+        this.createRayCaster()
         this.setupControls()
 
         //
 
         // this.stats = new Stats();
         // this.mount.appendChild( this.stats.dom );
-
+        document.addEventListener( 'mousedown', this.onDocumentMouseDown, false );
         window.addEventListener( 'resize', this.onWindowResize, false );
     };
 
@@ -147,13 +128,51 @@ class Environment extends Component {
         this.camera.position.set(50, 50, 188); // is used here to set some distance from a cube that is located at z = 0
     }
 
+    createRayCaster = () => {
+        this.raycaster = new THREE.Raycaster();
+        this.raycaster.setFromCamera(this.mouse, this.camera)
+    }
+
+    createMouse = () => {
+        this.mouse = new THREE.Vector2()
+    }
+
+    createSphere = () => {
+        let material = new THREE.MeshStandardMaterial({
+            side: THREE.DoubleSide,
+            color: 0x7fc5f9,
+            emissive: 0x25673d,
+            emissiveIntensity: 0.4,
+            metalness: 0.5,
+            roughness: 1
+            });
+        let geometry = new THREE.SphereGeometry(10, 30, 30);
+
+        this.sphere = new THREE.Mesh( geometry, material );
+        this.sphere.position.x = 0
+        this.sphere.position.y = 10
+        this.sphere.position.z = 10
+        this.sphere.name = 'Sphere'
+        this.sphere.callback = () => this.objectSelected();
+
+        this.scene.add( this.sphere );
+    }
+
+    objectSelected = () => {
+        console.log('HELLO');
+    }
+
     setupControls = () => {
         this.controls = new OrbitControls( this.camera, this.renderer.domElement );
         this.controls.maxPolarAngle = Math.PI * 0.495;
+        this.controls.enableKeys = true;
+        this.controls.enablePan = true
         this.controls.target.set( 0, 10, 0 );
-        this.controls.minDistance = 40.0;
-        this.controls.maxDistance = 200.0;
+        this.controls.minDistance = 100;
+        this.controls.maxDistance = 400;
+        this.controls.target = this.sphere.position
         this.controls.update();
+        
     }
 
     updateSun = () => {
@@ -175,7 +194,19 @@ class Environment extends Component {
     // Code below is taken from Three.js BoxGeometry example
     // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
-
+    onDocumentMouseDown= (event) => {
+        this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        this.intersects = this.raycaster.intersectObjects( this.scene.children );
+        if(this.intersects.length > 0) {
+            console.log('t', this.intersects)
+            this.intersects.forEach((obj) => {
+                if(obj.name == 'Sphere') {
+                    obj.selected()
+                }
+            })
+        }
+    }
     onWindowResize = () => {
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
