@@ -235,7 +235,6 @@ class Environment extends Component {
     this.setState({
       pause: true
     })
-    console.log("HELLO");
   };
 
   createAxes = () => {
