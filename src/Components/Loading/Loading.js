@@ -18,7 +18,6 @@ const Loading = props => {
   return (
     <LoadingWrapper show={!props.has_loaded}>
       <h2> Deptford Moving Image Festival</h2>
-      <p> Loading...</p>
       <LoadingBar />
     </LoadingWrapper>
   );
