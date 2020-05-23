@@ -14,6 +14,7 @@ const style = {
 };
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 40, 10);
+  clickableObjects = []
   componentDidMount() {
     this.init();
     this.animate();
@@ -51,6 +52,8 @@ class Environment extends Component {
     // Water
     this.createWater();
 
+    // Axes
+    this.createAxes()
     // Middle Object
     this.createCenterObject();
 
@@ -103,7 +106,8 @@ class Environment extends Component {
       20000 // far plane
     );
     this.camera.position.set(128, 61, 457);
-    this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
+    // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
+    this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
   };
 
   createRenderer = (width, height) => {
@@ -121,16 +125,12 @@ class Environment extends Component {
     this.light = new THREE.DirectionalLight(0xffffff, 0.8);
     this.scene.add(this.light);
   };
-
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
-    this.raycaster.setFromCamera(this.mouse, this.camera);
   };
-
   createMouse = () => {
     this.mouse = new THREE.Vector2();
   };
-
   createWater = () => {
     let waterGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
 
@@ -152,7 +152,7 @@ class Environment extends Component {
     this.scene.add(this.water);
   };
   createCenterObject = () => {
-    this.manager = new THREE.LoadingManager(this.loadObject);
+    this.manager = new THREE.LoadingManager(this.loadCenterObject);
     let loader = new MTLLoader(this.manager);
 
     loader.load(MiddleObjectMaterial, (materials) => {
@@ -166,51 +166,63 @@ class Environment extends Component {
     })
   };
 
-  loadObject = () => {
+  loadCenterObject = () => {
     if (this.centerObject) {
-      // this.centerObject.traverse(function(child) {
-      //   if (child.isMesh) {
-      //     child.castShadow = true;
-      //     child.receiveShadow = true;
-      //   }
-      // });
+      this.centerObject.traverse(function(child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
       this.centerObject.position.x = this.centralPoint.x;
       this.centerObject.position.y = this.centralPoint.y;
       this.centerObject.position.z = this.centralPoint.z;
+      this.centerObject.clickable = true;
       this.scene.add(this.centerObject);
+      this.clickableObjects.push(this.centerObject)
     }
   };
 
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
-      color: 0x7fc5f9,
-      emissive: 0x25673d,
+      color: 0xffffff,
+      emissive: 0xffffff,
       emissiveIntensity: 0.4,
       metalness: 0.5,
       roughness: 1
     });
     let geometry = new THREE.SphereGeometry(10, 30, 30);
 
-    // this.sphere = new THREE.Mesh(geometry, material);
-    // this.sphere.position.x = this.centralPoint.x;
-    // this.sphere.position.y = this.centralPoint.y;
-    // this.sphere.position.z = this.centralPoint.z;
-    // this.sphere.name = "Sphere";
-    // this.sphere.callback = () => this.objectSelected();
-    // this.scene.add(this.sphere);
+    this.sphere = new THREE.Mesh(geometry, material);
+    this.sphere.position.x = this.centralPoint.x + 100;
+    this.sphere.position.y = this.centralPoint.y;
+    this.sphere.position.z = this.centralPoint.z;
+    this.sphere.name = "Sphere";
+    this.sphere.clickable = true;
+    this.sphere.callback = () => this.objectSelected();
+    this.scene.add(this.sphere);
+    this.clickableObjects.push(this.sphere)
 
-    // this.sphere_two = new THREE.Mesh(geometry, material);
-    // this.sphere_two.position.x = this.centralPoint.x + 10;
-    // this.sphere_two.position.y = this.centralPoint.y + 50;
-    // this.sphere_two.position.z = this.centralPoint.z + 100;
-    // this.sphere_two.callback = () => this.objectSelected();
-    // this.scene.add(this.sphere_two);
+    this.sphere_two = new THREE.Mesh(geometry, material);
+    this.sphere_two.position.x = this.centralPoint.x - 100;
+    this.sphere_two.position.y = this.centralPoint.y + 100;
+    this.sphere_two.position.z = this.centralPoint.z;
+    this.sphere_two.name = "Sphere2";
+    this.sphere_two.clickable = true;
+    this.sphere_two.callback = () => this.objectSelected();
+    this.scene.add(this.sphere_two);
+    this.clickableObjects.push(this.sphere_two)
   };
 
   objectSelected = () => {
     console.log("HELLO");
   };
+
+  createAxes = () => {
+    var axesHelper = new THREE.AxesHelper( 10 ); 
+    this.scene.add( axesHelper );
+  }
 
   setupControls = () => {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -249,19 +261,19 @@ class Environment extends Component {
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentMouseDown = event => {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    this.intersects = this.raycaster.intersectObjects(this.scene.children);
+    event.preventDefault();
+    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    console.log(this.mouse)    
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
-      console.log('INTERSECCTS', this.intersects)
-      this.intersects.forEach(obj => {
-        if (obj.name === "Sphere") {
-          obj.selected();
-        }
-      });
+      if(this.intersects[0].object.callback) {
+        this.intersects[0].object.callback()
+      }
     }
   };
+  
   onWindowResize = () => {
     const width = this.mount.clientWidth;
     const height = this.mount.clientHeight;
