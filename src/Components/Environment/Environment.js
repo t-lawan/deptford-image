@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FlyControls } from "three/examples/jsm/controls/FlyControls";
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -9,6 +9,7 @@ import MiddleObject from '../../Assets/Models/middle.obj'
 import MiddleObjectMaterial from '../../Assets/Models/middle.mtl'
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
+import Stats from "../../Utility/Stats";
 const style = {
   height: 1000 // we can control scene size by setting container dimensions
 };
@@ -88,8 +89,8 @@ class Environment extends Component {
 
     //
     this.createRayCaster();
-    this.setupControls();
-
+    this.setupOrbitControls();
+    this.setupStats()
     //
 
     // this.stats = new Stats();
@@ -109,6 +110,11 @@ class Environment extends Component {
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
     this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
   };
+
+  setupStats = () => {
+    this.stats = new Stats();
+    this.mount.appendChild(this.stats.dom)
+  }
 
   createRenderer = (width, height) => {
     this.renderer = new THREE.WebGLRenderer();
@@ -224,7 +230,7 @@ class Environment extends Component {
     this.scene.add( axesHelper );
   }
 
-  setupControls = () => {
+  setupOrbitControls = () => {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.maxPolarAngle = Math.PI * 0.495;
     this.controls.enableKeys = true;
@@ -235,6 +241,10 @@ class Environment extends Component {
     this.controls.target = this.centralPoint;
     this.controls.update();
   };
+
+  setupPointerLockControls = () => {
+    this.controls = new PointerLockControls(this.camera, this.renderer.domElement)
+  }
 
   updateSun = () => {
     let theta = Math.PI * (this.parameters.inclination - 0.5);
@@ -273,7 +283,7 @@ class Environment extends Component {
       }
     }
   };
-  
+
   onWindowResize = () => {
     const width = this.mount.clientWidth;
     const height = this.mount.clientHeight;
@@ -289,6 +299,7 @@ class Environment extends Component {
   animate = () => {
     this.requestID = requestAnimationFrame(this.animate);
     this.renderEnvironment();
+    this.stats.update()
   };
 
   renderEnvironment = () => {
