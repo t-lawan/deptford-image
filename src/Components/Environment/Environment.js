@@ -5,8 +5,8 @@ import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import CenterObject from '../../Assets/Models/center.obj'
-import CenterObjectMaterial from '../../Assets/Models/center.mtl'
+import MiddleObject from '../../Assets/Models/middle.obj'
+import MiddleObjectMaterial from '../../Assets/Models/middle.mtl'
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 const style = {
@@ -155,21 +155,15 @@ class Environment extends Component {
     this.manager = new THREE.LoadingManager(this.loadObject);
     let loader = new MTLLoader(this.manager);
 
-    loader.load(CenterObjectMaterial, (materials) => {
+    loader.load(MiddleObjectMaterial, (materials) => {
       materials.preload()
 
       let objLoader = new OBJLoader(this.manager);
       objLoader.setMaterials(materials);
-      objLoader.load(CenterObject, (obj) => {
-        this.centerObject = obj
-        // this.scene.add(obj);
+      objLoader.load(MiddleObject, (obj) => {
+        this.centerObject = obj;
       })
     })
-    // let loader = new THREE.ObjectLoader(this.manager);
-    // loader.load(CenterObject, object => {
-    //   console.log(object);
-    //   this.centerObject = object;
-    // });
   };
 
   loadObject = () => {
@@ -257,10 +251,10 @@ class Environment extends Component {
   onDocumentMouseDown = event => {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    console.log("po", this.camera.position);
-    console.log("ro", this.camera.rotation);
+
     this.intersects = this.raycaster.intersectObjects(this.scene.children);
     if (this.intersects.length > 0) {
+      console.log('INTERSECCTS', this.intersects)
       this.intersects.forEach(obj => {
         if (obj.name === "Sphere") {
           obj.selected();
