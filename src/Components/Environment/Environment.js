@@ -108,6 +108,7 @@ class Environment extends Component {
       1, // near plane
       5000 // far plane
     );
+    this.camera.aspect = width / height;
     this.camera.position.set(128, 61, 457);
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
     this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0

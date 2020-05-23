@@ -6,7 +6,7 @@ const LoadingBarWrapper = styled.div`
     bottom: 0;
     width: 100%;
     height: 1rem;
-    background: white;
+    background: #72869d;
     position: absolute;
 `;
 
@@ -14,7 +14,7 @@ const LoadingProgressWrapper = styled.div`
     bottom: 0;
     width: ${props => props.percent};
     height: 100%;
-    background: #72869d;
+    background: green;
 `;
 const LoadingBar = props => {
 
