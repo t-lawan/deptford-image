@@ -7,7 +7,9 @@ const LoadingWrapper = styled.div`
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background: pink;
+  margin: auto;
+  /* width: 60%; */
+  background: #72869d;
   display: ${props => (props.show ? "block" : "none")};
   text-align: center;
 `;
