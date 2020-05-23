@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
-import Vimeo from "@u-wave/react-vimeo";
+import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -30,11 +30,6 @@ export const ModalCloseImage = styled.img`
   align-self: flex-end;
 `;
 
-export const ResponsiveIFrameWrapper = styled.div`
-    padding: 1rem;
-  /* padding: 56.25% 0 0 0;
-  position: relative; */
-`;
 class Modal extends React.Component {
   closeModal = () => {
     this.props.closeModal();
@@ -49,22 +44,8 @@ class Modal extends React.Component {
           />
         </ModalHeader>
         <ModalBody>
-          <h2> This is a video about art</h2>
-          {/* <p>
-            {" "}
-            Portland polaroid duis quinoa, proident food truck skateboard
-            pickled pok pok pop-up. Selvage pour-over deep v normcore. Bicycle
-            rights direct trade leggings ea mollit. Cardigan leggings PBR&B
-            beard, officia skateboard direct trade. Jianbing meh sriracha irure,
-            PBR&B iPhone distillery est dolore. Cornhole drinking vinegar jean
-            shorts, ex labore messenger bag cronut echo park hella sint fam.
-          </p> */}
-          <ResponsiveIFrameWrapper>
-            <Vimeo video="247839331" responsive={true} />
-          </ResponsiveIFrameWrapper>
+            <ExhibitionItem />
         </ModalBody>
-
-        <script src="https://player.vimeo.com/api/player.js"></script>
       </ModalWrapper>
     );
   }

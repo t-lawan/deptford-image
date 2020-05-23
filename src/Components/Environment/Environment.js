@@ -18,7 +18,12 @@ import {
   loading
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
+import styled from "styled-components";
 
+
+const EnvironmentWrapper = styled.div`
+  height: 100vh
+`
 const style = {
   height: "100vh" // we can control scene size by setting container dimensions
 };
@@ -98,10 +103,10 @@ class Environment extends Component {
 
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
-      55, // fov = field of view
+      70, // fov = field of view
       width / height, // aspect ratio
       1, // near plane
-      20000 // far plane
+      5000 // far plane
     );
     this.camera.position.set(128, 61, 457);
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
@@ -138,7 +143,8 @@ class Environment extends Component {
   createRenderer = (width, height) => {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(width, height);
+    this.renderer.setViewport(0, 0, width, height);
+    // this.renderer.setPixelRatio(width, height);
     this.mount.appendChild(this.renderer.domElement);
   };
   createScene = () => {
@@ -350,7 +356,7 @@ class Environment extends Component {
   };
 
   render() {
-    return <div style={style} ref={ref => (this.mount = ref)} />;
+    return <EnvironmentWrapper ref={ref => (this.mount = ref)} />;
   }
 }
 
