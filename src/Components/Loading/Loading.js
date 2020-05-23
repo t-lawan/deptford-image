@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import LoadingBar from "./LoadingBar";
 
 const LoadingWrapper = styled.div`
   position: absolute;
@@ -18,11 +19,12 @@ const Loading = props => {
     <LoadingWrapper show={!props.has_loaded}>
       <h2> Deptford Moving Image Festival</h2>
       <p> Loading...</p>
+      <LoadingBar />
     </LoadingWrapper>
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     has_loaded: state.has_loaded
   };

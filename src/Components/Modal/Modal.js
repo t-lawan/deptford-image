@@ -2,10 +2,12 @@ import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
-import CloseOverlaySVG from '../../Assets/close_overlay.svg'
+import CloseOverlaySVG from "../../Assets/close_overlay.svg";
+import Vimeo from "@u-wave/react-vimeo";
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
+  max-height: 100%;
   height: 100%;
   z-index: 500;
   background: white;
@@ -19,9 +21,19 @@ const ModalHeader = styled.div`
   text-align: right;
 `;
 
+const ModalBody = styled.div`
+  padding: 0.5em 0;
+  padding-bottom: 0;
+`;
 export const ModalCloseImage = styled.img`
   width: 5%;
   align-self: flex-end;
+`;
+
+export const ResponsiveIFrameWrapper = styled.div`
+    padding: 1rem;
+  /* padding: 56.25% 0 0 0;
+  position: relative; */
 `;
 class Modal extends React.Component {
   closeModal = () => {
@@ -36,16 +48,23 @@ class Modal extends React.Component {
             src={CloseOverlaySVG}
           />
         </ModalHeader>
-        <h2> This is a video about art</h2>
-        <p>
-          {" "}
-          Portland polaroid duis quinoa, proident food truck skateboard pickled
-          pok pok pop-up. Selvage pour-over deep v normcore. Bicycle rights
-          direct trade leggings ea mollit. Cardigan leggings PBR&B beard,
-          officia skateboard direct trade. Jianbing meh sriracha irure, PBR&B
-          iPhone distillery est dolore. Cornhole drinking vinegar jean shorts,
-          ex labore messenger bag cronut echo park hella sint fam.
-        </p>
+        <ModalBody>
+          <h2> This is a video about art</h2>
+          {/* <p>
+            {" "}
+            Portland polaroid duis quinoa, proident food truck skateboard
+            pickled pok pok pop-up. Selvage pour-over deep v normcore. Bicycle
+            rights direct trade leggings ea mollit. Cardigan leggings PBR&B
+            beard, officia skateboard direct trade. Jianbing meh sriracha irure,
+            PBR&B iPhone distillery est dolore. Cornhole drinking vinegar jean
+            shorts, ex labore messenger bag cronut echo park hella sint fam.
+          </p> */}
+          <ResponsiveIFrameWrapper>
+            <Vimeo video="247839331" responsive={true} />
+          </ResponsiveIFrameWrapper>
+        </ModalBody>
+
+        <script src="https://player.vimeo.com/api/player.js"></script>
       </ModalWrapper>
     );
   }

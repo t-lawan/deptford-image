@@ -6,37 +6,46 @@ import { PointerLockControls } from "three/examples/jsm/controls/PointerLockCont
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import MiddleObject from '../../Assets/Models/middle.obj'
-import MiddleObjectMaterial from '../../Assets/Models/middle.mtl'
+import MiddleObject from "../../Assets/Models/middle.obj";
+import MiddleObjectMaterial from "../../Assets/Models/middle.mtl";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
-import { hasLoaded, openModal } from "../../Store/action";
+import {
+  hasLoaded,
+  openModal,
+  setExhibitionItems,
+  loading
+} from "../../Store/action";
+import RequestManager from "../../Utility/RequestManager";
 
 const style = {
-  height: '100vh' // we can control scene size by setting container dimensions
+  height: "100vh" // we can control scene size by setting container dimensions
 };
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 40, 10);
-  clickableObjects = []
+  clickableObjects = [];
 
   constructor(props) {
     super(props);
     this.state = {
       pause: false
-    }
+    };
   }
 
   componentDidUpdate(prevProps) {
-    if((prevProps.modal_open !== this.props.modal_open) && !this.props.modal_open) {
+    if (
+      prevProps.modal_open !== this.props.modal_open &&
+      !this.props.modal_open
+    ) {
       this.setState({
         pause: false
-      })
+      });
     }
   }
 
-  componentDidMount() {
-    this.init();
+  async componentDidMount() {
+    await this.init();
     this.animate();
   }
 
@@ -49,7 +58,7 @@ class Environment extends Component {
 
   // Standard scene setup in Three.js. Check "Creating a scene" manual for more information
   // https://threejs.org/docs/#manual/en/introduction/Creating-a-scene
-  init = () => {
+  init = async () => {
     // get container dimensions and use them for scene sizing
     const width = this.mount.clientWidth;
     const height = this.mount.clientHeight;
@@ -73,16 +82,16 @@ class Environment extends Component {
     this.createWater();
 
     // Axes
-    this.createAxes()
+    this.createAxes();
     // Middle Object
-    this.createCenterObject();
+    await this.createCenterObject();
 
     // Skybox
-    this.setupSky()
+    this.setupSky();
     this.createSphere();
     this.createRayCaster();
     this.setupOrbitControls();
-    this.setupStats()
+    this.setupStats();
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
@@ -119,12 +128,12 @@ class Environment extends Component {
     this.cubeCamera.renderTarget.texture.generateMipMaps = true;
     this.cubeCamera.renderTarget.texture.minFilter =
       THREE.LinearMipMapLinearFilter;
-  }
+  };
 
   setupStats = () => {
     this.stats = new Stats();
-    this.mount.appendChild(this.stats.dom)
-  }
+    this.mount.appendChild(this.stats.dom);
+  };
 
   createRenderer = (width, height) => {
     this.renderer = new THREE.WebGLRenderer();
@@ -167,19 +176,33 @@ class Environment extends Component {
     this.water.rotation.x = -Math.PI / 2;
     this.scene.add(this.water);
   };
-  createCenterObject = () => {
+  createCenterObject = async () => {
     this.manager = new THREE.LoadingManager(this.loadCenterObject);
     let loader = new MTLLoader(this.manager);
-
-    loader.load(MiddleObjectMaterial, (materials) => {
-      materials.preload()
+    await this.setExhibitionItems();
+    loader.load(MiddleObjectMaterial, async materials => {
+      materials.preload();
 
       let objLoader = new OBJLoader(this.manager);
       objLoader.setMaterials(materials);
-      objLoader.load(MiddleObject, (obj) => {
-        this.centerObject = obj;
-      })
-    })
+      objLoader.load(
+        MiddleObject,
+        obj => {
+          this.centerObject = obj;
+        },
+        this.loadProgressing
+      );
+    });
+  };
+
+  setExhibitionItems = async () => {
+    let exhibitionItems = await RequestManager.getExhibitionItems();
+    this.props.setExhibitionItems(exhibitionItems);
+  };
+
+  loadProgressing = xhr => {
+    this.props.loading(xhr.loaded, xhr.total);
+
   };
   loadCenterObject = () => {
     if (this.centerObject) {
@@ -194,7 +217,7 @@ class Environment extends Component {
       this.centerObject.position.z = this.centralPoint.z;
       this.centerObject.clickable = true;
       this.scene.add(this.centerObject);
-      this.clickableObjects.push(this.centerObject)
+      this.clickableObjects.push(this.centerObject);
       this.props.hasLoaded();
     }
   };
@@ -217,7 +240,7 @@ class Environment extends Component {
     this.sphere.clickable = true;
     this.sphere.callback = () => this.objectSelected();
     this.scene.add(this.sphere);
-    this.clickableObjects.push(this.sphere)
+    this.clickableObjects.push(this.sphere);
 
     this.sphere_two = new THREE.Mesh(geometry, material);
     this.sphere_two.position.x = this.centralPoint.x - 100;
@@ -227,20 +250,20 @@ class Environment extends Component {
     this.sphere_two.clickable = true;
     this.sphere_two.callback = () => this.objectSelected();
     this.scene.add(this.sphere_two);
-    this.clickableObjects.push(this.sphere_two)
+    this.clickableObjects.push(this.sphere_two);
   };
 
   objectSelected = () => {
     this.props.openModal();
     this.setState({
       pause: true
-    })
+    });
   };
 
   createAxes = () => {
-    var axesHelper = new THREE.AxesHelper( 10 ); 
-    this.scene.add( axesHelper );
-  }
+    var axesHelper = new THREE.AxesHelper(10);
+    this.scene.add(axesHelper);
+  };
 
   setupOrbitControls = () => {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -255,8 +278,11 @@ class Environment extends Component {
   };
 
   setupPointerLockControls = () => {
-    this.controls = new PointerLockControls(this.camera, this.renderer.domElement)
-  }
+    this.controls = new PointerLockControls(
+      this.camera,
+      this.renderer.domElement
+    );
+  };
 
   updateSun = () => {
     let theta = Math.PI * (this.parameters.inclination - 0.5);
@@ -286,12 +312,12 @@ class Environment extends Component {
     event.preventDefault();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
-    console.log(this.mouse)    
+    console.log(this.mouse);
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
-      if(this.intersects[0].object.callback) {
-        this.intersects[0].object.callback()
+      if (this.intersects[0].object.callback) {
+        this.intersects[0].object.callback();
       }
     }
   };
@@ -311,14 +337,14 @@ class Environment extends Component {
   animate = () => {
     this.requestID = requestAnimationFrame(this.animate);
     this.renderEnvironment();
-    this.stats.update()
+    this.stats.update();
   };
 
   renderEnvironment = () => {
-    if(!this.state.pause) {
+    if (!this.state.pause) {
       let time = performance.now() * 0.001;
       this.water.material.uniforms["time"].value += 1.0 / 60.0;
-      this.sphere.rotateX(0.1 * time)
+      this.sphere.rotateX(0.1 * time);
       this.renderer.render(this.scene, this.camera);
     }
   };
@@ -328,20 +354,24 @@ class Environment extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     modal_open: state.modal_open,
     modal_component: state.modal_component
-  }
-}
+  };
+};
 
-
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: () => dispatch(openModal())
-  }
-}
+    openModal: () => dispatch(openModal()),
+    setExhibitionItems: exhibitionItems =>
+      dispatch(setExhibitionItems(exhibitionItems)),
+    loading: (loaded, total) => dispatch(loading(loaded, total))
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Environment);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Environment);
