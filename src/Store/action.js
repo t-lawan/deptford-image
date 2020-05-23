@@ -2,7 +2,7 @@ export const OPEN_MODAL = "OPEN_MODAL";
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export const HAS_LOADED = 'HAS_LOADED';
 
-export const openModal = (component) => {
+export const openModal = () => {
     return {
         type: OPEN_MODAL
     }

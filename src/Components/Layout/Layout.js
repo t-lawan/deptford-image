@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Helmet } from "react-helmet";
+import Loading from "../Loading/Loading";
+import Modal from "../Modal/Modal";
 
 const Layout = (props) => {
     let description = 'Festival';
@@ -21,7 +23,10 @@ const Layout = (props) => {
         <meta name="twitter:title" content={`${title}`}></meta>
         <meta name="twitter:description" content={`${description}`}></meta>
       </Helmet>
+      <Loading />
+      <Modal />
       <div>
+        
         {props.children}
       </div>
     </>

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
@@ -10,12 +11,30 @@ import MiddleObjectMaterial from '../../Assets/Models/middle.mtl'
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
+import { hasLoaded, openModal } from "../../Store/action";
+
 const style = {
-  height: 1000 // we can control scene size by setting container dimensions
+  height: '100vh' // we can control scene size by setting container dimensions
 };
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 40, 10);
   clickableObjects = []
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      pause: false
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if((prevProps.modal_open !== this.props.modal_open) && !this.props.modal_open) {
+      this.setState({
+        pause: false
+      })
+    }
+  }
+
   componentDidMount() {
     this.init();
     this.animate();
@@ -59,6 +78,28 @@ class Environment extends Component {
     this.createCenterObject();
 
     // Skybox
+    this.setupSky()
+    this.createSphere();
+    this.createRayCaster();
+    this.setupOrbitControls();
+    this.setupStats()
+    document.addEventListener("mousedown", this.onDocumentMouseDown, false);
+    window.addEventListener("resize", this.onWindowResize, false);
+  };
+
+  setupCamera = (width, height) => {
+    this.camera = new THREE.PerspectiveCamera(
+      55, // fov = field of view
+      width / height, // aspect ratio
+      1, // near plane
+      20000 // far plane
+    );
+    this.camera.position.set(128, 61, 457);
+    // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
+    this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
+  };
+
+  setupSky = () => {
     this.sky = new Sky();
 
     this.uniforms = this.sky.material.uniforms;
@@ -78,38 +119,7 @@ class Environment extends Component {
     this.cubeCamera.renderTarget.texture.generateMipMaps = true;
     this.cubeCamera.renderTarget.texture.minFilter =
       THREE.LinearMipMapLinearFilter;
-
-    // this.scene.background = this.cubeCamera.renderTarget;
-
-    // this.updateSun();
-
-    //
-
-    this.createSphere();
-
-    //
-    this.createRayCaster();
-    this.setupOrbitControls();
-    this.setupStats()
-    //
-
-    // this.stats = new Stats();
-    // this.mount.appendChild( this.stats.dom );
-    document.addEventListener("mousedown", this.onDocumentMouseDown, false);
-    window.addEventListener("resize", this.onWindowResize, false);
-  };
-
-  setupCamera = (width, height) => {
-    this.camera = new THREE.PerspectiveCamera(
-      55, // fov = field of view
-      width / height, // aspect ratio
-      1, // near plane
-      20000 // far plane
-    );
-    this.camera.position.set(128, 61, 457);
-    // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
-    this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
-  };
+  }
 
   setupStats = () => {
     this.stats = new Stats();
@@ -171,7 +181,6 @@ class Environment extends Component {
       })
     })
   };
-
   loadCenterObject = () => {
     if (this.centerObject) {
       this.centerObject.traverse(function(child) {
@@ -186,9 +195,9 @@ class Environment extends Component {
       this.centerObject.clickable = true;
       this.scene.add(this.centerObject);
       this.clickableObjects.push(this.centerObject)
+      this.props.hasLoaded();
     }
   };
-
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -222,6 +231,10 @@ class Environment extends Component {
   };
 
   objectSelected = () => {
+    this.props.openModal();
+    this.setState({
+      pause: true
+    })
     console.log("HELLO");
   };
 
@@ -303,10 +316,12 @@ class Environment extends Component {
   };
 
   renderEnvironment = () => {
-    let time = performance.now() * 0.001;
-
-    this.water.material.uniforms["time"].value += 1.0 / 60.0;
-    this.renderer.render(this.scene, this.camera);
+    if(!this.state.pause) {
+      let time = performance.now() * 0.001;
+      this.water.material.uniforms["time"].value += 1.0 / 60.0;
+      this.sphere.rotateX(0.1 * time)
+      this.renderer.render(this.scene, this.camera);
+    }
   };
 
   render() {
@@ -314,4 +329,20 @@ class Environment extends Component {
   }
 }
 
-export default Environment;
+const mapStateToProps = (state) => {
+  return {
+    modal_open: state.modal_open,
+    modal_component: state.modal_component
+  }
+}
+
+
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    hasLoaded: () => dispatch(hasLoaded()),
+    openModal: () => dispatch(openModal())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Environment);
