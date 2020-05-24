@@ -22,10 +22,9 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 
-
 const EnvironmentWrapper = styled.div`
-  height: 100vh
-`
+  height: 100vh;
+`;
 const style = {
   height: "100vh" // we can control scene size by setting container dimensions
 };
@@ -92,14 +91,14 @@ class Environment extends Component {
     // Axes
     // this.createAxes();
     // Middle Object
-    this.createCenterObjectBoundary()
-    await this.createCenterObject();
+    this.createCenterObjectBoundary();
+    await this.loadFBXObject();
     // await this.loadFBXObject()
     // Skybox
     this.setupSky();
     this.createSphere();
     this.createRayCaster();
-    this.assignExhibitionItemsToClickableObjects()
+    this.assignExhibitionItemsToClickableObjects();
     this.setupOrbitControls();
     this.setupStats();
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
@@ -117,7 +116,6 @@ class Environment extends Component {
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
     this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
     this.camera.updateProjectionMatrix();
-      
   };
 
   setupSky = () => {
@@ -189,8 +187,26 @@ class Environment extends Component {
     this.water.rotation.x = -Math.PI / 2;
     this.scene.add(this.water);
   };
+
+  createFont = () => {
+    var loader = new THREE.FontLoader();
+
+    loader.load("fonts/helvetiker_regular.typeface.json", function(font) {
+      var geometry = new THREE.TextBufferGeometry("Hello three.js!", {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5
+      });
+    });
+  };
   createCenterObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject);
+    this.manager = new THREE.LoadingManager(this.loadCenterObject, this.loadProgressing);
     let loader = new MTLLoader(this.manager);
     await this.setExhibitionItems();
     loader.load(MiddleObjectMaterial, async materials => {
@@ -202,21 +218,24 @@ class Environment extends Component {
         MiddleObject,
         obj => {
           this.centerObject = obj;
-        },
-        this.loadProgressing
+        }
       );
     });
   };
 
   loadFBXObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject);
+    this.manager = new THREE.LoadingManager(this.loadCenterObject,  this.loadProgressing);
     let loader = new FBXLoader(this.manager);
     await this.setExhibitionItems();
 
-    loader.load(MiddleFBX, (object) => {
-      this.centerObject = object;
-    }, this.loadProgressing)
-  }
+    loader.load(
+      MiddleFBX,
+      object => {
+        this.centerObject = object;
+      },
+      this.loadProgressing
+    );
+  };
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
     this.props.setExhibitionItems(exhibitionItems);
@@ -224,14 +243,14 @@ class Environment extends Component {
 
   assignExhibitionItemsToClickableObjects = () => {
     this.props.exhibition_items.forEach((item, index) => {
-      if(index + 1 <= this.clickableObjects.length) {
+      if (index + 1 <= this.clickableObjects.length) {
         this.clickableObjects[index].exhibition_id = item.id;
       }
-    })
-  }
+    });
+  };
 
-  loadProgressing = xhr => {
-    this.props.loading(xhr.loaded, xhr.total);
+  loadProgressing = (url, itemsLoaded, itemsTotal) => {
+    this.props.loading(itemsLoaded, itemsTotal);
   };
   loadCenterObject = () => {
     if (this.centerObject) {
@@ -263,10 +282,10 @@ class Environment extends Component {
     this.cube.position.x = this.centralPoint.x;
     this.cube.position.y = this.centralPoint.y;
     this.cube.position.z = this.centralPoint.z;
-    this.cube.callback = (id) => this.objectSelected(id);
-    this.scene.add(this.cube)
+    this.cube.callback = id => this.objectSelected(id);
+    this.scene.add(this.cube);
     this.clickableObjects.push(this.cube);
-  }
+  };
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -284,7 +303,7 @@ class Environment extends Component {
     this.sphere.position.z = this.centralPoint.z;
     this.sphere.name = "Sphere";
     this.sphere.clickable = true;
-    this.sphere.callback = (id) => this.objectSelected(id);
+    this.sphere.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere);
     this.clickableObjects.push(this.sphere);
 
@@ -294,12 +313,12 @@ class Environment extends Component {
     this.sphere_two.position.z = this.centralPoint.z;
     this.sphere_two.name = "Sphere2";
     this.sphere_two.clickable = true;
-    this.sphere_two.callback = (id) => this.objectSelected(id);
+    this.sphere_two.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere_two);
     this.clickableObjects.push(this.sphere_two);
   };
 
-  objectSelected = (id) => {
+  objectSelected = id => {
     this.props.openModal(id);
     this.setState({
       pause: true
@@ -384,18 +403,18 @@ class Environment extends Component {
     this.requestID = requestAnimationFrame(this.animate);
 
     this.renderEnvironment();
-    if(this.stats) {
+    if (this.stats) {
       this.stats.update();
     }
   };
 
   renderEnvironment = () => {
     if (!this.state.pause) {
-      if(this.state.firstCall) {
+      if (this.state.firstCall) {
         this.onWindowResize();
         this.setState({
           firstCall: false
-        })
+        });
       }
       let time = performance.now() * 0.001;
       this.water.material.uniforms["time"].value += 1.0 / 60.0;
@@ -420,7 +439,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: (item) => dispatch(openModal(item)),
+    openModal: item => dispatch(openModal(item)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     loading: (loaded, total) => dispatch(loading(loaded, total))
