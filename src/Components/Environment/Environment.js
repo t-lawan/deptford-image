@@ -37,7 +37,8 @@ class Environment extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pause: false
+      pause: false,
+      firstCall: true
     };
   }
 
@@ -366,7 +367,6 @@ class Environment extends Component {
 
     this.renderer.setSize(width, height);
     this.camera.aspect = width / height;
-
     // Note that after making changes to most of camera properties you have to call
     // .updateProjectionMatrix for the changes to take effect.
     this.camera.updateProjectionMatrix();
@@ -374,12 +374,21 @@ class Environment extends Component {
 
   animate = () => {
     this.requestID = requestAnimationFrame(this.animate);
+
     this.renderEnvironment();
-    this.stats.update();
+    if(this.stats) {
+      this.stats.update();
+    }
   };
 
   renderEnvironment = () => {
     if (!this.state.pause) {
+      if(this.state.firstCall) {
+        this.onWindowResize();
+        this.setState({
+          firstCall: false
+        })
+      }
       let time = performance.now() * 0.001;
       this.water.material.uniforms["time"].value += 1.0 / 60.0;
       this.sphere.rotateX(0.1 * time);
