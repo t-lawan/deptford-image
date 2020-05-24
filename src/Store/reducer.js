@@ -15,7 +15,7 @@ export const reducer = (state = initalState, action) => {
       return {
         ...state,
         modal_open: true,
-        modal_item: 1
+        modal_item: action.modal_item
       };
     case CLOSE_MODAL:
       return {
