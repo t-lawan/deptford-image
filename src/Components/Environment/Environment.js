@@ -99,6 +99,7 @@ class Environment extends Component {
     this.setupSky();
     this.createSphere();
     this.createRayCaster();
+    this.assignExhibitionItemsToClickableObjects()
     this.setupOrbitControls();
     this.setupStats();
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
@@ -221,6 +222,14 @@ class Environment extends Component {
     this.props.setExhibitionItems(exhibitionItems);
   };
 
+  assignExhibitionItemsToClickableObjects = () => {
+    this.props.exhibition_items.forEach((item, index) => {
+      if(index + 1 <= this.clickableObjects.length) {
+        this.clickableObjects[index].exhibition_id = item.id;
+      }
+    })
+  }
+
   loadProgressing = xhr => {
     this.props.loading(xhr.loaded, xhr.total);
   };
@@ -236,7 +245,7 @@ class Environment extends Component {
       this.centerObject.position.y = this.centralPoint.y;
       this.centerObject.position.z = this.centralPoint.z;
       this.centerObject.clickable = true;
-      this.centerObject.callback = () => this.objectSelected();
+      // this.centerObject.callback = (id) => this.objectSelected(id);
       this.scene.add(this.centerObject);
       this.props.hasLoaded();
     }
@@ -254,11 +263,10 @@ class Environment extends Component {
     this.cube.position.x = this.centralPoint.x;
     this.cube.position.y = this.centralPoint.y;
     this.cube.position.z = this.centralPoint.z;
-    this.cube.callback = () => this.objectSelected();
+    this.cube.callback = (id) => this.objectSelected(id);
     this.scene.add(this.cube)
     this.clickableObjects.push(this.cube);
   }
-
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -276,7 +284,7 @@ class Environment extends Component {
     this.sphere.position.z = this.centralPoint.z;
     this.sphere.name = "Sphere";
     this.sphere.clickable = true;
-    this.sphere.callback = () => this.objectSelected();
+    this.sphere.callback = (id) => this.objectSelected(id);
     this.scene.add(this.sphere);
     this.clickableObjects.push(this.sphere);
 
@@ -286,13 +294,13 @@ class Environment extends Component {
     this.sphere_two.position.z = this.centralPoint.z;
     this.sphere_two.name = "Sphere2";
     this.sphere_two.clickable = true;
-    this.sphere_two.callback = () => this.objectSelected();
+    this.sphere_two.callback = (id) => this.objectSelected(id);
     this.scene.add(this.sphere_two);
     this.clickableObjects.push(this.sphere_two);
   };
 
-  objectSelected = () => {
-    this.props.openModal(1);
+  objectSelected = (id) => {
+    this.props.openModal(id);
     this.setState({
       pause: true
     });
@@ -352,10 +360,12 @@ class Environment extends Component {
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects, true);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
-      if (this.intersects[0].object.callback) {
-        this.intersects[0].object.callback();
+      let mesh = this.intersects[0];
+      if (mesh.object.callback && mesh.object.exhibition_id) {
+        console.log('ds', mesh)
+        mesh.object.callback(mesh.object.exhibition_id);
       }
     }
   };
@@ -403,7 +413,8 @@ class Environment extends Component {
 const mapStateToProps = state => {
   return {
     modal_open: state.modal_open,
-    modal_item: state.modal_item
+    modal_item: state.modal_item,
+    exhibition_items: state.exhibition_items
   };
 };
 
