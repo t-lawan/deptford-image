@@ -16,7 +16,7 @@ const ModalWrapper = styled.div`
 `;
 
 const ModalHeader = styled.div`
-  padding: 0.5em 0;
+  padding: 0.5em 0.25em;
   padding-bottom: 0;
   text-align: right;
 `;

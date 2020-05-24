@@ -101,6 +101,7 @@ class Environment extends Component {
     this.assignExhibitionItemsToClickableObjects();
     this.setupOrbitControls();
     this.setupStats();
+    document.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
@@ -203,10 +204,20 @@ class Environment extends Component {
         bevelOffset: 0,
         bevelSegments: 5
       });
+
+      let material = new THREE.LineBasicMaterial({
+        color: new THREE.Color('red'),
+        side: THREE.DoubleSide
+      });
+
+      
     });
   };
   createCenterObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject, this.loadProgressing);
+    this.manager = new THREE.LoadingManager(
+      this.loadCenterObject,
+      this.loadProgressing
+    );
     let loader = new MTLLoader(this.manager);
     await this.setExhibitionItems();
     loader.load(MiddleObjectMaterial, async materials => {
@@ -214,17 +225,17 @@ class Environment extends Component {
 
       let objLoader = new OBJLoader(this.manager);
       objLoader.setMaterials(materials);
-      objLoader.load(
-        MiddleObject,
-        obj => {
-          this.centerObject = obj;
-        }
-      );
+      objLoader.load(MiddleObject, obj => {
+        this.centerObject = obj;
+      });
     });
   };
 
   loadFBXObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject,  this.loadProgressing);
+    this.manager = new THREE.LoadingManager(
+      this.loadCenterObject,
+      this.loadProgressing
+    );
     let loader = new FBXLoader(this.manager);
     await this.setExhibitionItems();
 
@@ -378,6 +389,22 @@ class Environment extends Component {
     event.preventDefault();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    if (this.intersects.length > 0) {
+      let mesh = this.intersects[0];
+      if (mesh.object.callback && mesh.object.exhibition_id) {
+        mesh.object.callback(mesh.object.exhibition_id);
+      }
+    }
+  };
+
+
+  onDocumentTouchStart = event => {
+    event.preventDefault();
+
+    this.mouse.x = (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
