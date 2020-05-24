@@ -8,6 +8,8 @@ import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
 import MiddleObject from "../../Assets/Models/middle.obj";
 import MiddleObjectMaterial from "../../Assets/Models/middle.mtl";
+import MiddleFBX from "../../Assets/Models/middle.fbx";
+import MantleFBX from "../../Assets/Models/mantle.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -19,6 +21,7 @@ import {
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
+import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 
 
 const EnvironmentWrapper = styled.div`
@@ -87,10 +90,11 @@ class Environment extends Component {
     this.createWater();
 
     // Axes
-    this.createAxes();
+    // this.createAxes();
     // Middle Object
+    this.createCenterObjectBoundary()
     await this.createCenterObject();
-
+    // await this.loadFBXObject()
     // Skybox
     this.setupSky();
     this.createSphere();
@@ -100,7 +104,6 @@ class Environment extends Component {
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
-
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
       70, // fov = field of view
@@ -112,6 +115,8 @@ class Environment extends Component {
     this.camera.position.set(128, 61, 457);
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
     this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
+    this.camera.updateProjectionMatrix();
+      
   };
 
   setupSky = () => {
@@ -202,6 +207,15 @@ class Environment extends Component {
     });
   };
 
+  loadFBXObject = async () => {
+    this.manager = new THREE.LoadingManager(this.loadCenterObject);
+    let loader = new FBXLoader(this.manager);
+    await this.setExhibitionItems();
+
+    loader.load(MiddleFBX, (object) => {
+      this.centerObject = object;
+    }, this.loadProgressing)
+  }
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
     this.props.setExhibitionItems(exhibitionItems);
@@ -209,7 +223,6 @@ class Environment extends Component {
 
   loadProgressing = xhr => {
     this.props.loading(xhr.loaded, xhr.total);
-
   };
   loadCenterObject = () => {
     if (this.centerObject) {
@@ -223,11 +236,29 @@ class Environment extends Component {
       this.centerObject.position.y = this.centralPoint.y;
       this.centerObject.position.z = this.centralPoint.z;
       this.centerObject.clickable = true;
+      this.centerObject.callback = () => this.objectSelected();
       this.scene.add(this.centerObject);
-      this.clickableObjects.push(this.centerObject);
       this.props.hasLoaded();
     }
   };
+
+  createCenterObjectBoundary = () => {
+    let material = new THREE.MeshStandardMaterial();
+    material.opacity = 0.0;
+    material.transparent = true;
+    material.visible = false;
+
+    let geometry = new THREE.BoxGeometry(50, 150, 50);
+
+    this.cube = new THREE.Mesh(geometry, material);
+    this.cube.position.x = this.centralPoint.x;
+    this.cube.position.y = this.centralPoint.y;
+    this.cube.position.z = this.centralPoint.z;
+    this.cube.callback = () => this.objectSelected();
+    this.scene.add(this.cube)
+    this.clickableObjects.push(this.cube);
+  }
+
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -319,9 +350,8 @@ class Environment extends Component {
     event.preventDefault();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
-    console.log(this.mouse);
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects, true);
     if (this.intersects.length > 0) {
       if (this.intersects[0].object.callback) {
         this.intersects[0].object.callback();
