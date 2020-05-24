@@ -12,7 +12,7 @@ export const ResponsiveIFrameWrapper = styled.div`
 `;
 const ExhibitionItem = props => {
   let item = props.exhibition_items.find(it => {
-    return it.id === 1;
+    return it.id === props.modal_item;
   });
 
   return (
@@ -32,7 +32,8 @@ const ExhibitionItem = props => {
 
 const mapStateToProps = state => {
   return {
-    exhibition_items: state.exhibition_items
+    exhibition_items: state.exhibition_items,
+    modal_item: state.modal_item
   };
 };
 

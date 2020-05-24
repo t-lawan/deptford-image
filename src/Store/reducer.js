@@ -2,7 +2,7 @@ import { OPEN_MODAL, CLOSE_MODAL, HAS_LOADED, SET_EXHIBITION_ITEMS, LOADING } fr
 
 const initalState = {
   modal_open: false,
-  modal_component: null,
+  modal_item: null,
   has_loaded: false,
   loaded: 0.1,
   total: 1,
@@ -14,12 +14,14 @@ export const reducer = (state = initalState, action) => {
     case OPEN_MODAL:
       return {
         ...state,
-        modal_open: true
+        modal_open: true,
+        modal_item: 1
       };
     case CLOSE_MODAL:
       return {
         ...state,
-        modal_open: false
+        modal_open: false,
+        modal_item: null
       };
     case HAS_LOADED:
       return {

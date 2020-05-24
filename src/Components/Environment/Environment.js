@@ -292,7 +292,7 @@ class Environment extends Component {
   };
 
   objectSelected = () => {
-    this.props.openModal();
+    this.props.openModal(1);
     this.setState({
       pause: true
     });
@@ -312,6 +312,7 @@ class Environment extends Component {
     this.controls.minDistance = 100;
     this.controls.maxDistance = 400;
     this.controls.target = this.centralPoint;
+    this.controls.keyPanSpeed = 10;
     this.controls.update();
   };
 
@@ -394,14 +395,14 @@ class Environment extends Component {
 const mapStateToProps = state => {
   return {
     modal_open: state.modal_open,
-    modal_component: state.modal_component
+    modal_item: state.modal_item
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: () => dispatch(openModal()),
+    openModal: (item) => dispatch(openModal(item)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     loading: (loaded, total) => dispatch(loading(loaded, total))
