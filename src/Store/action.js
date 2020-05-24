@@ -4,9 +4,10 @@ export const HAS_LOADED = 'HAS_LOADED';
 export const SET_EXHIBITION_ITEMS = 'SET_EXHIBITION_ITEMS';
 export const LOADING = 'LOADING';
 
-export const openModal = () => {
+export const openModal = (item) => {
     return {
-        type: OPEN_MODAL
+        type: OPEN_MODAL,
+        modal_item: item
     }
 }
 
