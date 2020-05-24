@@ -2,6 +2,7 @@ import * as React from "react";
 import { Helmet } from "react-helmet";
 import Loading from "../Loading/Loading";
 import Modal from "../Modal/Modal";
+import Instruction from "../Instruction/Instruction";
 
 const Layout = (props) => {
     let description = 'Festival';
@@ -25,6 +26,7 @@ const Layout = (props) => {
       </Helmet>
       <Loading />
       <Modal />
+      <Instruction />
       <div>
         
         {props.children}
