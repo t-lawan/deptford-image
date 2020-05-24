@@ -312,7 +312,7 @@ class Environment extends Component {
     this.controls.minDistance = 100;
     this.controls.maxDistance = 400;
     this.controls.target = this.centralPoint;
-    this.controls.keyPanSpeed = 10;
+    this.controls.keyPanSpeed = 20;
     this.controls.update();
   };
 
