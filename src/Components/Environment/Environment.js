@@ -9,7 +9,6 @@ import { Sky } from "../../Utility/Objects/Sky";
 import MiddleObject from "../../Assets/Models/middle.obj";
 import MiddleObjectMaterial from "../../Assets/Models/middle.mtl";
 import MiddleFBX from "../../Assets/Models/middle.fbx";
-import MantleFBX from "../../Assets/Models/mantle.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";

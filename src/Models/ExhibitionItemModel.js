@@ -1,6 +1,7 @@
 export default class ExhibitionItemModel {
     id;
     title;
+    short_description;
     description;
     vimeo_id;
     start_date;
