@@ -21,16 +21,15 @@ import {
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
-
-
+import Sound from '../../Assets/Birds.m4a'
 const EnvironmentWrapper = styled.div`
-  height: 100vh
-`
+  height: 100vh;
+`;
 const style = {
   height: "100vh" // we can control scene size by setting container dimensions
 };
 class Environment extends Component {
-  centralPoint = new THREE.Vector3(0, 40, 10);
+  centralPoint = new THREE.Vector3(0, 500, 10);
   clickableObjects = [];
 
   constructor(props) {
@@ -79,7 +78,7 @@ class Environment extends Component {
 
     //Set Camera
     this.setupCamera(height, width);
-
+    this.createAudioListener();
     // Create Mouse
     this.createMouse();
 
@@ -87,21 +86,22 @@ class Environment extends Component {
     this.createLight();
 
     // Water
-    this.createWater();
+    // this.createWater();
 
     // Axes
     // this.createAxes();
     // Middle Object
-    this.createCenterObjectBoundary()
-    await this.createCenterObject();
-    // await this.loadFBXObject()
+    this.createLoadingManager()
+    this.createCenterObjectBoundary();
+    await this.startLoadingProcess();
     // Skybox
     this.setupSky();
     this.createSphere();
     this.createRayCaster();
-    this.assignExhibitionItemsToClickableObjects()
+    this.assignExhibitionItemsToClickableObjects();
     this.setupOrbitControls();
     this.setupStats();
+    document.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
@@ -117,7 +117,6 @@ class Environment extends Component {
     // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
     this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
     this.camera.updateProjectionMatrix();
-      
   };
 
   setupSky = () => {
@@ -189,8 +188,39 @@ class Environment extends Component {
     this.water.rotation.x = -Math.PI / 2;
     this.scene.add(this.water);
   };
-  createCenterObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject);
+
+  createLoadingManager = () => {
+    this.manager = new THREE.LoadingManager(
+      this.hasLoaded,
+      this.loadProgressing
+    );
+  }
+
+  createFont = () => {
+    var loader = new THREE.FontLoader();
+
+    loader.load("fonts/helvetiker_regular.typeface.json", function(font) {
+      var geometry = new THREE.TextBufferGeometry("Hello three.js!", {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5
+      });
+
+      let material = new THREE.LineBasicMaterial({
+        color: new THREE.Color('red'),
+        side: THREE.DoubleSide
+      });
+
+      
+    });
+  };
+  loadOBJFile = async () => {
     let loader = new MTLLoader(this.manager);
     await this.setExhibitionItems();
     loader.load(MiddleObjectMaterial, async materials => {
@@ -198,42 +228,49 @@ class Environment extends Component {
 
       let objLoader = new OBJLoader(this.manager);
       objLoader.setMaterials(materials);
-      objLoader.load(
-        MiddleObject,
-        obj => {
-          this.centerObject = obj;
-        },
-        this.loadProgressing
-      );
+      objLoader.load(MiddleObject, obj => {
+        this.centerObject = obj;
+      });
     });
   };
 
-  loadFBXObject = async () => {
-    this.manager = new THREE.LoadingManager(this.loadCenterObject);
+  startLoadingProcess = async () => {
+    await this.loadFBXFile();
+    this.loadAudio()
+  }
+
+  hasLoaded = () => {
+    this.addFBXFile()
+  }
+
+  loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
     await this.setExhibitionItems();
 
-    loader.load(MiddleFBX, (object) => {
-      this.centerObject = object;
-    }, this.loadProgressing)
-  }
-  setExhibitionItems = async () => {
-    let exhibitionItems = await RequestManager.getExhibitionItems();
-    this.props.setExhibitionItems(exhibitionItems);
+    loader.load(
+      MiddleFBX,
+      object => {
+        this.centerObject = object;
+      },
+      this.loadProgressing
+    );
   };
 
-  assignExhibitionItemsToClickableObjects = () => {
-    this.props.exhibition_items.forEach((item, index) => {
-      if(index + 1 <= this.clickableObjects.length) {
-        this.clickableObjects[index].exhibition_id = item.id;
-      }
+  loadAudio = () => {
+    this.audioLoader = new THREE.AudioLoader(this.manager);
+    this.audioLoader.load(Sound, (buffer) => {
+      this.sound.setBuffer(buffer);
+      this.sound.setLoop(false);
+      this.sound.setVolume(1)
+      this.sound.duration = 1;
     })
   }
 
-  loadProgressing = xhr => {
-    this.props.loading(xhr.loaded, xhr.total);
+  loadProgressing = (url, itemsLoaded, itemsTotal) => {
+    console.log(url)
+    this.props.loading(itemsLoaded, itemsTotal);
   };
-  loadCenterObject = () => {
+  addFBXFile = () => {
     if (this.centerObject) {
       this.centerObject.traverse(function(child) {
         if (child.isMesh) {
@@ -251,22 +288,46 @@ class Environment extends Component {
     }
   };
 
+  setExhibitionItems = async () => {
+    let exhibitionItems = await RequestManager.getExhibitionItems();
+    this.props.setExhibitionItems(exhibitionItems);
+  };
+
+  assignExhibitionItemsToClickableObjects = () => {
+    this.clickableObjects = this.clickableObjects.sort((a, b) => {
+      return a.order - b.order;
+    })
+    this.props.exhibition_items.forEach((item, index) => {
+      if (index + 1 <= this.clickableObjects.length) {
+        this.clickableObjects[index].exhibition_id = item.id;
+      }
+    });
+  };
+
+  createAudioListener = () => {
+    this.listener = new THREE.AudioListener();
+    this.camera.add(this.listener);
+    this.sound = new THREE.Audio(this.listener);
+  }
+
+
   createCenterObjectBoundary = () => {
     let material = new THREE.MeshStandardMaterial();
-    material.opacity = 0.0;
+    material.opacity = 0.5;
     material.transparent = true;
     material.visible = false;
 
-    let geometry = new THREE.BoxGeometry(50, 150, 50);
+    let geometry = new THREE.BoxGeometry(50, 50, 50);
 
     this.cube = new THREE.Mesh(geometry, material);
     this.cube.position.x = this.centralPoint.x;
     this.cube.position.y = this.centralPoint.y;
-    this.cube.position.z = this.centralPoint.z;
-    this.cube.callback = (id) => this.objectSelected(id);
-    this.scene.add(this.cube)
+    this.cube.position.z = this.centralPoint.z + 19;
+    this.cube.callback = id => this.objectSelected(id);
+    this.cube.order = 2;
+    this.scene.add(this.cube);
     this.clickableObjects.push(this.cube);
-  }
+  };
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -284,7 +345,8 @@ class Environment extends Component {
     this.sphere.position.z = this.centralPoint.z;
     this.sphere.name = "Sphere";
     this.sphere.clickable = true;
-    this.sphere.callback = (id) => this.objectSelected(id);
+    this.sphere.order = 1;
+    this.sphere.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere);
     this.clickableObjects.push(this.sphere);
 
@@ -294,12 +356,14 @@ class Environment extends Component {
     this.sphere_two.position.z = this.centralPoint.z;
     this.sphere_two.name = "Sphere2";
     this.sphere_two.clickable = true;
-    this.sphere_two.callback = (id) => this.objectSelected(id);
+    this.sphere_two.order = 3;
+    this.sphere_two.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere_two);
     this.clickableObjects.push(this.sphere_two);
   };
 
-  objectSelected = (id) => {
+  objectSelected = id => {
+    this.sound.play()
     this.props.openModal(id);
     this.setState({
       pause: true
@@ -321,6 +385,7 @@ class Environment extends Component {
     this.controls.maxDistance = 400;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
+    this.controls.maxPolarAngle = 2 * Math.PI
     this.controls.update();
   };
 
@@ -344,9 +409,11 @@ class Environment extends Component {
     this.sky.material.uniforms["sunPosition"].value = this.light.position.copy(
       this.light.position
     );
-    this.water.material.uniforms["sunDirection"].value
+    if(this.water) {
+      this.water.material.uniforms["sunDirection"].value
       .copy(this.light.position)
       .normalize();
+    }
 
     this.cubeCamera.update(this.renderer, this.sky);
   };
@@ -364,7 +431,22 @@ class Environment extends Component {
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.exhibition_id) {
-        console.log('ds', mesh)
+        mesh.object.callback(mesh.object.exhibition_id);
+      }
+    }
+  };
+
+
+  onDocumentTouchStart = event => {
+    event.preventDefault();
+
+    this.mouse.x = (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    if (this.intersects.length > 0) {
+      let mesh = this.intersects[0];
+      if (mesh.object.callback && mesh.object.exhibition_id) {
         mesh.object.callback(mesh.object.exhibition_id);
       }
     }
@@ -385,21 +467,23 @@ class Environment extends Component {
     this.requestID = requestAnimationFrame(this.animate);
 
     this.renderEnvironment();
-    if(this.stats) {
+    if (this.stats) {
       this.stats.update();
     }
   };
 
   renderEnvironment = () => {
     if (!this.state.pause) {
-      if(this.state.firstCall) {
+      if (this.state.firstCall) {
         this.onWindowResize();
         this.setState({
           firstCall: false
-        })
+        });
       }
       let time = performance.now() * 0.001;
-      this.water.material.uniforms["time"].value += 1.0 / 60.0;
+      if(this.water) {
+        this.water.material.uniforms["time"].value += 1.0 / 60.0;
+      }
       this.sphere.rotateX(0.1 * time);
       this.renderer.render(this.scene, this.camera);
     }
@@ -421,7 +505,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: (item) => dispatch(openModal(item)),
+    openModal: item => dispatch(openModal(item)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     loading: (loaded, total) => dispatch(loading(loaded, total))
