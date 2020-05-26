@@ -6,8 +6,6 @@ import { PointerLockControls } from "three/examples/jsm/controls/PointerLockCont
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import MiddleObject from "../../Assets/Models/middle.obj";
-import MiddleObjectMaterial from "../../Assets/Models/middle.mtl";
 import MiddleFBX from "../../Assets/Models/middle.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
@@ -21,7 +19,7 @@ import {
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
-import Sound from '../../Assets/Birds.m4a'
+import Sound from "../../Assets/Birds.m4a";
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
@@ -58,7 +56,9 @@ class Environment extends Component {
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.onWindowResize);
-    document.removeEventListener("mousemove", this.onDocumentMouseDown);
+    document.removeEventListener("mousedown", this.onDocumentMouseDown);
+    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+
     window.cancelAnimationFrame(this.requestID);
     this.controls.dispose();
   }
@@ -71,7 +71,7 @@ class Environment extends Component {
     const height = this.mount.clientHeight;
 
     // Set Renderer
-    this.createRenderer(width, height);
+    this.setupRenderer(width, height);
     // mount using React ref
     // Set Scene
     this.createScene();
@@ -91,7 +91,7 @@ class Environment extends Component {
     // Axes
     // this.createAxes();
     // Middle Object
-    this.createLoadingManager()
+    this.createLoadingManager();
     this.createCenterObjectBoundary();
     await this.startLoadingProcess();
     // Skybox
@@ -101,8 +101,9 @@ class Environment extends Component {
     this.assignExhibitionItemsToClickableObjects();
     this.setupOrbitControls();
     this.setupStats();
-    document.addEventListener( 'touchstart', this.onDocumentTouchStart, false );
+    document.addEventListener("touchstart", this.onDocumentTouchStart, false);
     document.addEventListener("mousedown", this.onDocumentMouseDown, false);
+    document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
   setupCamera = (width, height) => {
@@ -139,6 +140,11 @@ class Environment extends Component {
     this.cubeCamera.renderTarget.texture.generateMipMaps = true;
     this.cubeCamera.renderTarget.texture.minFilter =
       THREE.LinearMipMapLinearFilter;
+    
+    // this.scene.background = this.cubeCamera.renderTarget;
+
+    this.updateSun();
+
   };
 
   setupStats = () => {
@@ -146,7 +152,7 @@ class Environment extends Component {
     this.mount.appendChild(this.stats.dom);
   };
 
-  createRenderer = (width, height) => {
+  setupRenderer = (width, height) => {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
     this.renderer.setViewport(0, 0, width, height);
@@ -194,7 +200,14 @@ class Environment extends Component {
       this.hasLoaded,
       this.loadProgressing
     );
-  }
+  };
+
+  addLight = (x, y, z) => {
+    var pointLight = new THREE.PointLight('red', 500, 100, 2);
+    pointLight.position.set(x, y + 100, z);
+    this.scene.add(pointLight);
+    return pointLight;
+  };
 
   createFont = () => {
     var loader = new THREE.FontLoader();
@@ -213,22 +226,20 @@ class Environment extends Component {
       });
 
       let material = new THREE.LineBasicMaterial({
-        color: new THREE.Color('red'),
+        color: new THREE.Color("red"),
         side: THREE.DoubleSide
       });
-
-      
     });
   };
-  loadOBJFile = async () => {
+  loadOBJFile = async (materialUri, OBJUri) => {
     let loader = new MTLLoader(this.manager);
     await this.setExhibitionItems();
-    loader.load(MiddleObjectMaterial, async materials => {
+    loader.load(materialUri, async materials => {
       materials.preload();
 
       let objLoader = new OBJLoader(this.manager);
       objLoader.setMaterials(materials);
-      objLoader.load(MiddleObject, obj => {
+      objLoader.load(OBJUri, obj => {
         this.centerObject = obj;
       });
     });
@@ -236,17 +247,17 @@ class Environment extends Component {
 
   startLoadingProcess = async () => {
     await this.loadFBXFile();
-    this.loadAudio()
-  }
+    this.loadAudio();
+  };
 
   hasLoaded = () => {
-    this.addFBXFile()
-  }
+    this.addFBXFile();
+    this.addSound();
+  };
 
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
     await this.setExhibitionItems();
-
     loader.load(
       MiddleFBX,
       object => {
@@ -258,24 +269,20 @@ class Environment extends Component {
 
   loadAudio = () => {
     this.audioLoader = new THREE.AudioLoader(this.manager);
-    this.audioLoader.load(Sound, (buffer) => {
+    this.audioLoader.load(Sound, buffer => {
       this.sound.setBuffer(buffer);
-      this.sound.setLoop(false);
-      this.sound.setVolume(1)
-      this.sound.duration = 1;
-    })
-  }
+    });
+  };
 
   loadProgressing = (url, itemsLoaded, itemsTotal) => {
-    console.log(url)
     this.props.loading(itemsLoaded, itemsTotal);
   };
   addFBXFile = () => {
     if (this.centerObject) {
       this.centerObject.traverse(function(child) {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+          child.castShadow = false;
+          child.receiveShadow = false;
         }
       });
       this.centerObject.position.x = this.centralPoint.x;
@@ -284,8 +291,15 @@ class Environment extends Component {
       this.centerObject.clickable = true;
       // this.centerObject.callback = (id) => this.objectSelected(id);
       this.scene.add(this.centerObject);
+      console.log('S', this.centerObject)
       this.props.hasLoaded();
     }
+  };
+
+  addSound = () => {
+    this.sound.setLoop(false);
+    this.sound.setVolume(1);
+    this.sound.duration = 1;
   };
 
   setExhibitionItems = async () => {
@@ -296,7 +310,7 @@ class Environment extends Component {
   assignExhibitionItemsToClickableObjects = () => {
     this.clickableObjects = this.clickableObjects.sort((a, b) => {
       return a.order - b.order;
-    })
+    });
     this.props.exhibition_items.forEach((item, index) => {
       if (index + 1 <= this.clickableObjects.length) {
         this.clickableObjects[index].exhibition_id = item.id;
@@ -308,18 +322,22 @@ class Environment extends Component {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
     this.sound = new THREE.Audio(this.listener);
-  }
-
+  };
 
   createCenterObjectBoundary = () => {
     let material = new THREE.MeshStandardMaterial();
     material.opacity = 0.5;
     material.transparent = true;
     material.visible = false;
-
+    // boundingBox = new THREE.Box3().setFromObject(this.centerObject)
+    // size = boundingBox.getSize();
     let geometry = new THREE.BoxGeometry(50, 50, 50);
 
+
+
     this.cube = new THREE.Mesh(geometry, material);
+
+
     this.cube.position.x = this.centralPoint.x;
     this.cube.position.y = this.centralPoint.y;
     this.cube.position.z = this.centralPoint.z + 19;
@@ -333,10 +351,19 @@ class Environment extends Component {
       side: THREE.DoubleSide,
       color: 0xffffff,
       emissive: 0xffffff,
-      emissiveIntensity: 0.4,
+      emissiveIntensity: 0.6,
       metalness: 0.5,
       roughness: 1
     });
+
+    let material_two = new THREE.MeshStandardMaterial({
+      side: THREE.DoubleSide,
+      color: 0xffffff,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.6,
+      metalness: 0.5,
+      roughness: 1
+    });;
     let geometry = new THREE.SphereGeometry(10, 30, 30);
 
     this.sphere = new THREE.Mesh(geometry, material);
@@ -346,24 +373,35 @@ class Environment extends Component {
     this.sphere.name = "Sphere";
     this.sphere.clickable = true;
     this.sphere.order = 1;
+    this.sphere.light = this.addLight(
+      this.sphere.position.x,
+      this.sphere.position.y,
+      this.sphere.position.z
+    );
     this.sphere.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere);
     this.clickableObjects.push(this.sphere);
 
-    this.sphere_two = new THREE.Mesh(geometry, material);
+    this.sphere_two = new THREE.Mesh(geometry, material_two);
     this.sphere_two.position.x = this.centralPoint.x - 100;
     this.sphere_two.position.y = this.centralPoint.y + 100;
     this.sphere_two.position.z = this.centralPoint.z;
     this.sphere_two.name = "Sphere2";
     this.sphere_two.clickable = true;
     this.sphere_two.order = 3;
+    this.sphere_two.light = this.addLight(
+      this.sphere_two.position.x,
+      this.sphere_two.position.y,
+      this.sphere_two.position.z
+    );
     this.sphere_two.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere_two);
     this.clickableObjects.push(this.sphere_two);
+
   };
 
   objectSelected = id => {
-    this.sound.play()
+    this.sound.play();
     this.props.openModal(id);
     this.setState({
       pause: true
@@ -380,12 +418,11 @@ class Environment extends Component {
     this.controls.maxPolarAngle = Math.PI * 0.495;
     this.controls.enableKeys = true;
     this.controls.enablePan = true;
-    this.controls.target.set(0, 10, 0);
     this.controls.minDistance = 100;
     this.controls.maxDistance = 400;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
-    this.controls.maxPolarAngle = 2 * Math.PI
+    this.controls.maxPolarAngle = 2 * Math.PI;
     this.controls.update();
   };
 
@@ -409,10 +446,10 @@ class Environment extends Component {
     this.sky.material.uniforms["sunPosition"].value = this.light.position.copy(
       this.light.position
     );
-    if(this.water) {
+    if (this.water) {
       this.water.material.uniforms["sunDirection"].value
-      .copy(this.light.position)
-      .normalize();
+        .copy(this.light.position)
+        .normalize();
     }
 
     this.cubeCamera.update(this.renderer, this.sky);
@@ -431,17 +468,32 @@ class Environment extends Component {
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.exhibition_id) {
+        console.log(mesh)
+
         mesh.object.callback(mesh.object.exhibition_id);
       }
     }
   };
 
+  onDocumentMouseMove = event => {
+    event.preventDefault();
+    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    if(this.intersects.length > 0) {
+      // this.intersects[0].object.material.emissiveIntensity = 1;
+      // this.intersects[0].object.material.visible = true;
+    }
+  };
 
   onDocumentTouchStart = event => {
     event.preventDefault();
 
-    this.mouse.x = (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y = -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
+    this.mouse.x =
+      (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y =
+      -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
@@ -465,7 +517,7 @@ class Environment extends Component {
 
   animate = () => {
     this.requestID = requestAnimationFrame(this.animate);
-
+    this.controls.update();
     this.renderEnvironment();
     if (this.stats) {
       this.stats.update();
@@ -481,7 +533,7 @@ class Environment extends Component {
         });
       }
       let time = performance.now() * 0.001;
-      if(this.water) {
+      if (this.water) {
         this.water.material.uniforms["time"].value += 1.0 / 60.0;
       }
       this.sphere.rotateX(0.1 * time);
