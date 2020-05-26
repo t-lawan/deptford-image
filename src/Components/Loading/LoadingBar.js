@@ -17,8 +17,11 @@ const LoadingProgressWrapper = styled.div`
     background: green;
 `;
 const LoadingBar = props => {
+    let percent = 0;
+    if(props.loaded && props.total) {
+      percent = Math.round((props.loaded/props.total) * 100);
 
-    let percent = Math.round((props.loaded/props.total) * 100);
+    }
   return (
     <LoadingBarWrapper>
         <LoadingProgressWrapper percent={`${percent}%`} />
