@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { showInstructions } from "../../Store/action";
 
 const InstructionWrapper = styled.div`
   position: absolute;
@@ -29,21 +30,24 @@ class Instruction extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.has_loaded !== this.props.has_loaded &&
-      this.props.has_loaded
-    ) {
-        setTimeout(() => {
-          this.setState({
-            show: false
-          });
-        }, 5000);
-    }
+    // if (
+    //   prevProps.has_loaded !== this.props.has_loaded &&
+    //   this.props.has_loaded
+    // ) {
+    //   this.props.showInstructions()
+    //   console.log('HELLO', this.props)
+
+    //     // setTimeout(() => {
+    //     //   this.setState({
+    //     //     show: false
+    //     //   });
+    //     // }, 5000);
+    // }
   }
 
   render() {
     return (
-      <InstructionWrapper show={this.props.has_loaded && this.state.show}>
+      <InstructionWrapper show={this.props.has_loaded && this.props.show_instructions}>
         <Instructions>
           <p> Click Drag or Touch to turn the view </p>
           <p> Use the arrows buttons to move </p>
@@ -55,11 +59,18 @@ class Instruction extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    has_loaded: state.has_loaded
+    has_loaded: state.has_loaded,
+    show_instructions: state.show_instructions
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    showInstructions: () => dispatch(showInstructions())
   };
 };
 
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(Instruction);

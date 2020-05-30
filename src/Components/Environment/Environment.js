@@ -14,7 +14,8 @@ import {
   hasLoaded,
   openModal,
   setExhibitionItems,
-  loading
+  loading,
+  hideInstructions
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -29,7 +30,8 @@ const style = {
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
   clickableObjects = [];
-
+  isHovering = false;
+  hasInteracted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -162,7 +164,7 @@ class Environment extends Component {
   createScene = () => {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x72869d);
-    this.scene.fog = new THREE.FogExp2(0x72869d, 0.002);
+    this.scene.fog = new THREE.FogExp2(0x72869d, 0.003);
   };
   createLight = () => {
     this.light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -204,7 +206,8 @@ class Environment extends Component {
 
   addLight = (x, y, z) => {
     var pointLight = new THREE.PointLight('red', 500, 100, 2);
-    pointLight.position.set(x, y + 100, z);
+    pointLight.position.set(x, y + 20, z);
+    pointLight.intensity = 0;
     this.scene.add(pointLight);
     return pointLight;
   };
@@ -253,6 +256,7 @@ class Environment extends Component {
   hasLoaded = () => {
     this.addFBXFile();
     this.addSound();
+    this.props.hasLoaded();
   };
 
   loadFBXFile = async () => {
@@ -291,8 +295,6 @@ class Environment extends Component {
       this.centerObject.clickable = true;
       // this.centerObject.callback = (id) => this.objectSelected(id);
       this.scene.add(this.centerObject);
-      console.log('S', this.centerObject)
-      this.props.hasLoaded();
     }
   };
 
@@ -333,19 +335,23 @@ class Environment extends Component {
     // size = boundingBox.getSize();
     let geometry = new THREE.BoxGeometry(50, 50, 50);
 
+    this.centerObjectBoundary = new THREE.Mesh(geometry, material);
 
 
-    this.cube = new THREE.Mesh(geometry, material);
-
-
-    this.cube.position.x = this.centralPoint.x;
-    this.cube.position.y = this.centralPoint.y;
-    this.cube.position.z = this.centralPoint.z + 19;
-    this.cube.callback = id => this.objectSelected(id);
-    this.cube.order = 2;
-    this.scene.add(this.cube);
-    this.clickableObjects.push(this.cube);
+    this.centerObjectBoundary.position.x = this.centralPoint.x;
+    this.centerObjectBoundary.position.y = this.centralPoint.y;
+    this.centerObjectBoundary.position.z = this.centralPoint.z + 19;
+    this.centerObjectBoundary.callback = id => this.objectSelected(id);
+    this.centerObjectBoundary.light = this.addLight(
+      this.centerObjectBoundary.position.x,
+      this.centerObjectBoundary.position.y,
+      this.centerObjectBoundary.position.z
+    );
+    this.centerObjectBoundary.order = 2;
+    this.scene.add(this.centerObjectBoundary);
+    this.clickableObjects.push(this.centerObjectBoundary);
   };
+  
   createSphere = () => {
     let material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
@@ -422,7 +428,9 @@ class Environment extends Component {
     this.controls.maxDistance = 400;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
+    this.controls.panSpeed = 3;
     this.controls.maxPolarAngle = 2 * Math.PI;
+    this.controls.maxAzimuthAngle = Infinity;
     this.controls.update();
   };
 
@@ -436,7 +444,6 @@ class Environment extends Component {
   updateSun = () => {
     let theta = Math.PI * (this.parameters.inclination - 0.5);
     let phi = 2 * Math.PI * (this.parameters.azimuth - 0.5);
-
     this.light.position.x = this.parameters.distance * Math.cos(phi);
     this.light.position.y =
       this.parameters.distance * Math.sin(phi) * Math.sin(theta);
@@ -451,9 +458,16 @@ class Environment extends Component {
         .copy(this.light.position)
         .normalize();
     }
-
     this.cubeCamera.update(this.renderer, this.sky);
   };
+
+  hideInstructions = () => {
+    if(this.props.show_instructions) {
+      setTimeout(() => {
+        this.props.hideInstructions()
+      }, 1500)
+    }
+  }
 
   // Here should come custom code.
   // Code below is taken from Three.js BoxGeometry example
@@ -461,6 +475,7 @@ class Environment extends Component {
 
   onDocumentMouseDown = event => {
     event.preventDefault();
+    this.hideInstructions();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -468,28 +483,42 @@ class Environment extends Component {
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.exhibition_id) {
-        console.log(mesh)
-
         mesh.object.callback(mesh.object.exhibition_id);
       }
     }
   };
 
+
+
   onDocumentMouseMove = event => {
     event.preventDefault();
+    this.hideInstructions();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if(this.intersects.length > 0) {
-      // this.intersects[0].object.material.emissiveIntensity = 1;
-      // this.intersects[0].object.material.visible = true;
-    }
+      if(!this.isHovering) {
+        this.isHovering = true;
+        this.intersects[0].object.light.intensity = 1000;
+      }
+    } else {
+      if(this.isHovering) {
+        this.isHovering = false;
+        this.turnOffAllLights()
+      }
+    } 
   };
+
+  turnOffAllLights = () => {
+    this.clickableObjects.forEach((obj) => {
+      obj.light.intensity = 0;
+    })
+  }
 
   onDocumentTouchStart = event => {
     event.preventDefault();
-
+    this.hideInstructions();
     this.mouse.x =
       (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y =
@@ -550,7 +579,8 @@ const mapStateToProps = state => {
   return {
     modal_open: state.modal_open,
     modal_item: state.modal_item,
-    exhibition_items: state.exhibition_items
+    exhibition_items: state.exhibition_items,
+    show_instructions: state.show_instructions
   };
 };
 
@@ -560,7 +590,8 @@ const mapDispatchToProps = dispatch => {
     openModal: item => dispatch(openModal(item)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
-    loading: (loaded, total) => dispatch(loading(loaded, total))
+    loading: (loaded, total) => dispatch(loading(loaded, total)),
+    hideInstructions:  () => dispatch(hideInstructions())
   };
 };
 
