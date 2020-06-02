@@ -21,6 +21,7 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
+import TypeFace from '../../Assets/Fonts/helvetiker_regular.typeface.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
@@ -212,28 +213,7 @@ class Environment extends Component {
     return pointLight;
   };
 
-  createFont = () => {
-    var loader = new THREE.FontLoader();
 
-    loader.load("fonts/helvetiker_regular.typeface.json", function(font) {
-      var geometry = new THREE.TextBufferGeometry("Hello three.js!", {
-        font: font,
-        size: 80,
-        height: 5,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 8,
-        bevelOffset: 0,
-        bevelSegments: 5
-      });
-
-      let material = new THREE.LineBasicMaterial({
-        color: new THREE.Color("red"),
-        side: THREE.DoubleSide
-      });
-    });
-  };
   loadOBJFile = async (materialUri, OBJUri) => {
     let loader = new MTLLoader(this.manager);
     await this.setExhibitionItems();
@@ -251,6 +231,7 @@ class Environment extends Component {
   startLoadingProcess = async () => {
     await this.loadFBXFile();
     this.loadAudio();
+    this.loadFont()
   };
 
   hasLoaded = () => {
@@ -271,6 +252,13 @@ class Environment extends Component {
     );
   };
 
+  loadFont = () => {
+    var loader = new THREE.FontLoader(this.manager);
+    this.font = loader.parse(TypeFace)
+
+  };
+
+
   loadAudio = () => {
     this.audioLoader = new THREE.AudioLoader(this.manager);
     this.audioLoader.load(Sound, buffer => {
@@ -281,6 +269,26 @@ class Environment extends Component {
   loadProgressing = (url, itemsLoaded, itemsTotal) => {
     this.props.loading(itemsLoaded, itemsTotal);
   };
+
+  addFont = (textInfo, position) => {
+      if(this.font && textInfo) {
+        var geometry = new THREE.TextBufferGeometry(textInfo, {
+          font: this.font,
+          size: 5,
+          height: 1,
+        });
+  
+        let material = new THREE.MeshBasicMaterial({
+          color: new THREE.Color("white")
+        });
+        let text = new THREE.Mesh(geometry, material);
+        text.position.x = position.x;
+        text.position.y = position.y + 50;
+        text.position.z = position.z;
+        this.scene.add(text);
+        return text
+      }
+  }
   addFBXFile = () => {
     if (this.centerObject) {
       this.centerObject.traverse(function(child) {
@@ -307,17 +315,6 @@ class Environment extends Component {
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
     this.props.setExhibitionItems(exhibitionItems);
-  };
-
-  assignExhibitionItemsToClickableObjects = () => {
-    this.clickableObjects = this.clickableObjects.sort((a, b) => {
-      return a.order - b.order;
-    });
-    this.props.exhibition_items.forEach((item, index) => {
-      if (index + 1 <= this.clickableObjects.length) {
-        this.clickableObjects[index].exhibition_id = item.id;
-      }
-    });
   };
 
   createAudioListener = () => {
@@ -417,6 +414,38 @@ class Environment extends Component {
   createAxes = () => {
     var axesHelper = new THREE.AxesHelper(10);
     this.scene.add(axesHelper);
+  };
+
+  assignExhibitionItemsToClickableObjects = () => {
+    let sentenceLength = 4;
+    let distance = 10
+
+    this.clickableObjects = this.clickableObjects.sort((a, b) => {
+      return a.order - b.order;
+    });
+
+    this.props.exhibition_items.forEach((item, index) => {
+      if (index + 1 <= this.clickableObjects.length) {
+        //  Split description into array of words
+        let desc = item.short_description.split(' ');
+        let arr = [];
+        // Iterate
+        for(let i = 0; i < desc.length; i = i + sentenceLength) {
+          arr.push(`${desc[i]} ${desc[i+1]} ${desc[i+2]} ${desc[i+3]}`)
+        }
+
+        let position = this.clickableObjects[index].position;
+        position.y = position.y + (distance * arr.length)
+        let text = []; 
+        arr.forEach((sentence) => {
+          text.push(this.addFont(sentence, position))
+          position.y = position.y - distance;
+        })
+
+        this.clickableObjects[index].exhibition_id = item.id;
+        this.clickableObjects[index].text = text
+      }
+    });
   };
 
   setupOrbitControls = () => {
