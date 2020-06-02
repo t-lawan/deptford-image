@@ -5,9 +5,9 @@ import Modal from "../Modal/Modal";
 import Instruction from "../Instruction/Instruction";
 
 const Layout = (props) => {
-    let description = 'Festival';
+    let description = 'Deptford Moving Image Festival';
     let imageUrl = ''
-    let url = ''
+    let url = 'https://demomovingimage.net/'
     let title = 'Deptford Moving Image Festival '
   return (
     <>
