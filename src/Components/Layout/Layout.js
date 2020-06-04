@@ -18,8 +18,8 @@ const Layout = (props) => {
         <meta name="og:description" content={`${description}`}></meta>
         <meta name="og:image" content={`${imageUrl}`}></meta>
         <meta name="og:type" content={`website`}></meta>
-        <meta name="og:url" content={`url`}></meta>
-
+        <meta name="og:url" content={`${url}`}></meta>
+        <link rel="canonical" href={`${url}`} />
         <meta name="twitter:card" content={`summary`}></meta>
         <meta name="twitter:title" content={`${title}`}></meta>
         <meta name="twitter:description" content={`${description}`}></meta>

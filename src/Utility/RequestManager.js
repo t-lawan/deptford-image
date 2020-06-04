@@ -19,35 +19,12 @@ export default class RequestManager {
           item.fields.shortDescription,
           item.fields.description,
           item.fields.vimeoId,
+          item.fields.videoUrl,
           "20200105",
           "20200110"
         )
     })
-    // let items = [
-    //   new ExhibitionItemModel(
-    //     1,
-    //     "Title",
-    //     `Portland polaroid duis quinoa, proident food truck skateboard
-    //         pickled pok pok pop-up. Selvage pour-over deep v normcore. Bicycle
-    //         rights direct trade leggings ea mollit. Cardigan leggings PBR&B
-    //         beard, officia skateboard direct trade. Jianbing meh sriracha irure,
-    //         PBR&B iPhone distillery est dolore. Cornhole drinking vinegar jean
-    //         shorts, ex labore messenger bag cronut echo park hella sint fam.`,
-    //     `247839331`,
-    //     "20200105",
-    //     "20200110"
-    //   ),
-    //   new ExhibitionItemModel(
-    //     2,
-    //     "Title Two",
-    //     ``,
-    //     `247839331`,
-    //     "20200105",
-    //     "20200110"
-    //   )
-    // ];
     return exhibitionItems;
-    // return await this.get(`${this.baseUrl}/video/create`);
   }
 
   static get = async url => {

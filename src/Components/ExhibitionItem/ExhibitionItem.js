@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import Vimeo from "@u-wave/react-vimeo";
+import VideoPlayer from "../VideoPlayer/VideoPlayer";
 
 const ExhibitionItemWrapper = styled.div``;
 
@@ -23,7 +24,8 @@ const ExhibitionItem = props => {
             {item.description}
         </p>
         <ResponsiveIFrameWrapper>
-          <Vimeo video={item.vimeo_id} responsive={true} />
+          <VideoPlayer videoUrl={item.video_url}/>
+          {/* <Vimeo video={item.vimeo_id} responsive={true} /> */}
         </ResponsiveIFrameWrapper>
       </div> :  null}
     </ExhibitionItemWrapper>
