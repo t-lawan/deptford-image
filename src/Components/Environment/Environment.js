@@ -274,7 +274,7 @@ class Environment extends Component {
       if(this.font && textInfo) {
         var geometry = new THREE.TextBufferGeometry(textInfo, {
           font: this.font,
-          size: 5,
+          size: 3,
           height: 1,
         });
   

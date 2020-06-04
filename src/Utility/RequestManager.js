@@ -24,9 +24,7 @@ export default class RequestManager {
           "20200110"
         )
     })
-    console.log('exhit', exhibitionItems)
     return exhibitionItems;
-    // return await this.get(`${this.baseUrl}/video/create`);
   }
 
   static get = async url => {
