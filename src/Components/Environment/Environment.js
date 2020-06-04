@@ -503,7 +503,7 @@ class Environment extends Component {
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentMouseDown = event => {
-    event.preventDefault();
+    // event.preventDefault();
     this.hideInstructions();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
@@ -546,7 +546,7 @@ class Environment extends Component {
   }
 
   onDocumentTouchStart = event => {
-    event.preventDefault();
+    // event.preventDefault();
     this.hideInstructions();
     this.mouse.x =
       (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
