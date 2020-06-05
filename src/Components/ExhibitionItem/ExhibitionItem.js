@@ -1,7 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import Vimeo from "@u-wave/react-vimeo";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 
 const ExhibitionItemWrapper = styled.div``;

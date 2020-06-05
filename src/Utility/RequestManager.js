@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+
 import ExhibitionItemModel from "../Models/ExhibitionItemModel";
 import * as contentful from 'contentful'
 export default class RequestManager {
@@ -28,23 +28,4 @@ export default class RequestManager {
     })
     return exhibitionItems;
   }
-
-  static get = async url => {
-    let config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-    return await axios.get(url, config);
-  };
-
-  static post = async (url, data) => {
-    const d = JSON.stringify(data);
-    let config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-    return await axios.post(url, d, config);
-  };
 }

@@ -1,4 +1,4 @@
-import { css, createGlobalStyle, keyframes } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import KarlaRegular from "../../Assets/Fonts/Karla-Regular.ttf";
 import KarlaBold from "../../Assets/Fonts/Karla-Bold.ttf";
 import KarlaBoldItalic from "../../Assets/Fonts/Karla-BoldItalic.ttf";
