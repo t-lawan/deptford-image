@@ -24,7 +24,7 @@ const ExhibitionItem = props => {
             {item.description}
         </p>
         <ResponsiveIFrameWrapper>
-          <VideoPlayer videoUrl={item.video_url}/>
+          <VideoPlayer posterUrl={item.poster_url} videoUrl={item.video_url}/>
           {/* <Vimeo video={item.vimeo_id} responsive={true} /> */}
         </ResponsiveIFrameWrapper>
       </div> :  null}

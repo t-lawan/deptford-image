@@ -22,7 +22,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalBody = styled.div`
-  padding: 0.5em 0;
+  padding: 2em;
   padding-bottom: 0;
 `;
 export const ModalCloseImage = styled.img`
