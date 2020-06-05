@@ -4,37 +4,74 @@ import Loading from "../Loading/Loading";
 import Modal from "../Modal/Modal";
 import Instruction from "../Instruction/Instruction";
 import { GlobalStyle } from "../Global/global.styles";
-import SharingUrl from '../../Assets/DemoSharingImage.jpg'
-const Layout = (props) => {
-    let description = 'Deptford Moving Image Festival';
-    let url = 'https://demomovingimage.net/'
-    let title = 'DEMO'
+import SharingUrl from "../../Assets/DemoSharingImage.jpg";
+const Layout = props => {
+  let description = "Deptford Moving Image Festival";
+  let url = "https://demomovingimage.net/";
+  let title = "DEMO";
   return (
     <>
-      <Helmet>
-        <title> {title} </title>
-        <meta name="description" content={`${description}`}></meta>
-        <meta property="og:title" content={`${title}`}></meta>
-        <meta property="og:description" content={`${description}`}></meta>
-        <meta property="og:image" content={SharingUrl}></meta>
-        <meta property="og:image:height" content={'720'}></meta>
-        <meta property="og:image:width" content={'720'}></meta>
-
-        <meta property="og:type" content={`website`}></meta>
-        <meta property="og:url" content={`${url}`}></meta>
-        <link rel="canonical" href={`${url}`} />
-        <meta name="twitter:card" content={`summary`}></meta>
-        <meta name="twitter:title" content={`${title}`}></meta>
-        <meta name="twitter:description" content={`${description}`}></meta>
-      </Helmet>
+      <Helmet
+        htmlAttributes={{
+          lang: 'en'
+        }}
+        title={title}
+        meta={[
+          {
+            rel: "canonical",
+            href: `${url}`
+          },
+          {
+            name: `description`,
+            content: description
+          },
+          {
+            property: `og:title`,
+            content: title
+          },
+          {
+            property: `og:description`,
+            content: description
+          },
+          {
+            property: `og:image`,
+            content: SharingUrl
+          },
+          {
+            property: `og:image:width`,
+            content: `720`
+          },
+          {
+            property: `og:image:height`,
+            content: `720`
+          },
+          {
+            property: `og:type`,
+            content: `website`
+          },
+          {
+            property: `og:url`,
+            content: `${url}`
+          },
+          {
+            name: `twitter:card`,
+            content: `summary`
+          },
+          {
+            name: `twitter:title`,
+            content: title
+          },
+          {
+            name: `twitter:description`,
+            content: description
+          }
+        ]}
+      />
       <GlobalStyle />
       <Loading />
       <Modal />
       <Instruction />
-      <div>
-        
-        {props.children}
-      </div>
+      <div>{props.children}</div>
     </>
   );
 };
