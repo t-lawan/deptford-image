@@ -21,7 +21,7 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
-import TypeFace from '../../Assets/Fonts/helvetiker_regular.typeface.json'
+import TypeFace from '../../Assets/Fonts/karla.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
