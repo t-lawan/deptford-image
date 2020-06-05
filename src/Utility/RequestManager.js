@@ -13,6 +13,7 @@ export default class RequestManager {
 
     let response = await client.getEntries();
     let exhibitionItems = response.items.map((item) => {
+      let poster_image = item.fields.posterImage ? item.fields.posterImage.fields.file.url : null
         return new ExhibitionItemModel(
           item.sys.id,
           item.fields.title,
@@ -20,6 +21,7 @@ export default class RequestManager {
           item.fields.description,
           item.fields.vimeoId,
           item.fields.videoUrl,
+          poster_image,
           "20200105",
           "20200110"
         )
