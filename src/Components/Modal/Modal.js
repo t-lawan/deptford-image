@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
+import { size } from "../Global/global.styles";
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -28,6 +29,9 @@ const ModalBody = styled.div`
 export const ModalCloseImage = styled.img`
   width: 5%;
   align-self: flex-end;
+  @media (max-width: ${size.tabletL}) {
+    width: 10%;
+  }
 `;
 
 class Modal extends React.Component {

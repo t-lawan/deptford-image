@@ -21,7 +21,7 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
-import TypeFace from '../../Assets/Fonts/helvetiker_regular.typeface.json'
+import TypeFace from '../../Assets/Fonts/karla.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
@@ -430,9 +430,27 @@ class Environment extends Component {
         let desc = item.short_description.split(' ');
         let arr = [];
         // Iterate
-        for(let i = 0; i < desc.length; i = i + sentenceLength) {
-          arr.push(`${desc[i]} ${desc[i+1]} ${desc[i+2]} ${desc[i+3]}`)
-        }
+        // for(let i = 0; i < desc.length; i = i + sentenceLength) {
+        //   let word_one = desc[i];
+        //   let word_two = desc[i + 1];
+        //   let word_three = desc[i + 2];
+        //   let word_four = desc[i + 3];
+        //   arr.push(`${desc[i]} ${desc[i+1]} ${desc[i+2]} ${desc[i+3]}`)
+        // }
+        let sentence = '';
+
+        desc.forEach((it, i) => {
+          if(i !== 0 && i % sentenceLength === 0) {
+            arr.push(sentence);
+            sentence = ''
+          }
+
+          sentence =  sentence.concat(` ${it}`);
+
+          if(i + 1 === desc.length) {
+            arr.push(sentence);
+          }
+        })
 
         let position = this.clickableObjects[index].position;
         position.y = position.y + (distance * arr.length)

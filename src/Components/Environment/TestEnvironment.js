@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import * as THREE from 'three';
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import { Water } from "../../Utility/Water/Water";
 const style = {
     height: 1000 // we can control scene size by setting container dimensions
 };
