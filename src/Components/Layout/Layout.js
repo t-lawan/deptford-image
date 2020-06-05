@@ -14,14 +14,14 @@ const Layout = (props) => {
       <Helmet>
         <title> {title} </title>
         <meta name="description" content={`${description}`}></meta>
-        <meta name="og:title" content={`${title}`}></meta>
-        <meta name="og:description" content={`${description}`}></meta>
-        <meta name="og:image" content={SharingUrl}></meta>
-        <meta name="og:image:height" content={'720'}></meta>
-        <meta name="og:image:width" content={'720'}></meta>
+        <meta property="og:title" content={`${title}`}></meta>
+        <meta property="og:description" content={`${description}`}></meta>
+        <meta property="og:image" content={SharingUrl}></meta>
+        <meta property="og:image:height" content={'720'}></meta>
+        <meta property="og:image:width" content={'720'}></meta>
 
-        <meta name="og:type" content={`website`}></meta>
-        <meta name="og:url" content={`${url}`}></meta>
+        <meta property="og:type" content={`website`}></meta>
+        <meta property="og:url" content={`${url}`}></meta>
         <link rel="canonical" href={`${url}`} />
         <meta name="twitter:card" content={`summary`}></meta>
         <meta name="twitter:title" content={`${title}`}></meta>

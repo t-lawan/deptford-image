@@ -19,6 +19,8 @@ export const size = {
   desktop: "2260px"
 };
 
+
+
 export const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: Karla;
@@ -57,5 +59,10 @@ html, body {
   font-family: 'Karla', Fallback, sans-serif;
   width: 100%;
   -webkit-font-smoothing: antialiased;
+}
+
+.video-react .video-react-big-play-button{
+  border: 0 !important;
+  border-radius: 0 !important;
 }
   `;
