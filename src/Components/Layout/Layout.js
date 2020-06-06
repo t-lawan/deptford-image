@@ -6,7 +6,7 @@ import Instruction from "../Instruction/Instruction";
 import { GlobalStyle } from "../Global/global.styles";
 import SharingUrl from "../../Assets/DemoSharingImage.jpg";
 const Layout = props => {
-  let description = "Deptford Moving Image Festival";
+  let description = "DEMO Moving Image Festival";
   let url = "https://demomovingimage.net/";
   let title = "DEMO";
   return (
