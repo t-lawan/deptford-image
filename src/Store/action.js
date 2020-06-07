@@ -7,10 +7,11 @@ export const SET_EXHIBITION_ITEMS = 'SET_EXHIBITION_ITEMS';
 export const LOADING = 'LOADING';
 export const SET_PAGES = 'SET_PAGES';
 
-export const openModal = (item) => {
+export const openModal = (item, type) => {
     return {
         type: OPEN_MODAL,
-        modal_item: item
+        modal_item: item,
+        modal_type: type
     }
 }
 

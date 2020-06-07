@@ -8,10 +8,12 @@ import {
   HIDE_INSTRUCTIONS,
   SET_PAGES
 } from "./action";
+import { ModelTypes } from "../Components/Environment/Environment";
 
 const initalState = {
   modal_open: false,
   modal_item: null,
+  modal_type: ModelTypes.EXHIBIITION_ITEM,
   has_loaded: false,
   loaded: 0.1,
   total: 1,

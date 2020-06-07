@@ -27,7 +27,7 @@ const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
 
-const ModelTypes = {
+export const ModelTypes = {
   PAGE: 'PAGE',
   EXHIBIITION_ITEM: 'EXHIBIITION_ITEM'
 }
@@ -376,9 +376,9 @@ class Environment extends Component {
   };
   
 
-  objectSelected = id => {
+  objectSelected = (id, modelType = ModelTypes.EXHIBIITION_ITEM) => {
     this.sound.play();
-    this.props.openModal(id);
+    this.props.openModal(id, modelType);
     this.setState({
       pause: true
     });
@@ -632,7 +632,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: item => dispatch(openModal(item)),
+    openModal: (item, type) => dispatch(openModal(item, type)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     setPages: pages => 
