@@ -15,7 +15,8 @@ import {
   openModal,
   setExhibitionItems,
   loading,
-  hideInstructions
+  hideInstructions,
+  setPages
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -106,7 +107,6 @@ class Environment extends Component {
     await this.startLoadingProcess();
     // Skybox
     this.setupSky();
-    // this.createSphere();
     this.createRayCaster();
     this.setupOrbitControls();
     this.setupStats();
@@ -226,18 +226,11 @@ class Environment extends Component {
     );
   };
 
-  addLight = (x, y, z) => {
-    var pointLight = new THREE.PointLight('red', 500, 100, 2);
-    pointLight.position.set(x, y + 20, z);
-    pointLight.intensity = 0;
-    this.scene.add(pointLight);
-    return pointLight;
-  };
 
 
   loadOBJFile = async (materialUri, OBJUri) => {
     let loader = new MTLLoader(this.manager);
-    await this.setExhibitionItems();
+
     loader.load(materialUri, async materials => {
       materials.preload();
 
@@ -250,6 +243,8 @@ class Environment extends Component {
   };
 
   startLoadingProcess = async () => {
+    await this.setExhibitionItems();
+    await this.setPages();
     await this.loadFBXFile();
     this.loadAudio();
     this.loadFont()
@@ -264,7 +259,7 @@ class Environment extends Component {
 
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
-    await this.setExhibitionItems();
+    // await this.setExhibitionItems();
     loader.load(
       ExplosionFBX,
       object => {
@@ -305,7 +300,7 @@ class Environment extends Component {
         });
         let text = new THREE.Mesh(geometry, material);
         text.position.x = position.x;
-        text.position.y = position.y + 50;
+        text.position.y = position.y + 30;
         text.position.z = position.z;
         this.scene.add(text);
         return text
@@ -321,7 +316,12 @@ class Environment extends Component {
         // mesh.position.z = this.centralPoint.z;
         mesh.updateMatrix()
         mesh.geometry.computeBoundingSphere()
-        let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(mesh.geometry.boundingSphere.center)
+        // mesh.geometry.computeBoundingBox()
+        console.log('MESH', mesh)
+        let spherePosition = mesh.geometry.boundingSphere.center;
+        // let spherePosition = mesh.geometry.boundingBox.max;
+        // spherePosition.y = spherePosition.z + mesh.geometry.boundingSphere.radius/2
+        let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(spherePosition)
         mesh.worldPosition = position;
 
         mesh.castShadow = true;
@@ -345,6 +345,11 @@ class Environment extends Component {
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
     this.props.setExhibitionItems(exhibitionItems);
+  };
+  setPages = async () => {
+    let pages = await RequestManager.getPages();
+    console.log(pages)
+    this.props.setPages(pages);
   };
 
   createAudioListener = () => {
@@ -370,57 +375,6 @@ class Environment extends Component {
     this.scene.add(boundary);
   };
   
-  createSphere = () => {
-    let material = new THREE.MeshStandardMaterial({
-      side: THREE.DoubleSide,
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.6,
-      metalness: 0.5,
-      roughness: 1
-    });
-
-    let material_two = new THREE.MeshStandardMaterial({
-      side: THREE.DoubleSide,
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.6,
-      metalness: 0.5,
-      roughness: 1
-    });;
-    let geometry = new THREE.SphereGeometry(10, 30, 30);
-
-    this.sphere = new THREE.Mesh(geometry, material);
-    this.sphere.position.x = this.centralPoint.x + 100;
-    this.sphere.position.y = this.centralPoint.y;
-    this.sphere.position.z = this.centralPoint.z;
-    this.sphere.name = "Sphere";
-    this.sphere.order = 1;
-    // this.sphere.light = this.addLight(
-    //   this.sphere.position.x,
-    //   this.sphere.position.y,
-    //   this.sphere.position.z
-    // );
-    this.sphere.callback = id => this.objectSelected(id);
-    this.scene.add(this.sphere);
-    this.clickableObjects.push(this.sphere);
-
-    this.sphere_two = new THREE.Mesh(geometry, material_two);
-    this.sphere_two.position.x = this.centralPoint.x - 100;
-    this.sphere_two.position.y = this.centralPoint.y + 100;
-    this.sphere_two.position.z = this.centralPoint.z;
-    this.sphere_two.name = "Sphere2";
-    this.sphere_two.order = 3;
-    // this.sphere_two.light = this.addLight(
-    //   this.sphere_two.position.x,
-    //   this.sphere_two.position.y,
-    //   this.sphere_two.position.z
-    // );
-    this.sphere_two.callback = id => this.objectSelected(id);
-    this.scene.add(this.sphere_two);
-    this.clickableObjects.push(this.sphere_two);
-
-  };
 
   objectSelected = id => {
     this.sound.play();
@@ -495,23 +449,14 @@ class Environment extends Component {
     if(programmeIndex) {
       this.clickableObjects[programmeIndex].model_type = ModelTypes.PAGE
     }
-
-    // hh = hh.map((h) => {
-    //   return {
-    //     name: h.name
-    //   }
-    // })
-//2, 3
-    hh.forEach((h, i) => {
-      if(i == 3 ) {
-        h.material.color.g = 0;
-        h.material.color.b = 0;
-        h.material.emissive.r = 0.5; 
-      }
-
+    console.log('BEFORE MESHES', this.clickableObjects)
+    // Remove Clickable that has no model type or Id
+    this.clickableObjects = this.clickableObjects.filter((obj) => {
+      return obj.model_type;
     })
 
-    console.log('MESHES',this.clickableObjects)
+
+    console.log('AFTER MESHES',this.clickableObjects)
 
   };
 
@@ -610,7 +555,7 @@ class Environment extends Component {
     obj.material.color.g = 0;
     obj.material.color.b = 0;
     obj.material.emissive.r = 0.4; 
-    obj.material.emissive.g = 0; 
+    obj.material.emissive.g = 1; 
     obj.material.emissive.b = 0; 
   }
 
@@ -699,6 +644,8 @@ const mapDispatchToProps = dispatch => {
     openModal: item => dispatch(openModal(item)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
+    setPages: pages => 
+      dispatch(setPages(pages)),
     loading: (loaded, total) => dispatch(loading(loaded, total)),
     hideInstructions:  () => dispatch(hideInstructions())
   };

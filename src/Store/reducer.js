@@ -1,4 +1,13 @@
-import { OPEN_MODAL, CLOSE_MODAL, HAS_LOADED, SET_EXHIBITION_ITEMS, LOADING, SHOW_INSTRUCTIONS, HIDE_INSTRUCTIONS } from "./action";
+import {
+  OPEN_MODAL,
+  CLOSE_MODAL,
+  HAS_LOADED,
+  SET_EXHIBITION_ITEMS,
+  LOADING,
+  SHOW_INSTRUCTIONS,
+  HIDE_INSTRUCTIONS,
+  SET_PAGES
+} from "./action";
 
 const initalState = {
   modal_open: false,
@@ -7,6 +16,7 @@ const initalState = {
   loaded: 0.1,
   total: 1,
   exhibition_items: [],
+  pages: [],
   show_instructions: true
 };
 
@@ -34,12 +44,17 @@ export const reducer = (state = initalState, action) => {
         ...state,
         exhibition_items: action.exhibition_items
       };
+    case SET_PAGES:
+      return {
+        ...state,
+        pages: action.pages
+      };
     case LOADING:
       return {
         ...state,
         loaded: action.loaded,
         total: action.total
-      }
+      };
     case SHOW_INSTRUCTIONS:
       return {
         ...state,

@@ -5,6 +5,7 @@ export const SHOW_INSTRUCTIONS = 'SHOW_INSTRUCTIONS';
 export const HIDE_INSTRUCTIONS = 'HIDE_INSTRUCTIONS';
 export const SET_EXHIBITION_ITEMS = 'SET_EXHIBITION_ITEMS';
 export const LOADING = 'LOADING';
+export const SET_PAGES = 'SET_PAGES';
 
 export const openModal = (item) => {
     return {
@@ -51,5 +52,12 @@ export const setExhibitionItems = (exhibitionItems) => {
     return {
         type: SET_EXHIBITION_ITEMS,
         exhibition_items: exhibitionItems
+    }
+}
+
+export const setPages = (pages) => {
+    return {
+        type: SET_PAGES,
+        pages: pages
     }
 }
