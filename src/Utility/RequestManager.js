@@ -11,7 +11,9 @@ export default class RequestManager {
       accessToken: '6bQShSi8yy1EIEFrw5pKhqj44QH_Rcp49R_a0yq1X0A'
     })
 
-    let response = await client.getEntries();
+    let response = await client.getEntries({
+      'content_type': 'exhibitionItem'
+    });
     let exhibitionItems = response.items.map((item) => {
       let poster_image = item.fields.posterImage ? item.fields.posterImage.fields.file.url : null
         return new ExhibitionItemModel(
@@ -19,11 +21,11 @@ export default class RequestManager {
           item.fields.title,
           item.fields.shortDescription,
           item.fields.description,
-          item.fields.vimeoId,
+          item.fields.participant,
           item.fields.videoUrl,
           poster_image,
-          "20200105",
-          "20200110"
+          item.fields.startDate,
+          item.fields.endDate
         )
     })
     return exhibitionItems;
