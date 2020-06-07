@@ -34,9 +34,9 @@ export const ModelTypes = {
 
 const PageConfig = {
   'ABOUT': 'FbxScene_udgkcewhw_LOD0',
-  'PROGRAMME': 'FbxScene_ucmjdfkhw_LOD0'
-
+  'CONTAGION': 'FbxScene_ucmjdfkhw_LOD0'
 }
+
 
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
@@ -317,7 +317,6 @@ class Environment extends Component {
         mesh.updateMatrix()
         mesh.geometry.computeBoundingSphere()
         // mesh.geometry.computeBoundingBox()
-        console.log('MESH', mesh)
         let spherePosition = mesh.geometry.boundingSphere.center;
         // let spherePosition = mesh.geometry.boundingBox.max;
         // spherePosition.y = spherePosition.z + mesh.geometry.boundingSphere.radius/2
@@ -326,7 +325,7 @@ class Environment extends Component {
 
         mesh.castShadow = true;
 
-        mesh.callback = id => this.objectSelected(id);
+        mesh.callback = (id, type) => this.objectSelected(id, type);
         
         this.clickableObjects.push(mesh);
         // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
@@ -348,7 +347,6 @@ class Environment extends Component {
   };
   setPages = async () => {
     let pages = await RequestManager.getPages();
-    console.log(pages)
     this.props.setPages(pages);
   };
 
@@ -376,7 +374,7 @@ class Environment extends Component {
   };
   
 
-  objectSelected = (id, modelType = ModelTypes.EXHIBIITION_ITEM) => {
+  objectSelected = (id, modelType) => {
     this.sound.play();
     this.props.openModal(id, modelType);
     this.setState({
@@ -392,7 +390,7 @@ class Environment extends Component {
   assignExhibitionItemsToClickableObjects = () => {
     let distance = 10
 
-
+    // ASSIGN EXHIBITION ITEMS
     this.props.exhibition_items.forEach((item, index) => {
       if (index + 1 <= this.clickableObjects.length) {
         //  Split description into array of words
@@ -425,24 +423,34 @@ class Environment extends Component {
         this.clickableObjects[index].text = text
       }
     });
-    
-    // Add ABOUT AND PROGRAMME 
 
+    
+    // ASSIGN PAGES
     let aboutIndex = this.clickableObjects.findIndex((value) => {
       return value.name === PageConfig.ABOUT
     })
 
     if(aboutIndex) {
+      let page = this.props.pages.find((value) => {
+        return 'ABOUT' === value.title.toUpperCase()
+      })
+
+
       this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
+      this.clickableObjects[aboutIndex].model_id= page.id
+
     }
 
-
-    let programmeIndex = this.clickableObjects.findIndex((value) => {
-      return value.name === PageConfig.PROGRAMME
+    let contagionIndex = this.clickableObjects.findIndex((value) => {
+      return value.name === PageConfig.CONTAGION
     })
 
-    if(programmeIndex) {
-      this.clickableObjects[programmeIndex].model_type = ModelTypes.PAGE
+    if(contagionIndex) {
+      let page = this.props.pages.find((value) => {
+        return 'CONTAGION' === value.title.toUpperCase()
+      })
+      this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE
+      this.clickableObjects[contagionIndex].model_id= page.id
     }
     // Remove Clickable that has no model type or Id
     this.clickableObjects = this.clickableObjects.filter((obj) => {
@@ -513,8 +521,11 @@ class Environment extends Component {
     
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
+      console.log(mesh)
       if (mesh.object.callback && mesh.object.model_id) {
-        mesh.object.callback(mesh.object.model_id);
+      console.log('00000', mesh)
+
+        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
     }
   };
@@ -573,7 +584,7 @@ class Environment extends Component {
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.model_id) {
-        mesh.object.callback(mesh.object.model_id);
+        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
     }
   };
@@ -625,6 +636,7 @@ const mapStateToProps = state => {
     modal_open: state.modal_open,
     modal_item: state.modal_item,
     exhibition_items: state.exhibition_items,
+    pages: state.pages,
     show_instructions: state.show_instructions
   };
 };
