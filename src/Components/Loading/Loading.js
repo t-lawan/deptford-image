@@ -17,7 +17,7 @@ const LoadingWrapper = styled.div`
 const Loading = props => {
   return (
     <LoadingWrapper show={!props.has_loaded}>
-      <h2> Deptford Moving Image Festival</h2>
+      <h2> DEMO Moving Image Festival</h2>
       <LoadingBar />
     </LoadingWrapper>
   );
