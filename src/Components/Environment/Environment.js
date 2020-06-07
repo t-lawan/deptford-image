@@ -521,10 +521,7 @@ class Environment extends Component {
     
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-      console.log(mesh)
       if (mesh.object.callback && mesh.object.model_id) {
-      console.log('00000', mesh)
-
         mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
     }

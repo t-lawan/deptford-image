@@ -12,7 +12,9 @@ const Page = props => {
 
   return (
     <PageWrapper>
-        <h1> {item.title}</h1>
+      {item ? 
+        <h1> {item.title}</h1> : null
+      }
     </PageWrapper>
   );
 };
