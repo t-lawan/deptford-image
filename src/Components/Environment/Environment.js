@@ -194,7 +194,7 @@ class Environment extends Component {
     this.mouse = new THREE.Vector2();
   };
 
-  setMouse = () => {
+  setMouse = (event) => {
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
   }
@@ -571,7 +571,7 @@ class Environment extends Component {
 
   onDocumentMouseDown = event => {
     this.hideInstructions();
-    this.setMouse()
+    this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     
@@ -588,7 +588,7 @@ class Environment extends Component {
   onDocumentMouseMove = event => {
     event.preventDefault();
     this.hideInstructions();
-    this.setMouse()
+    this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if(this.intersects.length > 0) {
@@ -609,7 +609,7 @@ class Environment extends Component {
     obj.material.color.r = 0;
     obj.material.color.g = 0;
     obj.material.color.b = 0;
-    obj.material.emissive.r = 0; 
+    obj.material.emissive.r = 0.4; 
     obj.material.emissive.g = 0; 
     obj.material.emissive.b = 0; 
   }
