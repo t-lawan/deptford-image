@@ -426,11 +426,6 @@ class Environment extends Component {
       }
     });
     
-    let hh = this.clickableObjects.filter((h) => {
-      return !h.model_id;
-    })
-
-
     // Add ABOUT AND PROGRAMME 
 
     let aboutIndex = this.clickableObjects.findIndex((value) => {
@@ -449,14 +444,10 @@ class Environment extends Component {
     if(programmeIndex) {
       this.clickableObjects[programmeIndex].model_type = ModelTypes.PAGE
     }
-    console.log('BEFORE MESHES', this.clickableObjects)
     // Remove Clickable that has no model type or Id
     this.clickableObjects = this.clickableObjects.filter((obj) => {
       return obj.model_type;
     })
-
-
-    console.log('AFTER MESHES',this.clickableObjects)
 
   };
 
