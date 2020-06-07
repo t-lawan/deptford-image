@@ -15,7 +15,8 @@ import {
   openModal,
   setExhibitionItems,
   loading,
-  hideInstructions
+  hideInstructions,
+  setPages
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -25,6 +26,17 @@ import TypeFace from '../../Assets/Fonts/karla.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
+
+export const ModelTypes = {
+  PAGE: 'PAGE',
+  EXHIBIITION_ITEM: 'EXHIBIITION_ITEM'
+}
+
+const PageConfig = {
+  'ABOUT': 'FbxScene_udgkcewhw_LOD0',
+  'CONTAGION': 'FbxScene_ucmjdfkhw_LOD0'
+}
+
 
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
@@ -56,9 +68,8 @@ class Environment extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.onWindowResize);
-    document.removeEventListener("mousedown", this.onDocumentMouseDown);
-    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+    this.removeEventListeners()
+
 
     window.cancelAnimationFrame(this.requestID);
     this.controls.dispose();
@@ -96,15 +107,25 @@ class Environment extends Component {
     await this.startLoadingProcess();
     // Skybox
     this.setupSky();
-    // this.createSphere();
     this.createRayCaster();
     this.setupOrbitControls();
     this.setupStats();
+    this.addEventListeners()
+  };
+
+  addEventListeners = () => {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
-    document.addEventListener("mousedown", this.onDocumentMouseDown, false);
+    document.addEventListener("mouseup", this.onDocumentMouseDown, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
-  };
+  }
+
+  removeEventListeners = () => {
+    window.removeEventListener("resize", this.onWindowResize);
+    document.removeEventListener("mouseup", this.onDocumentMouseDown);
+    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+    document.removeEventListener("touchstart", this.onDocumentTouchStart, false);
+  }
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
       70, // fov = field of view
@@ -172,6 +193,11 @@ class Environment extends Component {
   createMouse = () => {
     this.mouse = new THREE.Vector2();
   };
+
+  setMouse = (event) => {
+    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+  }
   createWater = () => {
     let waterGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
 
@@ -200,18 +226,11 @@ class Environment extends Component {
     );
   };
 
-  addLight = (x, y, z) => {
-    var pointLight = new THREE.PointLight('red', 500, 100, 2);
-    pointLight.position.set(x, y + 20, z);
-    pointLight.intensity = 0;
-    this.scene.add(pointLight);
-    return pointLight;
-  };
 
 
   loadOBJFile = async (materialUri, OBJUri) => {
     let loader = new MTLLoader(this.manager);
-    await this.setExhibitionItems();
+
     loader.load(materialUri, async materials => {
       materials.preload();
 
@@ -224,6 +243,8 @@ class Environment extends Component {
   };
 
   startLoadingProcess = async () => {
+    await this.setExhibitionItems();
+    await this.setPages();
     await this.loadFBXFile();
     this.loadAudio();
     this.loadFont()
@@ -238,7 +259,7 @@ class Environment extends Component {
 
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
-    await this.setExhibitionItems();
+    // await this.setExhibitionItems();
     loader.load(
       ExplosionFBX,
       object => {
@@ -268,16 +289,18 @@ class Environment extends Component {
       if(this.font && textInfo) {
         var geometry = new THREE.TextBufferGeometry(textInfo, {
           font: this.font,
-          size: 3,
+          size: 4,
           height: 1,
+          curveSegments: 20,
+
         });
   
         let material = new THREE.MeshBasicMaterial({
-          color: new THREE.Color("white")
+          color: new THREE.Color("black")
         });
         let text = new THREE.Mesh(geometry, material);
         text.position.x = position.x;
-        text.position.y = position.y + 50;
+        text.position.y = position.y + 30;
         text.position.z = position.z;
         this.scene.add(text);
         return text
@@ -293,21 +316,22 @@ class Environment extends Component {
         // mesh.position.z = this.centralPoint.z;
         mesh.updateMatrix()
         mesh.geometry.computeBoundingSphere()
-        let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(mesh.geometry.boundingSphere.center)
+        // mesh.geometry.computeBoundingBox()
+        let spherePosition = mesh.geometry.boundingSphere.center;
+        // let spherePosition = mesh.geometry.boundingBox.max;
+        // spherePosition.y = spherePosition.z + mesh.geometry.boundingSphere.radius/2
+        let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(spherePosition)
         mesh.worldPosition = position;
 
         mesh.castShadow = true;
 
-        mesh.callback = id => this.objectSelected(id);
+        mesh.callback = (id, type) => this.objectSelected(id, type);
         
         this.clickableObjects.push(mesh);
         // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
         this.scene.add(mesh);
 
       });
-
-
-      // this.centerObject.callback = (id) => this.objectSelected(id);
     }
   };
 
@@ -320,6 +344,10 @@ class Environment extends Component {
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
     this.props.setExhibitionItems(exhibitionItems);
+  };
+  setPages = async () => {
+    let pages = await RequestManager.getPages();
+    this.props.setPages(pages);
   };
 
   createAudioListener = () => {
@@ -345,61 +373,10 @@ class Environment extends Component {
     this.scene.add(boundary);
   };
   
-  createSphere = () => {
-    let material = new THREE.MeshStandardMaterial({
-      side: THREE.DoubleSide,
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.6,
-      metalness: 0.5,
-      roughness: 1
-    });
 
-    let material_two = new THREE.MeshStandardMaterial({
-      side: THREE.DoubleSide,
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.6,
-      metalness: 0.5,
-      roughness: 1
-    });;
-    let geometry = new THREE.SphereGeometry(10, 30, 30);
-
-    this.sphere = new THREE.Mesh(geometry, material);
-    this.sphere.position.x = this.centralPoint.x + 100;
-    this.sphere.position.y = this.centralPoint.y;
-    this.sphere.position.z = this.centralPoint.z;
-    this.sphere.name = "Sphere";
-    this.sphere.order = 1;
-    // this.sphere.light = this.addLight(
-    //   this.sphere.position.x,
-    //   this.sphere.position.y,
-    //   this.sphere.position.z
-    // );
-    this.sphere.callback = id => this.objectSelected(id);
-    this.scene.add(this.sphere);
-    this.clickableObjects.push(this.sphere);
-
-    this.sphere_two = new THREE.Mesh(geometry, material_two);
-    this.sphere_two.position.x = this.centralPoint.x - 100;
-    this.sphere_two.position.y = this.centralPoint.y + 100;
-    this.sphere_two.position.z = this.centralPoint.z;
-    this.sphere_two.name = "Sphere2";
-    this.sphere_two.order = 3;
-    // this.sphere_two.light = this.addLight(
-    //   this.sphere_two.position.x,
-    //   this.sphere_two.position.y,
-    //   this.sphere_two.position.z
-    // );
-    this.sphere_two.callback = id => this.objectSelected(id);
-    this.scene.add(this.sphere_two);
-    this.clickableObjects.push(this.sphere_two);
-
-  };
-
-  objectSelected = id => {
+  objectSelected = (id, modelType) => {
     this.sound.play();
-    this.props.openModal(id);
+    this.props.openModal(id, modelType);
     this.setState({
       pause: true
     });
@@ -413,7 +390,7 @@ class Environment extends Component {
   assignExhibitionItemsToClickableObjects = () => {
     let distance = 10
 
-
+    // ASSIGN EXHIBITION ITEMS
     this.props.exhibition_items.forEach((item, index) => {
       if (index + 1 <= this.clickableObjects.length) {
         //  Split description into array of words
@@ -441,10 +418,44 @@ class Environment extends Component {
           position.y = position.y - distance;
         })
 
-        this.clickableObjects[index].exhibition_id = item.id;
+        this.clickableObjects[index].model_id = item.id;
+        this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
         this.clickableObjects[index].text = text
       }
     });
+
+    
+    // ASSIGN PAGES
+    let aboutIndex = this.clickableObjects.findIndex((value) => {
+      return value.name === PageConfig.ABOUT
+    })
+
+    if(aboutIndex) {
+      let page = this.props.pages.find((value) => {
+        return 'ABOUT' === value.title.toUpperCase()
+      })
+
+
+      this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
+      this.clickableObjects[aboutIndex].model_id= page.id
+
+    }
+
+    let contagionIndex = this.clickableObjects.findIndex((value) => {
+      return value.name === PageConfig.CONTAGION
+    })
+
+    if(contagionIndex) {
+      let page = this.props.pages.find((value) => {
+        return 'CONTAGION' === value.title.toUpperCase()
+      })
+      this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE
+      this.clickableObjects[contagionIndex].model_id= page.id
+    }
+    // Remove Clickable that has no model type or Id
+    this.clickableObjects = this.clickableObjects.filter((obj) => {
+      return obj.model_type;
+    })
 
   };
 
@@ -504,15 +515,14 @@ class Environment extends Component {
 
   onDocumentMouseDown = event => {
     this.hideInstructions();
-    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.exhibition_id) {
-        mesh.object.callback(mesh.object.exhibition_id);
+      if (mesh.object.callback && mesh.object.model_id) {
+        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
     }
   };
@@ -522,26 +532,40 @@ class Environment extends Component {
   onDocumentMouseMove = event => {
     event.preventDefault();
     this.hideInstructions();
-    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if(this.intersects.length > 0) {
       if(!this.isHovering) {
         this.isHovering = true;
-        // this.intersects[0].object.light.intensity = 1000;
+        let obj = this.intersects[0].object
+        this.addColourToMesh(obj);
       }
     } else {
       if(this.isHovering) {
         this.isHovering = false;
-        this.hideAllText()
+        this.removeColourFromAllMesh()
       }
     } 
   };
+  
+  addColourToMesh = (obj) => {
+    obj.material.color.r = 0;
+    obj.material.color.g = 0;
+    obj.material.color.b = 0;
+    obj.material.emissive.r = 0.4; 
+    obj.material.emissive.g = 1; 
+    obj.material.emissive.b = 0; 
+  }
 
-  hideAllText = () => {
+  removeColourFromAllMesh = () => {
     this.clickableObjects.forEach((obj) => {
-      // obj.light.intensity = 0;
+      obj.material.color.r = 0;
+      obj.material.color.g = 0;
+      obj.material.color.b = 0;
+      obj.material.emissive.r = 0; 
+      obj.material.emissive.g = 0; 
+      obj.material.emissive.b = 0; 
     })
   }
 
@@ -556,8 +580,8 @@ class Environment extends Component {
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.exhibition_id) {
-        mesh.object.callback(mesh.object.exhibition_id);
+      if (mesh.object.callback && mesh.object.model_id) {
+        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
     }
   };
@@ -609,6 +633,7 @@ const mapStateToProps = state => {
     modal_open: state.modal_open,
     modal_item: state.modal_item,
     exhibition_items: state.exhibition_items,
+    pages: state.pages,
     show_instructions: state.show_instructions
   };
 };
@@ -616,9 +641,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     hasLoaded: () => dispatch(hasLoaded()),
-    openModal: item => dispatch(openModal(item)),
+    openModal: (item, type) => dispatch(openModal(item, type)),
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
+    setPages: pages => 
+      dispatch(setPages(pages)),
     loading: (loaded, total) => dispatch(loading(loaded, total)),
     hideInstructions:  () => dispatch(hideInstructions())
   };

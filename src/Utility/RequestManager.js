@@ -1,14 +1,17 @@
 
 import ExhibitionItemModel from "../Models/ExhibitionItemModel";
 import * as contentful from 'contentful'
+import PageModel from "../Models/PageModel";
 export default class RequestManager {
-  static baseUrl = "contentful.com";
+  static space = "nrx29ogwm4cn";
+  static environment = 'master'
+  static accessToken = '6bQShSi8yy1EIEFrw5pKhqj44QH_Rcp49R_a0yq1X0A'
 
   static async getExhibitionItems() {
     let client = contentful.createClient({
-      space: 'nrx29ogwm4cn',
-      environment: 'master', // defaults to 'master' if not set
-      accessToken: '6bQShSi8yy1EIEFrw5pKhqj44QH_Rcp49R_a0yq1X0A'
+      space: this.space,
+      environment: this.environment, // defaults to 'master' if not set
+      accessToken: this.accessToken
     })
 
     let response = await client.getEntries({
@@ -29,5 +32,25 @@ export default class RequestManager {
         )
     })
     return exhibitionItems;
+  }
+
+  static async getPages() {
+    let client = contentful.createClient({
+      space: this.space,
+      environment: this.environment, // defaults to 'master' if not set
+      accessToken: this.accessToken
+    })
+
+    let response = await client.getEntries({
+      'content_type': 'page'
+    });
+    let pages = response.items.map((item) => {
+      return new PageModel(
+        item.sys.id,
+        item.fields.title,
+        item.fields.text
+      )
+    })
+    return pages;
   }
 }

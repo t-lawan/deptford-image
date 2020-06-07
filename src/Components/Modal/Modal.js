@@ -5,6 +5,8 @@ import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 import { size } from "../Global/global.styles";
+import Page from "../Page/Page";
+import { ModelTypes } from "../Environment/Environment";
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -39,6 +41,8 @@ class Modal extends React.Component {
     this.props.closeModal();
   };
   render() {
+  console.log('PAGES', this.props)
+
     return (
       <ModalWrapper show={this.props.open}>
         <ModalHeader>
@@ -48,7 +52,8 @@ class Modal extends React.Component {
           />
         </ModalHeader>
         <ModalBody>
-            <ExhibitionItem />
+          {this.props.type ===  ModelTypes.EXHIBIITION_ITEM ? <ExhibitionItem /> : null}  
+          {this.props.type === ModelTypes.PAGE ?  <Page /> : null}
         </ModalBody>
       </ModalWrapper>
     );
@@ -58,7 +63,8 @@ class Modal extends React.Component {
 const mapStateToProps = state => {
   return {
     open: state.modal_open,
-    component: state.component
+    component: state.component,
+    type: state.modal_type
   };
 };
 
