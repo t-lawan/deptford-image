@@ -26,6 +26,17 @@ const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
 
+const ModelTypes = {
+  PAGE: 'PAGE',
+  EXHIBIITION_ITEM: 'EXHIBIITION_ITEM'
+}
+
+const PageConfig = {
+  'ABOUT': 'FbxScene_udgkcewhw_LOD0',
+  'PROGRAMME': 'FbxScene_ucmjdfkhw_LOD0'
+
+}
+
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
   clickableObjects = [];
@@ -56,9 +67,8 @@ class Environment extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.onWindowResize);
-    document.removeEventListener("mousedown", this.onDocumentMouseDown);
-    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+    this.removeEventListeners()
+
 
     window.cancelAnimationFrame(this.requestID);
     this.controls.dispose();
@@ -100,11 +110,22 @@ class Environment extends Component {
     this.createRayCaster();
     this.setupOrbitControls();
     this.setupStats();
+    this.addEventListeners()
+  };
+
+  addEventListeners = () => {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
-    document.addEventListener("mousedown", this.onDocumentMouseDown, false);
+    document.addEventListener("mouseup", this.onDocumentMouseDown, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
-  };
+  }
+
+  removeEventListeners = () => {
+    window.removeEventListener("resize", this.onWindowResize);
+    document.removeEventListener("mouseup", this.onDocumentMouseDown);
+    document.removeEventListener("mousemove", this.onDocumentMouseMove);
+    document.removeEventListener("touchstart", this.onDocumentTouchStart, false);
+  }
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
       70, // fov = field of view
@@ -172,6 +193,11 @@ class Environment extends Component {
   createMouse = () => {
     this.mouse = new THREE.Vector2();
   };
+
+  setMouse = () => {
+    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+  }
   createWater = () => {
     let waterGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
 
@@ -268,12 +294,14 @@ class Environment extends Component {
       if(this.font && textInfo) {
         var geometry = new THREE.TextBufferGeometry(textInfo, {
           font: this.font,
-          size: 3,
+          size: 4,
           height: 1,
+          curveSegments: 20,
+
         });
   
         let material = new THREE.MeshBasicMaterial({
-          color: new THREE.Color("white")
+          color: new THREE.Color("black")
         });
         let text = new THREE.Mesh(geometry, material);
         text.position.x = position.x;
@@ -305,9 +333,6 @@ class Environment extends Component {
         this.scene.add(mesh);
 
       });
-
-
-      // this.centerObject.callback = (id) => this.objectSelected(id);
     }
   };
 
@@ -441,10 +466,52 @@ class Environment extends Component {
           position.y = position.y - distance;
         })
 
-        this.clickableObjects[index].exhibition_id = item.id;
+        this.clickableObjects[index].model_id = item.id;
+        this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
         this.clickableObjects[index].text = text
       }
     });
+    
+    let hh = this.clickableObjects.filter((h) => {
+      return !h.model_id;
+    })
+
+
+    // Add ABOUT AND PROGRAMME 
+
+    let aboutIndex = this.clickableObjects.findIndex((value) => {
+      return value.name === PageConfig.ABOUT
+    })
+
+    if(aboutIndex) {
+      this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
+    }
+
+
+    let programmeIndex = this.clickableObjects.findIndex((value) => {
+      return value.name === PageConfig.PROGRAMME
+    })
+
+    if(programmeIndex) {
+      this.clickableObjects[programmeIndex].model_type = ModelTypes.PAGE
+    }
+
+    // hh = hh.map((h) => {
+    //   return {
+    //     name: h.name
+    //   }
+    // })
+//2, 3
+    hh.forEach((h, i) => {
+      if(i == 3 ) {
+        h.material.color.g = 0;
+        h.material.color.b = 0;
+        h.material.emissive.r = 0.5; 
+      }
+
+    })
+
+    console.log('MESHES',this.clickableObjects)
 
   };
 
@@ -504,15 +571,14 @@ class Environment extends Component {
 
   onDocumentMouseDown = event => {
     this.hideInstructions();
-    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.setMouse()
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.exhibition_id) {
-        mesh.object.callback(mesh.object.exhibition_id);
+      if (mesh.object.callback && mesh.object.model_id) {
+        mesh.object.callback(mesh.object.model_id);
       }
     }
   };
@@ -522,26 +588,40 @@ class Environment extends Component {
   onDocumentMouseMove = event => {
     event.preventDefault();
     this.hideInstructions();
-    this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+    this.setMouse()
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if(this.intersects.length > 0) {
       if(!this.isHovering) {
         this.isHovering = true;
-        // this.intersects[0].object.light.intensity = 1000;
+        let obj = this.intersects[0].object
+        this.addColourToMesh(obj);
       }
     } else {
       if(this.isHovering) {
         this.isHovering = false;
-        this.hideAllText()
+        this.removeColourFromAllMesh()
       }
     } 
   };
+  
+  addColourToMesh = (obj) => {
+    obj.material.color.r = 0;
+    obj.material.color.g = 0;
+    obj.material.color.b = 0;
+    obj.material.emissive.r = 0; 
+    obj.material.emissive.g = 0; 
+    obj.material.emissive.b = 0; 
+  }
 
-  hideAllText = () => {
+  removeColourFromAllMesh = () => {
     this.clickableObjects.forEach((obj) => {
-      // obj.light.intensity = 0;
+      obj.material.color.r = 0;
+      obj.material.color.g = 0;
+      obj.material.color.b = 0;
+      obj.material.emissive.r = 0; 
+      obj.material.emissive.g = 0; 
+      obj.material.emissive.b = 0; 
     })
   }
 
@@ -556,8 +636,8 @@ class Environment extends Component {
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.exhibition_id) {
-        mesh.object.callback(mesh.object.exhibition_id);
+      if (mesh.object.callback && mesh.object.model_id) {
+        mesh.object.callback(mesh.object.model_id);
       }
     }
   };
