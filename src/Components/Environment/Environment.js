@@ -6,7 +6,7 @@ import { PointerLockControls } from "three/examples/jsm/controls/PointerLockCont
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import MiddleFBX from "../../Assets/Models/middle.fbx";
+import ExplosionFBX from "../../Assets/Models/Explosion.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -25,9 +25,7 @@ import TypeFace from '../../Assets/Fonts/karla.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
-const style = {
-  height: "100vh" // we can control scene size by setting container dimensions
-};
+
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
   clickableObjects = [];
@@ -95,13 +93,11 @@ class Environment extends Component {
     // this.createAxes();
     // Middle Object
     this.createLoadingManager();
-    this.createCenterObjectBoundary();
     await this.startLoadingProcess();
     // Skybox
     this.setupSky();
-    this.createSphere();
+    // this.createSphere();
     this.createRayCaster();
-    this.assignExhibitionItemsToClickableObjects();
     this.setupOrbitControls();
     this.setupStats();
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
@@ -117,9 +113,8 @@ class Environment extends Component {
       5000 // far plane
     );
     this.camera.aspect = width / height;
-    this.camera.position.set(128, 61, 457);
-    // this.camera.rotation.set(-2.64, 1.28, 2.66); // is used here to set some distance from a cube that is located at z = 0
-    this.camera.rotation.set(0, 0, 0); // is used here to set some distance from a cube that is located at z = 0
+    this.camera.position.set(-414, 514, 1544);
+    // this.camera.lookAt(this.centralPoint)
     this.camera.updateProjectionMatrix();
   };
 
@@ -146,7 +141,7 @@ class Environment extends Component {
     
     // this.scene.background = this.cubeCamera.renderTarget;
 
-    this.updateSun();
+    // this.updateSun();
 
   };
 
@@ -165,7 +160,7 @@ class Environment extends Component {
   createScene = () => {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x72869d);
-    this.scene.fog = new THREE.FogExp2(0x72869d, 0.003);
+    this.scene.fog = new THREE.FogExp2(0x72869d, 0.001);
   };
   createLight = () => {
     this.light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -236,6 +231,7 @@ class Environment extends Component {
 
   hasLoaded = () => {
     this.addFBXFile();
+    this.assignExhibitionItemsToClickableObjects();
     this.addSound();
     this.props.hasLoaded();
   };
@@ -244,7 +240,7 @@ class Environment extends Component {
     let loader = new FBXLoader(this.manager);
     await this.setExhibitionItems();
     loader.load(
-      MiddleFBX,
+      ExplosionFBX,
       object => {
         this.centerObject = object;
       },
@@ -255,9 +251,7 @@ class Environment extends Component {
   loadFont = () => {
     var loader = new THREE.FontLoader(this.manager);
     this.font = loader.parse(TypeFace)
-
   };
-
 
   loadAudio = () => {
     this.audioLoader = new THREE.AudioLoader(this.manager);
@@ -291,18 +285,29 @@ class Environment extends Component {
   }
   addFBXFile = () => {
     if (this.centerObject) {
-      this.centerObject.traverse(function(child) {
-        if (child.isMesh) {
-          child.castShadow = false;
-          child.receiveShadow = false;
-        }
+      let meshes = [...this.centerObject.children];
+      meshes.forEach((mesh) => {
+        mesh.position.add(this.centralPoint)
+        // mesh.position.x = this.centralPoint.x;
+        // mesh.position.y = this.centralPoint.y;
+        // mesh.position.z = this.centralPoint.z;
+        mesh.updateMatrix()
+        mesh.geometry.computeBoundingSphere()
+        let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(mesh.geometry.boundingSphere.center)
+        mesh.worldPosition = position;
+
+        mesh.castShadow = true;
+
+        mesh.callback = id => this.objectSelected(id);
+        
+        this.clickableObjects.push(mesh);
+        // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
+        this.scene.add(mesh);
+
       });
-      this.centerObject.position.x = this.centralPoint.x;
-      this.centerObject.position.y = this.centralPoint.y;
-      this.centerObject.position.z = this.centralPoint.z;
-      this.centerObject.clickable = true;
+
+
       // this.centerObject.callback = (id) => this.objectSelected(id);
-      this.scene.add(this.centerObject);
     }
   };
 
@@ -323,30 +328,21 @@ class Environment extends Component {
     this.sound = new THREE.Audio(this.listener);
   };
 
-  createCenterObjectBoundary = () => {
+  createObjectBoundary = (radius, position) => {
     let material = new THREE.MeshStandardMaterial();
-    material.opacity = 0.5;
+    material.opacity = 0.2;
     material.transparent = true;
-    material.visible = false;
-    // boundingBox = new THREE.Box3().setFromObject(this.centerObject)
-    // size = boundingBox.getSize();
-    let geometry = new THREE.BoxGeometry(50, 50, 50);
+    material.visible = true;
 
-    this.centerObjectBoundary = new THREE.Mesh(geometry, material);
+    let geometry = new THREE.SphereGeometry(radius);
 
+    let boundary = new THREE.Mesh(geometry, material);
 
-    this.centerObjectBoundary.position.x = this.centralPoint.x;
-    this.centerObjectBoundary.position.y = this.centralPoint.y;
-    this.centerObjectBoundary.position.z = this.centralPoint.z + 19;
-    this.centerObjectBoundary.callback = id => this.objectSelected(id);
-    this.centerObjectBoundary.light = this.addLight(
-      this.centerObjectBoundary.position.x,
-      this.centerObjectBoundary.position.y,
-      this.centerObjectBoundary.position.z
-    );
-    this.centerObjectBoundary.order = 2;
-    this.scene.add(this.centerObjectBoundary);
-    this.clickableObjects.push(this.centerObjectBoundary);
+    boundary.position.x = position.x;
+    boundary.position.y = position.y;
+    boundary.position.z = position.z;
+
+    this.scene.add(boundary);
   };
   
   createSphere = () => {
@@ -374,13 +370,12 @@ class Environment extends Component {
     this.sphere.position.y = this.centralPoint.y;
     this.sphere.position.z = this.centralPoint.z;
     this.sphere.name = "Sphere";
-    this.sphere.clickable = true;
     this.sphere.order = 1;
-    this.sphere.light = this.addLight(
-      this.sphere.position.x,
-      this.sphere.position.y,
-      this.sphere.position.z
-    );
+    // this.sphere.light = this.addLight(
+    //   this.sphere.position.x,
+    //   this.sphere.position.y,
+    //   this.sphere.position.z
+    // );
     this.sphere.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere);
     this.clickableObjects.push(this.sphere);
@@ -390,13 +385,12 @@ class Environment extends Component {
     this.sphere_two.position.y = this.centralPoint.y + 100;
     this.sphere_two.position.z = this.centralPoint.z;
     this.sphere_two.name = "Sphere2";
-    this.sphere_two.clickable = true;
     this.sphere_two.order = 3;
-    this.sphere_two.light = this.addLight(
-      this.sphere_two.position.x,
-      this.sphere_two.position.y,
-      this.sphere_two.position.z
-    );
+    // this.sphere_two.light = this.addLight(
+    //   this.sphere_two.position.x,
+    //   this.sphere_two.position.y,
+    //   this.sphere_two.position.z
+    // );
     this.sphere_two.callback = id => this.objectSelected(id);
     this.scene.add(this.sphere_two);
     this.clickableObjects.push(this.sphere_two);
@@ -417,42 +411,29 @@ class Environment extends Component {
   };
 
   assignExhibitionItemsToClickableObjects = () => {
-    let sentenceLength = 4;
     let distance = 10
 
-    this.clickableObjects = this.clickableObjects.sort((a, b) => {
-      return a.order - b.order;
-    });
 
     this.props.exhibition_items.forEach((item, index) => {
       if (index + 1 <= this.clickableObjects.length) {
         //  Split description into array of words
-        let desc = item.short_description.split(' ');
         let arr = [];
-        // Iterate
-        // for(let i = 0; i < desc.length; i = i + sentenceLength) {
-        //   let word_one = desc[i];
-        //   let word_two = desc[i + 1];
-        //   let word_three = desc[i + 2];
-        //   let word_four = desc[i + 3];
-        //   arr.push(`${desc[i]} ${desc[i+1]} ${desc[i+2]} ${desc[i+3]}`)
-        // }
-        let sentence = '';
 
-        desc.forEach((it, i) => {
-          if(i !== 0 && i % sentenceLength === 0) {
-            arr.push(sentence);
-            sentence = ''
-          }
+        // desc.forEach((it, i) => {
+        //   if(i !== 0 && i % sentenceLength === 0) {
+        //     arr.push(sentence);
+        //     sentence = ''
+        //   }
 
-          sentence =  sentence.concat(` ${it}`);
+        //   sentence =  sentence.concat(` ${it}`);
 
-          if(i + 1 === desc.length) {
-            arr.push(sentence);
-          }
-        })
+        //   if(i + 1 === desc.length) {
+        //     arr.push(sentence);
+        //   }
+        // })
 
-        let position = this.clickableObjects[index].position;
+        arr.push(item.title, item.participant)
+        let position = this.clickableObjects[index].worldPosition;
         position.y = position.y + (distance * arr.length)
         let text = []; 
         arr.forEach((sentence) => {
@@ -464,6 +445,7 @@ class Environment extends Component {
         this.clickableObjects[index].text = text
       }
     });
+
   };
 
   setupOrbitControls = () => {
@@ -471,8 +453,8 @@ class Environment extends Component {
     this.controls.maxPolarAngle = Math.PI * 0.495;
     this.controls.enableKeys = true;
     this.controls.enablePan = true;
-    this.controls.minDistance = 100;
-    this.controls.maxDistance = 400;
+    this.controls.minDistance = 0;
+    this.controls.maxDistance = 2000;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
     this.controls.panSpeed = 3;
@@ -481,38 +463,38 @@ class Environment extends Component {
     this.controls.update();
   };
 
-  setupPointerLockControls = () => {
-    this.controls = new PointerLockControls(
-      this.camera,
-      this.renderer.domElement
-    );
-  };
+  // setupPointerLockControls = () => {
+  //   this.controls = new PointerLockControls(
+  //     this.camera,
+  //     this.renderer.domElement
+  //   );
+  // };
 
-  updateSun = () => {
-    let theta = Math.PI * (this.parameters.inclination - 0.5);
-    let phi = 2 * Math.PI * (this.parameters.azimuth - 0.5);
-    this.light.position.x = this.parameters.distance * Math.cos(phi);
-    this.light.position.y =
-      this.parameters.distance * Math.sin(phi) * Math.sin(theta);
-    this.light.position.z =
-      this.parameters.distance * Math.sin(phi) * Math.cos(theta);
+  // updateSun = () => {
+  //   let theta = Math.PI * (this.parameters.inclination - 0.5);
+  //   let phi = 2 * Math.PI * (this.parameters.azimuth - 0.5);
+  //   this.light.position.x = this.parameters.distance * Math.cos(phi);
+  //   this.light.position.y =
+  //     this.parameters.distance * Math.sin(phi) * Math.sin(theta);
+  //   this.light.position.z =
+  //     this.parameters.distance * Math.sin(phi) * Math.cos(theta);
 
-    this.sky.material.uniforms["sunPosition"].value = this.light.position.copy(
-      this.light.position
-    );
-    if (this.water) {
-      this.water.material.uniforms["sunDirection"].value
-        .copy(this.light.position)
-        .normalize();
-    }
-    this.cubeCamera.update(this.renderer, this.sky);
-  };
+  //   this.sky.material.uniforms["sunPosition"].value = this.light.position.copy(
+  //     this.light.position
+  //   );
+  //   if (this.water) {
+  //     this.water.material.uniforms["sunDirection"].value
+  //       .copy(this.light.position)
+  //       .normalize();
+  //   }
+  //   this.cubeCamera.update(this.renderer, this.sky);
+  // };
 
   hideInstructions = () => {
     if(this.props.show_instructions) {
       setTimeout(() => {
         this.props.hideInstructions()
-      }, 1500)
+      }, 1000)
     }
   }
 
@@ -521,12 +503,12 @@ class Environment extends Component {
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentMouseDown = event => {
-    // event.preventDefault();
     this.hideInstructions();
     this.mouse.x = (event.clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.exhibition_id) {
@@ -547,19 +529,19 @@ class Environment extends Component {
     if(this.intersects.length > 0) {
       if(!this.isHovering) {
         this.isHovering = true;
-        this.intersects[0].object.light.intensity = 1000;
+        // this.intersects[0].object.light.intensity = 1000;
       }
     } else {
       if(this.isHovering) {
         this.isHovering = false;
-        this.turnOffAllLights()
+        this.hideAllText()
       }
     } 
   };
 
-  turnOffAllLights = () => {
+  hideAllText = () => {
     this.clickableObjects.forEach((obj) => {
-      obj.light.intensity = 0;
+      // obj.light.intensity = 0;
     })
   }
 
@@ -589,6 +571,7 @@ class Environment extends Component {
     // Note that after making changes to most of camera properties you have to call
     // .updateProjectionMatrix for the changes to take effect.
     this.camera.updateProjectionMatrix();
+    this.controls.update()
   };
 
   animate = () => {
@@ -612,7 +595,6 @@ class Environment extends Component {
       if (this.water) {
         this.water.material.uniforms["time"].value += 1.0 / 60.0;
       }
-      this.sphere.rotateX(0.1 * time);
       this.renderer.render(this.scene, this.camera);
     }
   };

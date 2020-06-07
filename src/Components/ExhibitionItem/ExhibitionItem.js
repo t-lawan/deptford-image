@@ -18,13 +18,12 @@ const ExhibitionItem = props => {
   return (
     <ExhibitionItemWrapper>
       {item ? <div>
-        <h2> {item.title} </h2>
+        <h2> {item.title}, {item.participant} </h2>
         <p> 
             {item.description}
         </p>
         <ResponsiveIFrameWrapper>
           <VideoPlayer posterUrl={item.poster_url} videoUrl={item.video_url}/>
-          {/* <Vimeo video={item.vimeo_id} responsive={true} /> */}
         </ResponsiveIFrameWrapper>
       </div> :  null}
     </ExhibitionItemWrapper>
