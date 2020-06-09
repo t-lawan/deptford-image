@@ -10,8 +10,7 @@ import { ModelTypes } from "../Environment/Environment";
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
-  max-height: 100%;
-  height: 100%;
+  min-height: 100%;
   z-index: 500;
   background: white;
   display: ${props => (props.show ? "block" : "none")};
