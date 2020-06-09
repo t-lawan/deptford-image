@@ -11,6 +11,7 @@
     "@u-wave/react-vimeo": "^0.8.3",
     "axios": "^0.19.2",
     "contentful": "^7.14.4",
+    "moment": "^2.26.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
