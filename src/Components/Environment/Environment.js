@@ -92,7 +92,6 @@ class Environment extends Component {
     this.createAudioListener();
     // Create Mouse
     this.createMouse();
-
     // Set Light
     this.createLight();
 
@@ -298,8 +297,8 @@ class Environment extends Component {
           color: new THREE.Color(colour)
         });
         let text = new THREE.Mesh(geometry, material);
-        text.position.x = position.x;
-        text.position.y = position.y + 30;
+        text.position.x = position.x + 50;
+        text.position.y = position.y + 20;
         text.position.z = position.z;
         this.scene.add(text);
         return text
@@ -310,17 +309,23 @@ class Environment extends Component {
       let meshes = [...this.centerObject.children];
       meshes.forEach((mesh) => {
         mesh.position.add(this.centralPoint)
-        // mesh.position.x = this.centralPoint.x;
-        // mesh.position.y = this.centralPoint.y;
-        // mesh.position.z = this.centralPoint.z;
         mesh.updateMatrix()
         mesh.geometry.computeBoundingSphere()
-        // mesh.geometry.computeBoundingBox()
+        mesh.geometry.computeBoundingBox()
+
+        // Get World position of mesh
         let spherePosition = mesh.geometry.boundingSphere.center;
-        // let spherePosition = mesh.geometry.boundingBox.max;
-        // spherePosition.y = spherePosition.z + mesh.geometry.boundingSphere.radius/2
         let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(spherePosition)
         mesh.worldPosition = position;
+
+        // Get Top position fo mesh by getting difference between min and max
+        let diff = mesh.geometry.boundingBox.max;
+        diff = diff.sub(mesh.geometry.boundingBox.min)
+        // this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
+
+        let topPosition = position;
+        topPosition.y = topPosition.y + (diff.y / 2)
+        mesh.topPosition = topPosition;
 
         mesh.castShadow = true;
 
@@ -355,13 +360,13 @@ class Environment extends Component {
     this.sound = new THREE.Audio(this.listener);
   };
 
-  createObjectBoundary = (radius, position) => {
+  createObjectBoundary = (width, height, position) => {
     let material = new THREE.MeshStandardMaterial();
     material.opacity = 0.2;
     material.transparent = true;
     material.visible = true;
 
-    let geometry = new THREE.SphereGeometry(radius);
+    let geometry = new THREE.BoxGeometry(width, height);
 
     let boundary = new THREE.Mesh(geometry, material);
 
@@ -386,6 +391,23 @@ class Environment extends Component {
     this.scene.add(axesHelper);
   };
 
+  createLine = (position, colour) => {
+    var material = new THREE.LineBasicMaterial({
+      color: colour,
+      linewidth: 2,
+    });
+    
+    var points = [];
+    points.push( new THREE.Vector3(position.x, position.y, position.z) );
+    points.push( new THREE.Vector3(position.x + 50, position.y + 50, position.z) );
+    points.push( new THREE.Vector3(position.x + 100, position.y + 50, position.z) );
+    
+    var geometry = new THREE.BufferGeometry().setFromPoints( points );
+    
+    var line = new THREE.Line( geometry, material );
+    this.scene.add( line );
+  }
+
   assignExhibitionItemsToClickableObjects = () => {
     let distance = 10
 
@@ -409,13 +431,14 @@ class Environment extends Component {
         // })
 
         arr.push(item.title, item.participant)
-        let position = this.clickableObjects[index].worldPosition;
+        let position = this.clickableObjects[index].topPosition;
         position.y = position.y + (distance * arr.length)
         let text = []; 
         arr.forEach((sentence) => {
           text.push(this.addFont(sentence, position, "black"))
           position.y = position.y - distance;
         })
+        this.createLine(this.clickableObjects[index].topPosition, 'black')
 
         this.clickableObjects[index].model_id = item.id;
         this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
@@ -435,7 +458,10 @@ class Environment extends Component {
       })
 
       let text = [];
-      text.push(this.addFont(page.title, this.clickableObjects[aboutIndex].worldPosition, 'green'));
+      let position = this.clickableObjects[aboutIndex].topPosition;
+      position.y =  position.y + (distance * 2)
+      text.push(this.addFont(page.title, position, 'green'));
+      this.createLine(this.clickableObjects[aboutIndex].topPosition, 'green')
 
       this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[aboutIndex].model_id= page.id
@@ -452,7 +478,8 @@ class Environment extends Component {
       })
 
       let text = [];
-      text.push(this.addFont(page.title, this.clickableObjects[contagionIndex].worldPosition, 'green'));
+      text.push(this.addFont(page.title, this.clickableObjects[contagionIndex].topPosition, 'green'));
+      this.createLine(this.clickableObjects[contagionIndex].topPosition, 'green')
 
       this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[contagionIndex].model_id= page.id
