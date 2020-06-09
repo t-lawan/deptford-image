@@ -318,10 +318,11 @@ class Environment extends Component {
         let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(spherePosition)
         mesh.worldPosition = position;
 
-        // Get Top position fo mesh by getting difference between 
+        // Get Top position fo mesh by getting difference between min and max
         let diff = mesh.geometry.boundingBox.max;
         diff = diff.sub(mesh.geometry.boundingBox.min)
         // this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
+
         let topPosition = position;
         topPosition.y = topPosition.y + (diff.y / 2)
         mesh.topPosition = topPosition;
