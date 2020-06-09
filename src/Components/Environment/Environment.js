@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -285,7 +284,7 @@ class Environment extends Component {
     this.props.loading(itemsLoaded, itemsTotal);
   };
 
-  addFont = (textInfo, position) => {
+  addFont = (textInfo, position, colour = "black") => {
       if(this.font && textInfo) {
         var geometry = new THREE.TextBufferGeometry(textInfo, {
           font: this.font,
@@ -296,7 +295,7 @@ class Environment extends Component {
         });
   
         let material = new THREE.MeshBasicMaterial({
-          color: new THREE.Color("black")
+          color: new THREE.Color(colour)
         });
         let text = new THREE.Mesh(geometry, material);
         text.position.x = position.x;
@@ -414,7 +413,7 @@ class Environment extends Component {
         position.y = position.y + (distance * arr.length)
         let text = []; 
         arr.forEach((sentence) => {
-          text.push(this.addFont(sentence, position))
+          text.push(this.addFont(sentence, position, "black"))
           position.y = position.y - distance;
         })
 
@@ -435,6 +434,8 @@ class Environment extends Component {
         return 'ABOUT' === value.title.toUpperCase()
       })
 
+      let text = [];
+      text.push(this.addFont(page.title, this.clickableObjects[aboutIndex].worldPosition, 'green'));
 
       this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[aboutIndex].model_id= page.id
@@ -449,6 +450,10 @@ class Environment extends Component {
       let page = this.props.pages.find((value) => {
         return 'CONTAGION' === value.title.toUpperCase()
       })
+
+      let text = [];
+      text.push(this.addFont(page.title, this.clickableObjects[contagionIndex].worldPosition, 'green'));
+
       this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[contagionIndex].model_id= page.id
     }
@@ -473,33 +478,6 @@ class Environment extends Component {
     this.controls.maxAzimuthAngle = Infinity;
     this.controls.update();
   };
-
-  // setupPointerLockControls = () => {
-  //   this.controls = new PointerLockControls(
-  //     this.camera,
-  //     this.renderer.domElement
-  //   );
-  // };
-
-  // updateSun = () => {
-  //   let theta = Math.PI * (this.parameters.inclination - 0.5);
-  //   let phi = 2 * Math.PI * (this.parameters.azimuth - 0.5);
-  //   this.light.position.x = this.parameters.distance * Math.cos(phi);
-  //   this.light.position.y =
-  //     this.parameters.distance * Math.sin(phi) * Math.sin(theta);
-  //   this.light.position.z =
-  //     this.parameters.distance * Math.sin(phi) * Math.cos(theta);
-
-  //   this.sky.material.uniforms["sunPosition"].value = this.light.position.copy(
-  //     this.light.position
-  //   );
-  //   if (this.water) {
-  //     this.water.material.uniforms["sunDirection"].value
-  //       .copy(this.light.position)
-  //       .normalize();
-  //   }
-  //   this.cubeCamera.update(this.renderer, this.sky);
-  // };
 
   hideInstructions = () => {
     if(this.props.show_instructions) {
