@@ -309,23 +309,21 @@ class Environment extends Component {
       let meshes = [...this.centerObject.children];
       meshes.forEach((mesh) => {
         mesh.position.add(this.centralPoint)
-        // mesh.position.x = this.centralPoint.x;
-        // mesh.position.y = this.centralPoint.y;
-        // mesh.position.z = this.centralPoint.z;
         mesh.updateMatrix()
         mesh.geometry.computeBoundingSphere()
         mesh.geometry.computeBoundingBox()
 
+        // Get World position of mesh
         let spherePosition = mesh.geometry.boundingSphere.center;
-        // let spherePosition = mesh.geometry.boundingBox.max;
-        // spherePosition.y = spherePosition.z + mesh.geometry.boundingSphere.radius/2
         let position = new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z).add(spherePosition)
         mesh.worldPosition = position;
+
+        // Get Top position fo mesh by getting difference between 
         let diff = mesh.geometry.boundingBox.max;
         diff = diff.sub(mesh.geometry.boundingBox.min)
-        this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
+        // this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
         let topPosition = position;
-        topPosition.y = topPosition.y + diff.y
+        topPosition.y = topPosition.y + (diff.y / 2)
         mesh.topPosition = topPosition;
 
         mesh.castShadow = true;
