@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { FlyControls } from "three/examples/jsm/controls/FlyControls";
+// import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -23,6 +23,8 @@ import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
 import TypeFace from '../../Assets/Fonts/karla.json'
+import { FlyControls } from "../../Utility/FlyControl";
+
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
@@ -124,7 +126,7 @@ class Environment extends Component {
   }
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
-      70, // fov = field of view
+      100, // fov = field of view
       width / height, // aspect ratio
       1, // near plane
       5000 // far plane
@@ -493,8 +495,7 @@ class Environment extends Component {
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.dragToLook = true;
     this.controls.movementSpeed = 10;
-    this.controls.rollSpeed = 0.003;
-
+    this.controls.rollSpeed = 0.004;
     this.controls.update(1);
   };
 

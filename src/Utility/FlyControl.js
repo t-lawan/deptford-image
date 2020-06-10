@@ -1,11 +1,8 @@
+import { Vector3, Quaternion } from "three";
 /**
  * @author James Baicoianu / http://www.baicoianu.com/
  */
 
-import {
-	Quaternion,
-	Vector3
-} from "../../../build/three.module.js";
 
 var FlyControls = function ( object, domElement ) {
 

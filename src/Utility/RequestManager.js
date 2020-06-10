@@ -20,12 +20,9 @@ export default class RequestManager {
     });
     let exhibitionItems = response.items.map((item) => {
       let poster_image = item.fields.posterImage ? item.fields.posterImage.fields.file.url : null
-        let isAfterStartDate = moment('2020-07-05T00:00+01:00').isSameOrAfter(moment(item.fields.startDate));
-        let isBeforeEndDate = moment('2020-07-05T00:00+01:00').isSameOrBefore(moment(item.fields.endDate));
+        let isAfterStartDate = moment().isSameOrAfter(moment(item.fields.startDate));
+        let isBeforeEndDate = moment().isSameOrBefore(moment(item.fields.endDate));
 
-        console.log('IS BEFORE', isBeforeEndDate)
-        console.log('IS AFTER', isAfterStartDate)
-        console.log('START DATE', item.fields.startDate)
         return new ExhibitionItemModel(
           item.sys.id,
           item.fields.title,
