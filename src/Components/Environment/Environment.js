@@ -26,7 +26,6 @@ import TypeFace from '../../Assets/Fonts/karla.json'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
-
 export const ModelTypes = {
   PAGE: 'PAGE',
   EXHIBIITION_ITEM: 'EXHIBIITION_ITEM'
@@ -96,7 +95,6 @@ class Environment extends Component {
 
     // Water
     // this.createWater();
-
     // Axes
     // this.createAxes();
     // Middle Object
@@ -105,21 +103,22 @@ class Environment extends Component {
     // Skybox
     this.setupSky();
     this.createRayCaster();
-    this.setupOrbitControls();
+    // this.setupOrbitControls();
+    this.setupFlyControls()
     this.setupStats();
     this.addEventListeners()
   };
 
   addEventListeners = () => {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
-    document.addEventListener("mouseup", this.onDocumentMouseDown, false);
+    document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
   }
 
   removeEventListeners = () => {
     window.removeEventListener("resize", this.onWindowResize);
-    document.removeEventListener("mouseup", this.onDocumentMouseDown);
+    document.removeEventListener("dblclick", this.onDocumentDoubleClick);
     document.removeEventListener("mousemove", this.onDocumentMouseMove);
     document.removeEventListener("touchstart", this.onDocumentTouchStart, false);
   }
@@ -132,7 +131,7 @@ class Environment extends Component {
     );
     this.camera.aspect = width / height;
     this.camera.position.set(-414, 514, 1544);
-    // this.camera.lookAt(this.centralPoint)
+    this.camera.lookAt(this.centralPoint)
     this.camera.updateProjectionMatrix();
   };
 
@@ -223,8 +222,6 @@ class Environment extends Component {
     );
   };
 
-
-
   loadOBJFile = async (materialUri, OBJUri) => {
     let loader = new MTLLoader(this.manager);
 
@@ -256,7 +253,6 @@ class Environment extends Component {
 
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
-    // await this.setExhibitionItems();
     loader.load(
       ExplosionFBX,
       object => {
@@ -289,7 +285,6 @@ class Environment extends Component {
           size: 4,
           height: 1,
           curveSegments: 20,
-
         });
   
         let material = new THREE.MeshBasicMaterial({
@@ -494,6 +489,15 @@ class Environment extends Component {
     this.controls.update();
   };
 
+  setupFlyControls = () => {
+    this.controls = new FlyControls(this.camera, this.renderer.domElement);
+    this.controls.dragToLook = true;
+    this.controls.movementSpeed = 10;
+    this.controls.rollSpeed = 0.002;
+
+    this.controls.update(1);
+  };
+
   hideInstructions = () => {
     if(this.props.show_instructions) {
       setTimeout(() => {
@@ -506,9 +510,10 @@ class Environment extends Component {
   // Code below is taken from Three.js BoxGeometry example
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
-  onDocumentMouseDown = event => {
+  onDocumentDoubleClick = event => {
     this.hideInstructions();
-    this.setMouse(event)
+    this.setMouse(event);
+
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
     
@@ -588,12 +593,12 @@ class Environment extends Component {
     // Note that after making changes to most of camera properties you have to call
     // .updateProjectionMatrix for the changes to take effect.
     this.camera.updateProjectionMatrix();
-    this.controls.update()
+    this.controls.update(1)
   };
 
   animate = () => {
     this.requestID = requestAnimationFrame(this.animate);
-    this.controls.update();
+    this.controls.update(1);
     this.renderEnvironment();
     if (this.stats) {
       this.stats.update();
@@ -607,7 +612,7 @@ class Environment extends Component {
         this.setState({
           firstCall: false
         });
-      }
+      };
       let time = performance.now() * 0.001;
       if (this.water) {
         this.water.material.uniforms["time"].value += 1.0 / 60.0;
