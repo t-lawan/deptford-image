@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -68,8 +69,6 @@ class Environment extends Component {
 
   componentWillUnmount() {
     this.removeEventListeners()
-
-
     window.cancelAnimationFrame(this.requestID);
     this.controls.dispose();
   }
@@ -414,31 +413,20 @@ class Environment extends Component {
     // ASSIGN EXHIBITION ITEMS
     this.props.exhibition_items.forEach((item, index) => {
       if (index + 1 <= this.clickableObjects.length) {
-        //  Split description into array of words
+        let colour = item.is_live ? 'green' : 'black'
+
+        //  Push
         let arr = [];
-
-        // desc.forEach((it, i) => {
-        //   if(i !== 0 && i % sentenceLength === 0) {
-        //     arr.push(sentence);
-        //     sentence = ''
-        //   }
-
-        //   sentence =  sentence.concat(` ${it}`);
-
-        //   if(i + 1 === desc.length) {
-        //     arr.push(sentence);
-        //   }
-        // })
 
         arr.push(item.title, item.participant)
         let position = this.clickableObjects[index].topPosition;
         position.y = position.y + (distance * arr.length)
         let text = []; 
         arr.forEach((sentence) => {
-          text.push(this.addFont(sentence, position, "black"))
+          text.push(this.addFont(sentence, position, colour))
           position.y = position.y - distance;
         })
-        this.createLine(this.clickableObjects[index].topPosition, 'black')
+        this.createLine(this.clickableObjects[index].topPosition, colour)
 
         this.clickableObjects[index].model_id = item.id;
         this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;

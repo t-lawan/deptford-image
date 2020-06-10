@@ -40,7 +40,6 @@ class Modal extends React.Component {
     this.props.closeModal();
   };
   render() {
-  console.log('PAGES', this.props)
 
     return (
       <ModalWrapper show={this.props.open}>
