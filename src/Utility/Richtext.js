@@ -18,8 +18,14 @@ const NAMEARTICLE = styled.ul`
 `
 
 const LOGO = styled.img`
-    width: 20%;
+    width: 10%;
     margin-right: 1rem;
+
+`
+const LogoWrapper = styled.div`
+    width: 20%;
+    height: 20%;
+    display: inline-block;
 `
 
 const NAME = styled.li`
@@ -38,7 +44,7 @@ export const richTextOptions = {
       [BLOCKS.OL_LIST]: (node, children) => <ol> {children} </ol>,
       [BLOCKS.UL_LIST]: (node, children) => <NAMEARTICLE> {children} </NAMEARTICLE>,
       [BLOCKS.LIST_ITEM]: (node, children) => <NAME> {children} </NAME>,
-      [BLOCKS.EMBEDDED_ASSET]: (node) => <LOGO src={node.data.target.fields.file.url} alt={node.data.target.fields.title} />
+      [BLOCKS.EMBEDDED_ASSET]: (node) =>  <LOGO src={node.data.target.fields.file.url} alt={node.data.target.fields.title} />
       
     }
   };
