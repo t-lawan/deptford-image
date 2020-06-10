@@ -530,7 +530,7 @@ class Environment extends Component {
 
   onDocumentMouseMove = event => {
     event.preventDefault();
-    // this.hideInstructions();
+    this.hideInstructions();
     this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
