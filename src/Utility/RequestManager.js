@@ -2,6 +2,7 @@
 import ExhibitionItemModel from "../Models/ExhibitionItemModel";
 import * as contentful from 'contentful'
 import PageModel from "../Models/PageModel";
+import moment from 'moment'
 export default class RequestManager {
   static space = "nrx29ogwm4cn";
   static environment = 'master'
@@ -19,6 +20,12 @@ export default class RequestManager {
     });
     let exhibitionItems = response.items.map((item) => {
       let poster_image = item.fields.posterImage ? item.fields.posterImage.fields.file.url : null
+        let isAfterStartDate = moment('2020-07-05T00:00+01:00').isSameOrAfter(moment(item.fields.startDate));
+        let isBeforeEndDate = moment('2020-07-05T00:00+01:00').isSameOrBefore(moment(item.fields.endDate));
+
+        console.log('IS BEFORE', isBeforeEndDate)
+        console.log('IS AFTER', isAfterStartDate)
+        console.log('START DATE', item.fields.startDate)
         return new ExhibitionItemModel(
           item.sys.id,
           item.fields.title,
@@ -28,7 +35,8 @@ export default class RequestManager {
           item.fields.videoUrl,
           poster_image,
           item.fields.startDate,
-          item.fields.endDate
+          item.fields.endDate,
+          isAfterStartDate && isBeforeEndDate
         )
     })
     return exhibitionItems;
