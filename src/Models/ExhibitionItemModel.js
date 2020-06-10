@@ -8,7 +8,8 @@ export default class ExhibitionItemModel {
     end_date;
     video_url;
     poster_url;
-    constructor(id, title, short_description, description, participant, video_url, poster_url, start_date, end_date) {
+    is_live;
+    constructor(id, title, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive) {
         this.id = id;
         this.title = title;
         this.short_description = short_description;
@@ -18,5 +19,6 @@ export default class ExhibitionItemModel {
         this.start_date =start_date;
         this.end_date = end_date;
         this.poster_url = poster_url;
+        this.is_live = isLive;
     }
 }
