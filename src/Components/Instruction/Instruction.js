@@ -53,6 +53,7 @@ class Instruction extends React.Component {
           <p> Use the arrows buttons to move </p>
           <p> Use the WASD buttons to move within the space </p>
           <p> click and drag the mouse OR use the arrow buttons to turn </p>
+          <p> double click on an object to open modal </p>
         </Instructions>
       </InstructionWrapper>
     );
