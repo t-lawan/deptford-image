@@ -49,8 +49,10 @@ class Instruction extends React.Component {
     return (
       <InstructionWrapper show={this.props.has_loaded && this.props.show_instructions}>
         <Instructions>
-          <p> Click Drag or Touch to turn the view </p>
+          <p> Click, Drag or Touch to turn the view </p>
           <p> Use the arrows buttons to move </p>
+          <p> Use the WASD buttons to move within the space </p>
+          <p> click and drag the mouse OR use the arrow buttons to turn </p>
         </Instructions>
       </InstructionWrapper>
     );

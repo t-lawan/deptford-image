@@ -493,7 +493,7 @@ class Environment extends Component {
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.dragToLook = true;
     this.controls.movementSpeed = 10;
-    this.controls.rollSpeed = 0.002;
+    this.controls.rollSpeed = 0.003;
 
     this.controls.update(1);
   };
@@ -529,7 +529,7 @@ class Environment extends Component {
 
   onDocumentMouseMove = event => {
     event.preventDefault();
-    this.hideInstructions();
+    // this.hideInstructions();
     this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
