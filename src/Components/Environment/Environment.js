@@ -15,7 +15,6 @@ import {
   openModal,
   setExhibitionItems,
   loading,
-  hideInstructions,
   setPages
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
@@ -505,20 +504,12 @@ class Environment extends Component {
     this.controls.update(1);
   };
 
-  hideInstructions = () => {
-    if(this.props.show_instructions) {
-      setTimeout(() => {
-        this.props.hideInstructions()
-      }, 1000)
-    }
-  }
 
   // Here should come custom code.
   // Code below is taken from Three.js BoxGeometry example
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentDoubleClick = event => {
-    this.hideInstructions();
     this.setMouse(event);
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -536,7 +527,6 @@ class Environment extends Component {
 
   onDocumentMouseMove = event => {
     event.preventDefault();
-    this.hideInstructions();
     this.setMouse(event)
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
@@ -576,7 +566,6 @@ class Environment extends Component {
 
   onDocumentTouchStart = event => {
     // event.preventDefault();
-    this.hideInstructions();
     this.mouse.x =
       (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
     this.mouse.y =
@@ -652,7 +641,6 @@ const mapDispatchToProps = dispatch => {
     setPages: pages => 
       dispatch(setPages(pages)),
     loading: (loaded, total) => dispatch(loading(loaded, total)),
-    hideInstructions:  () => dispatch(hideInstructions())
   };
 };
 
