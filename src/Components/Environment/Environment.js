@@ -126,7 +126,7 @@ class Environment extends Component {
   }
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
-      100, // fov = field of view
+      70, // fov = field of view
       width / height, // aspect ratio
       1, // near plane
       5000 // far plane
@@ -443,10 +443,11 @@ class Environment extends Component {
       })
 
       let text = [];
-      let position = this.clickableObjects[aboutIndex].topPosition;
-      position.y =  position.y + (distance * 2)
-      text.push(this.addFont(page.title, position, 'green'));
-      this.createLine(this.clickableObjects[aboutIndex].topPosition, 'green')
+      let aboutPosition = this.clickableObjects[aboutIndex].topPosition;
+      aboutPosition.y =  aboutPosition.y + (distance * 2)
+      text.push(this.addFont(page.title, aboutPosition, 'red'));
+      aboutPosition.y = aboutPosition.y - (distance * 2)
+      this.createLine(this.clickableObjects[aboutIndex].topPosition, 'red')
 
       this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[aboutIndex].model_id= page.id
@@ -463,8 +464,12 @@ class Environment extends Component {
       })
 
       let text = [];
-      text.push(this.addFont(page.title, this.clickableObjects[contagionIndex].topPosition, 'green'));
-      this.createLine(this.clickableObjects[contagionIndex].topPosition, 'green')
+      let contagionPosition = this.clickableObjects[contagionIndex].topPosition;
+      contagionPosition.y =  contagionPosition.y + (distance * 2)
+      text.push(this.addFont(page.title, contagionPosition, 'red'));
+      contagionPosition.y =  contagionPosition.y - (distance * 2)
+
+      this.createLine(this.clickableObjects[contagionIndex].topPosition, 'red')
 
       this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE
       this.clickableObjects[contagionIndex].model_id= page.id
@@ -495,7 +500,7 @@ class Environment extends Component {
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.dragToLook = true;
     this.controls.movementSpeed = 10;
-    this.controls.rollSpeed = 0.004;
+    this.controls.rollSpeed = 0.008;
     this.controls.update(1);
   };
 
