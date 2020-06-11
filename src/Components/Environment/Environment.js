@@ -280,17 +280,18 @@ class Environment extends Component {
     this.props.loading(itemsLoaded, itemsTotal);
   };
 
-  addFont = (textInfo, position, colour = "black") => {
+  addFont = (textInfo, position, colour) => {
       if(this.font && textInfo) {
         var geometry = new THREE.TextBufferGeometry(textInfo, {
           font: this.font,
-          size: 4,
+          size: 6,
           height: 1,
           curveSegments: 20,
         });
   
-        let material = new THREE.MeshBasicMaterial({
-          color: new THREE.Color(colour)
+        let material = new THREE.MeshPhongMaterial({
+          color: new THREE.Color(colour),
+          emissive: new THREE.Color(colour)
         });
         let text = new THREE.Mesh(geometry, material);
         text.position.x = position.x + 50;
