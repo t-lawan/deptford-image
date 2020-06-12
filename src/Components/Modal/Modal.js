@@ -12,7 +12,7 @@ const ModalWrapper = styled.div`
   width: 100%;
   min-height: 100%;
   z-index: 500;
-  background: grey;
+  background: white;
   display: ${props => (props.show ? "block" : "none")};
   text-align: center;
 `;
