@@ -95,7 +95,7 @@ class Instruction extends React.Component {
             <p> Use the arrows buttons or WASD keys to move </p>
             <p> Use the Q and E keys to rotate </p>
             <p> Double click on an object to open modal </p>
-            <CloseText onClick={() => this.hideText()}> close </CloseText>
+            <CloseText onClick={() => this.hideText()}> click here to close </CloseText>
           </TextWrapper>
         </Instructions>
       </InstructionWrapper>
