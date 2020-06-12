@@ -3,6 +3,9 @@ import KarlaRegular from "../../Assets/Fonts/Karla-Regular.ttf";
 import KarlaBold from "../../Assets/Fonts/Karla-Bold.ttf";
 import KarlaBoldItalic from "../../Assets/Fonts/Karla-BoldItalic.ttf";
 import KarlaItalic from "../../Assets/Fonts/Karla-Italic.ttf";
+import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
+import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
+
 export const size = {
   mobileS: "320px",
   mobileM: "420px",
@@ -49,6 +52,20 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: normal;
     font-style: italic;
   }
+
+  @font-face {
+    font-family: AudintBody;
+    src: url(${AudintBody}) format('ttf');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: AudintTitle;
+    src: url(${AudintTitle}) format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
   * {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -56,7 +73,7 @@ export const GlobalStyle = createGlobalStyle`
 
 html, body {
   margin: 0;
-  font-family: 'Karla', Fallback, sans-serif;
+  font-family: Karla, Fallback, sans-serif;
   width: 100%;
   -webkit-font-smoothing: antialiased;
 }

@@ -3,7 +3,7 @@ export const ModelTypes = {
     EXHIBIITION_ITEM: "EXHIBIITION_ITEM"
   };
 export const ObjectExhibitionMap = {
-    "FbxScene_Aset_wood_branch_M_rkku2_LOD0": {
+    "FbxScene_Aset_structure_cement_M_sdsbo_LOD0": {
         id: 'protocols_audint',
         type: ModelTypes.EXHIBIITION_ITEM
     },
@@ -53,7 +53,7 @@ export const ObjectExhibitionMap = {
     },
     "Object_1": null,
     "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": null,
-    "FbxScene_Aset_structure_cement_M_sdsbo_LOD0": null,
+    "FbxScene_Aset_wood_branch_M_rkku2_LOD0": null,
     "FbxScene_teufceuda_LOD0": null,
     "FbxScene_slunl_LOD0": null,
 }

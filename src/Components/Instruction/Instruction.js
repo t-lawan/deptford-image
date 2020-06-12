@@ -31,7 +31,7 @@ const TextWrapper = styled.div`
 
 const ImageWrapper = styled.div`
   float: right;
-  padding: 1rem;
+  /* padding: 1rem; */
   display: ${props => (props.show ? "block" : "none")};
   text-align: right;
 `;

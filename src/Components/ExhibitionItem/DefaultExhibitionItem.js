@@ -12,7 +12,6 @@ export const ResponsiveIFrameWrapper = styled.div`
 `;
 const DefaultExhibitionItem = props => {
   let item = props.item;
-    console.log('DefaultExhibitionItem', item);
   return (
     <ExhibitionItemWrapper>
       {item ? (

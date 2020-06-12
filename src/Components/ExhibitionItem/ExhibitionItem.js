@@ -16,8 +16,6 @@ const ExhibitionItem = props => {
     return it.id === props.modal_item;
   });
 
-  console.log('ITEM', item)
-
   let renderedComponent = <p></p>;
   if (item) {
     switch (item.map_id) {

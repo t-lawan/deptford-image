@@ -18,13 +18,17 @@ const ModalWrapper = styled.div`
 `;
 
 const ModalHeader = styled.div`
-  padding: 0.5em 0.25em;
+  /* padding: 0.5em 0.25em; */
   padding-bottom: 0;
   text-align: right;
+  position: fixed;
+  width: 100%;
+  z-index: 550;
+
 `;
 
 const ModalBody = styled.div`
-  padding: 2em;
+  /* padding: 2em; */
   padding-bottom: 0;
 `;
 export const ModalCloseImage = styled.img`
