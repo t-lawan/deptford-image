@@ -8,7 +8,7 @@ import {
   HIDE_INSTRUCTIONS,
   SET_PAGES
 } from "./action";
-import { ModelTypes } from "../Components/Environment/Environment";
+import { ModelTypes } from "../Utility/ObjectExhibitionMap";
 
 const initalState = {
   modal_open: false,

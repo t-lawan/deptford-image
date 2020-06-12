@@ -24,14 +24,12 @@ import Sound from "../../Assets/Birds.m4a";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
+import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
 
 const EnvironmentWrapper = styled.div`
   height: 100vh;
 `;
-export const ModelTypes = {
-  PAGE: "PAGE",
-  EXHIBIITION_ITEM: "EXHIBIITION_ITEM"
-};
+
 
 const PageConfig = {
   ABOUT: "FbxScene_udgkcewhw_LOD0",
@@ -429,72 +427,53 @@ class Environment extends Component {
 
   assignExhibitionItemsToClickableObjects = () => {
     let distance = 10;
+    this.clickableObjects.forEach((obj, index) => {
+      let objectReference = ObjectExhibitionMap[obj.name]
+      if(objectReference){
+        if(objectReference.type === ModelTypes.EXHIBIITION_ITEM) {
+          let item = this.props.exhibition_items.find((exItem) => {
+            return exItem.map_id === objectReference.id;
+          })
+          let colour = item.is_live ? "green" : "black";
+          //  Push
+          let arr = [];
+          arr.push(item.title, item.participant);
+          let position = this.clickableObjects[index].topPosition;
+          position.y = position.y + distance * arr.length;
+          let text = [];
+          arr.forEach(sentence => {
+            text.push(this.addFont(sentence, position, colour));
+            position.y = position.y - distance;
+          });
 
-    // ASSIGN EXHIBITION ITEMS
-    this.props.exhibition_items.forEach((item, index) => {
-      if (index + 1 <= this.clickableObjects.length) {
-        let colour = item.is_live ? "green" : "black";
+          this.createLine(this.clickableObjects[index].topPosition, colour);
 
-        //  Push
-        let arr = [];
+          this.clickableObjects[index].model_id = item.id;
+          this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
+          this.clickableObjects[index].text = text;
+        }
 
-        arr.push(item.title, item.participant);
-        let position = this.clickableObjects[index].topPosition;
-        position.y = position.y + distance * arr.length;
-        let text = [];
-        arr.forEach(sentence => {
-          text.push(this.addFont(sentence, position, colour));
-          position.y = position.y - distance;
-        });
-        this.createLine(this.clickableObjects[index].topPosition, colour);
+        if(objectReference.type === ModelTypes.PAGE) {
+          let item = this.props.pages.find((pg) => {
+            return pg.title.toLowerCase() === objectReference.id;
+          })
+          let text = [];
+          let position = this.clickableObjects[index].topPosition;
+          position.y = position.y + distance * 2;
+          text.push(this.addFont(item.title, position, "red"));
+          position.y = position.y - distance * 2;
+          this.createLine(this.clickableObjects[index].topPosition, "red");
+    
+          this.clickableObjects[index].model_type = ModelTypes.PAGE;
+          this.clickableObjects[index].model_id = item.id;
+        }
+      } else {
 
-        this.clickableObjects[index].model_id = item.id;
-        this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
-        this.clickableObjects[index].text = text;
       }
-    });
+    })
 
-    // ASSIGN PAGES
-    let aboutIndex = this.clickableObjects.findIndex(value => {
-      return value.name === PageConfig.ABOUT;
-    });
 
-    if (aboutIndex) {
-      let page = this.props.pages.find(value => {
-        return "ABOUT" === value.title.toUpperCase();
-      });
 
-      let text = [];
-      let aboutPosition = this.clickableObjects[aboutIndex].topPosition;
-      aboutPosition.y = aboutPosition.y + distance * 2;
-      text.push(this.addFont(page.title, aboutPosition, "red"));
-      aboutPosition.y = aboutPosition.y - distance * 2;
-      this.createLine(this.clickableObjects[aboutIndex].topPosition, "red");
-
-      this.clickableObjects[aboutIndex].model_type = ModelTypes.PAGE;
-      this.clickableObjects[aboutIndex].model_id = page.id;
-    }
-
-    let contagionIndex = this.clickableObjects.findIndex(value => {
-      return value.name === PageConfig.CONTAGION;
-    });
-
-    if (contagionIndex) {
-      let page = this.props.pages.find(value => {
-        return "CONTAGION" === value.title.toUpperCase();
-      });
-
-      let text = [];
-      let contagionPosition = this.clickableObjects[contagionIndex].topPosition;
-      contagionPosition.y = contagionPosition.y + distance * 2;
-      text.push(this.addFont(page.title, contagionPosition, "red"));
-      contagionPosition.y = contagionPosition.y - distance * 2;
-
-      this.createLine(this.clickableObjects[contagionIndex].topPosition, "red");
-
-      this.clickableObjects[contagionIndex].model_type = ModelTypes.PAGE;
-      this.clickableObjects[contagionIndex].model_id = page.id;
-    }
     // Remove Clickable that has no model type or Id
     this.clickableObjects = this.clickableObjects.filter(obj => {
       return obj.model_type;
@@ -544,7 +523,6 @@ class Environment extends Component {
 
   onDocumentMouseMove = event => {
     event.preventDefault();
-    console.log("IS MOBILE", this.isMobile);
     this.setMouse(event);
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.intersects = this.raycaster.intersectObjects(this.clickableObjects);

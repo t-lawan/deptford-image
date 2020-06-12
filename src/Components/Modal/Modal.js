@@ -5,8 +5,8 @@ import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 import { size } from "../Global/global.styles";
-import Page from "../Page/Page";
-import { ModelTypes } from "../Environment/Environment";
+import Page from "../Page/Page";import { ModelTypes } from "../../Utility/ObjectExhibitionMap";
+
 const ModalWrapper = styled.div`
   position: absolute;
   width: 100%;
