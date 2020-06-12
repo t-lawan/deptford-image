@@ -31,11 +31,6 @@ const EnvironmentWrapper = styled.div`
 `;
 
 
-const PageConfig = {
-  ABOUT: "FbxScene_udgkcewhw_LOD0",
-  CONTAGION: "FbxScene_ucmjdfkhw_LOD0"
-};
-
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
   clickableObjects = [];
