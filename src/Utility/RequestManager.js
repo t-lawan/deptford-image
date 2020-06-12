@@ -22,9 +22,9 @@ export default class RequestManager {
       let poster_image = item.fields.posterImage ? item.fields.posterImage.fields.file.url : null
         let isAfterStartDate = moment().isSameOrAfter(moment(item.fields.startDate));
         let isBeforeEndDate = moment().isSameOrBefore(moment(item.fields.endDate));
-
         return new ExhibitionItemModel(
           item.sys.id,
+          item.fields.mapId,
           item.fields.title,
           item.fields.shortDescription,
           item.fields.description,

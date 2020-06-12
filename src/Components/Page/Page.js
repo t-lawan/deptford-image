@@ -16,7 +16,6 @@ const Page = props => {
   let item = props.pages.find(it => {
     return it.id === props.modal_item;
   });
-  console.log("ITEM", item);
   return (
     <PageWrapper>
       {item ? (
