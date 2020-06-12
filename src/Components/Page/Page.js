@@ -3,13 +3,21 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { richTextOptions } from "../../Utility/Richtext";
+import { Colour } from "../Global/global.styles";
 
 const PageWrapper = styled.div`
+  padding: 1rem;
+  width: 60%;
 `;
 
 const TextWrapper = styled.div`
   text-align: left;
+`
 
+const PageTitle =  styled.h1`
+  padding-bottom: 2rem;
+  color: ${Colour.green};
+  border-bottom: 1px solid ${Colour.green};
 `
 
 const Page = props => {
@@ -20,7 +28,7 @@ const Page = props => {
     <PageWrapper>
       {item ? (
         <>
-          <h1> {item.title}</h1>
+          <PageTitle> {item.title}</PageTitle>
           <TextWrapper> {documentToReactComponents(item.text, richTextOptions)} </TextWrapper>
         </>
       ) : null}

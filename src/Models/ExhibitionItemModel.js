@@ -10,7 +10,8 @@ export default class ExhibitionItemModel {
     poster_url;
     is_live;
     map_id;
-    constructor(id, map_id, title, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive) {
+    audint_section;
+    constructor(id, map_id, title, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive, audintSection) {
         this.id = id;
         this.title = title;
         this.short_description = short_description;
@@ -22,5 +23,6 @@ export default class ExhibitionItemModel {
         this.poster_url = poster_url;
         this.is_live = isLive;
         this.map_id = map_id;
+        this.audint_section = audintSection;
     }
 }

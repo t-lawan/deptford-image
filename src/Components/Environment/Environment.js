@@ -107,7 +107,7 @@ class Environment extends Component {
     } else {
       this.setupFlyControls();
     }
-    this.setupStats();
+    // this.setupStats();
     this.addEventListeners();
   };
 

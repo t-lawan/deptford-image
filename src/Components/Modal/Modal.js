@@ -14,7 +14,7 @@ const ModalWrapper = styled.div`
   z-index: 500;
   background: white;
   display: ${props => (props.show ? "block" : "none")};
-  text-align: center;
+  /* text-align: center; */
 `;
 
 const ModalHeader = styled.div`

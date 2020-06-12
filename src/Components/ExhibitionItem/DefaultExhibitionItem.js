@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 
-const ExhibitionItemWrapper = styled.div``;
+const ExhibitionItemWrapper = styled.div`
+  padding: 1rem;
+`;
 
 export const ResponsiveIFrameWrapper = styled.div`
   padding: 1rem;
