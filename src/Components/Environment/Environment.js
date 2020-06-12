@@ -314,6 +314,12 @@ class Environment extends Component {
   addFBXFile = () => {
     if (this.centerObject) {
       let meshes = [...this.centerObject.children];
+      // console.log('MESHES', meshes)
+      // let text = meshes.map((me) => {
+      //   return me.name
+      // })
+
+      // console.log('TEXT MESH', text)
       meshes.forEach(mesh => {
         mesh.position.add(this.centralPoint);
         mesh.updateMatrix();
