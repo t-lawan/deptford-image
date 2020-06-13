@@ -40,6 +40,10 @@ const PartnerTitle = styled.p`
   color: ${Colour.green};
 `
 
+const TeamMemberWrapper = styled(PartnerWrapper)`
+  margin: 2rem 0;
+`
+
 const ImageWrapper = styled.div`
   width: 100px;
   height: 100px;
@@ -57,6 +61,15 @@ const AboutPage = props => {
           <TextWrapper>
             {" "}
             {documentToReactComponents(item.text, richTextOptions)}{" "}
+          </TextWrapper>
+          <TextWrapper>
+            <PartnerTitle> DEMO TEAM:</PartnerTitle>
+            {item.team_members.map((team_member, index) => (
+              <TeamMemberWrapper key={index}>
+                <p> {team_member.name}, {team_member.role}</p>
+                <p> {team_member.email}</p>
+              </TeamMemberWrapper>
+            ))}
           </TextWrapper>
           <TextWrapper>
             {item.partners.map((partner, index) => (

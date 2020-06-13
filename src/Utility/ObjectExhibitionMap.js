@@ -4,11 +4,11 @@ export const ModelTypes = {
   };
 export const ObjectExhibitionMap = {
     "FbxScene_Aset_structure_cement_M_sdsbo_LOD0": {
-        id: 'protocols_audint',
+        id: 'black_invernomuto',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ti2fbajfa_LOD0": {
-        id: 'comrade_caterina',
+        id: 'mermaids_karrabing',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "tbiwO_LOD0_2": {
@@ -16,11 +16,11 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ti1vcenda_LOD0": {
-        id: 'weed_patrick',
-        type: ModelTypes.EXHIBIITION_ITEM
+        id: 'contagion',
+        type: ModelTypes.PAGE
     },
     "FbxScene_uc1iccejw_LOD0": {
-        id: 'mermaids_karrabing',
+        id: 'comrade_caterina',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_sjwoE_LOD0": {
@@ -40,11 +40,11 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_Aset_rock_granite_M_rjznD_LOD0": {
-        id: 'black_invernomuto',
+        id: 'protocols_audint',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ucmjdfkhw_LOD0": {
-        id: 'contagion',
+        id: 'programme',
         type: ModelTypes.PAGE
     },
     "FbxScene_udgkcewhw_LOD0": {
@@ -52,11 +52,12 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.PAGE
     },
     "FbxScene_slunl_LOD0": {
-        id: 'programme',
-        type: ModelTypes.PAGE
+        id: 'weed_patrick',
+        type: ModelTypes.EXHIBIITION_ITEM
     },
     "Object_1": null,
     "FbxScene_Aset_wood_branch_M_rkku2_LOD0": null,
     "FbxScene_teufceuda_LOD0": null,
     "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": null,
+
 }

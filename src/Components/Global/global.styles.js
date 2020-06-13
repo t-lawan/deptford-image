@@ -5,6 +5,7 @@ import KarlaBoldItalic from "../../Assets/Fonts/Karla-BoldItalic.ttf";
 import KarlaItalic from "../../Assets/Fonts/Karla-Italic.ttf";
 import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
+import GroteskLightExtender from "../../Assets/Fonts/Grotesk_Light_Extended.otf";
 
 export const size = {
   mobileS: "320px",
@@ -68,6 +69,13 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: normal;
     font-style: normal;
   }
+
+  @font-face {
+    font-family: GroteskLightExtender;
+    src: url(${GroteskLightExtender}) format('otf');
+    font-weight: normal;
+    font-style: normal;
+  }
   * {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -75,7 +83,7 @@ export const GlobalStyle = createGlobalStyle`
 
 html, body {
   margin: 0;
-  font-family: Karla, Fallback, sans-serif;
+  font-family: GroteskLightExtender, Fallback, sans-serif;
   width: 100%;
   -webkit-font-smoothing: antialiased;
 }
@@ -147,7 +155,7 @@ p, li{
   padding-right: 0;
   padding-top: 0;
   font-size: 1.5rem  !important;
-  line-height: 1.3;
+  line-height: 1.3rem;
   font-weight: 100 !important;
 }
 
