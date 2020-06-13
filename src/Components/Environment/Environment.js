@@ -23,6 +23,7 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
+import PositionalSound from "../../Assets/POSITIONAL_TRACK.mp3";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
@@ -113,6 +114,8 @@ class Environment extends Component {
     } else {
       this.setupFlyControls();
     }
+
+    this.playSound()
     // this.setupStats();
     this.addEventListeners();
   };
@@ -188,16 +191,34 @@ class Environment extends Component {
   createScene = () => {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(Colour.grey);
-    // this.scene.fog = new THREE.FogExp2(new THREE.Color('white'), 0.001);
+    this.scene.fog = new THREE.FogExp2(new THREE.Color('white'), 0.001);
   };
   createLight = () => {
+    let distance = 1000
     this.light = new THREE.DirectionalLight(0xffffff, 2);
-    // let targetObject = new THREE.Object3D();
-    // targetObject.position.set(this.centralPoint.x, this.centralPoint.y, this.centralPoint.z);
-    // this.scene.add(targetObject);
+    this.light.position.add(this.centralPoint)
 
-    // this.light.target = targetObject
+    let point_one = new THREE.PointLight(0xffffff, 5, 1000);
+    let point_two = new THREE.PointLight(0xffffff, 5, 4000);
+    
+    var sphereSize = 1;
+    
+    point_one.position.add(this.centralPoint);
+    point_one.position.setY(point_one.position.y - distance)
+    point_two.position.add(this.centralPoint);
+    point_two.position.setY(point_one.position.y + distance);
+
+    let targetObject = new THREE.Object3D();
+    targetObject.position.set(this.centralPoint.x, this.centralPoint.y, this.centralPoint.z);
+    this.scene.add(targetObject);
+    this.light.target = targetObject
     this.scene.add(this.light);
+    
+
+    this.scene.add(point_one);
+    this.scene.add(point_two);
+    
+
   };
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
@@ -285,8 +306,14 @@ class Environment extends Component {
   };
 
   loadAudio = () => {
+    this.globalAudioLoader = new THREE.AudioLoader(this.manager);
     this.audioLoader = new THREE.AudioLoader(this.manager);
-    this.audioLoader.load(Sound, buffer => {
+
+    //
+    this.globalAudioLoader.load(Sound, buffer => {
+      this.globalSound.setBuffer(buffer);
+    });
+    this.audioLoader.load(PositionalSound, buffer => {
       this.sound.setBuffer(buffer);
     });
   };
@@ -330,8 +357,8 @@ class Environment extends Component {
 
       meshes.forEach(mesh => {
         mesh.position.add(this.centralPoint);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;		
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;		
         mesh.updateMatrix();
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeBoundingBox();
@@ -339,10 +366,10 @@ class Environment extends Component {
         if(mesh.material) {
             // mesh.material.map.name = TestImage
 
-            // mesh.material.specular.r = 0
-            // mesh.material.specular.g = 0
-            // mesh.material.specular.b = 0  
-            // mesh.material.shininess = 2       
+            mesh.material.specular.r = 0
+            mesh.material.specular.g = 0
+            mesh.material.specular.b = 0  
+            mesh.material.shininess = 2       
             // mesh.material.emissive.r = 0.5
             // mesh.material.emissive.g = 0.5
             // mesh.material.emissive.b = 0.5
@@ -383,10 +410,28 @@ class Environment extends Component {
   };
 
   addSound = () => {
-    this.sound.setLoop(false);
+    this.globalSound.setLoop(false);
+    this.globalSound.setVolume(1);
+    this.globalSound.duration = 1;
+    this.sound.setRefDistance( 100 );
+    this.sound.setLoop(true);
     this.sound.setVolume(1);
-    this.sound.duration = 1;
+    this.clickableObjects[4].add(this.sound)
+    this.sound.play()
+
   };
+
+  stopAllSound = () => {
+    this.globalSound.setVolume(0);
+    this.sound.setVolume(0);
+  }
+
+  playSound = () => {
+    this.globalSound.setVolume(1)
+    this.sound.setVolume(1)
+
+    this.sound.play()
+  }
 
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
@@ -405,7 +450,8 @@ class Environment extends Component {
   createAudioListener = () => {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
-    this.sound = new THREE.Audio(this.listener);
+    this.globalSound = new THREE.Audio(this.listener);
+    this.sound = new THREE.PositionalAudio(this.listener)
   };
 
   createObjectBoundary = (width, height, position) => {
@@ -426,7 +472,7 @@ class Environment extends Component {
   };
 
   objectSelected = (id, modelType) => {
-    this.sound.play();
+    this.globalSound.play();
     this.props.openModal(id, modelType);
     this.setState({
       pause: true
@@ -483,6 +529,7 @@ class Environment extends Component {
           this.createLine(this.clickableObjects[index].topPosition, colour);
 
           this.clickableObjects[index].model_id = item.id;
+          this.clickableObjects[index].model_title = item.title;
           this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].text = text;
         }
@@ -560,7 +607,7 @@ class Environment extends Component {
     event.preventDefault();
     this.setMouse(event);
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    this.intersects = this.raycaster.intersectObjects(this.clickableObjects, true);
     if (this.intersects.length > 0) {
       if (!this.isHovering) {
         this.isHovering = true;

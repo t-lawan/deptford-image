@@ -155,12 +155,12 @@ p, li{
   padding-right: 0;
   padding-top: 0;
   font-size: 1.5rem  !important;
-  line-height: 1.3rem;
+  line-height: 1.3;
   font-weight: 100 !important;
 }
 
 p {
-  line-height: 1.35rem;
+  line-height: 1.35;
   font-size: 1.05rem;
   margin-bottom: 1.5rem;
 }
