@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import { Colour } from "../Global/global.styles";
 
 const ExhibitionItemWrapper = styled.div`
   padding: 1rem;
@@ -21,12 +22,13 @@ const DefaultExhibitionItem = props => {
     <ExhibitionItemWrapper>
       {item ? (
         <div>
-          <h2>
+          {/* <h2>
             {" "}
             {item.title}, {item.participant}{" "}
-          </h2>
+          </h2> */}
           <ResponsiveIFrameWrapper>
             <VideoPlayer
+              withBorder
               posterUrl={item.poster_url}
               videoUrl={item.video_url}
             />

@@ -146,8 +146,9 @@ p, li{
   padding-left: 0;
   padding-right: 0;
   padding-top: 0;
-  font-size: 1.1rem;
+  font-size: 1.5rem  !important;
   line-height: 1.3;
+  font-weight: 100 !important;
 }
 
 p {

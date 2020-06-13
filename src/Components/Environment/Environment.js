@@ -30,6 +30,9 @@ import { Colour } from "../Global/global.styles";
 
 const EnvironmentWrapper = styled.div`
   height: 100vh;
+  overflow-y: hidden;
+  position: fixed;
+  width: 100%;
 `;
 
 

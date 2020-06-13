@@ -8,11 +8,14 @@ import { getMediaAsset } from "../../Store/action";
 
 const PageWrapper = styled.div`
   padding: 1rem;
-  width: 90%;
+  width: 80%;
 `;
 
 const TextWrapper = styled.div`
   text-align: left;
+  p {
+    margin-bottom: 1rem;
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -21,7 +24,9 @@ const PageTitle = styled.h1`
   border-bottom: 1px solid ${Colour.green};
 `;
 
-const PartnerWrapper = styled.div``;
+const PartnerWrapper = styled.div`
+  margin: 1rem 0;
+`;
 
 const PartnerImagesWrapper = styled.div`
   display: flex;
@@ -30,6 +35,10 @@ const PartnerImagesWrapper = styled.div`
 const PartnerImage = styled.img`
   object-fit: contain;
 `;
+
+const PartnerTitle = styled.p`
+  color: ${Colour.green};
+`
 
 const ImageWrapper = styled.div`
   width: 100px;
@@ -52,7 +61,7 @@ const AboutPage = props => {
           <TextWrapper>
             {item.partners.map((partner, index) => (
               <PartnerWrapper key={index}>
-                <p> {partner.title}</p>
+                <PartnerTitle> {partner.title}:</PartnerTitle>
                 <PartnerImagesWrapper>
                   {partner.images.map((p, i) => (
                     <ImageWrapper key={i}>
