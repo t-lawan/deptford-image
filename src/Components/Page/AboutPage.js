@@ -40,8 +40,6 @@ const ImageWrapper = styled.div`
 
 const AboutPage = props => {
   let item = props.item;
-  // let asset = getMediaAsset(props.media_assets, item.partners[0].images[0])
-  console.log("ITEM", item);
   return (
     <PageWrapper>
       {item ? (

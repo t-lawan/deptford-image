@@ -3,9 +3,11 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
+import CloseIcon from "../../Assets/CloseIcon.png";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 import { size } from "../Global/global.styles";
-import Page from "../Page/Page";import { ModelTypes } from "../../Utility/ObjectExhibitionMap";
+import Page from "../Page/Page";
+import { ModelTypes } from "../../Utility/ObjectExhibitionMap";
 
 const ModalWrapper = styled.div`
   position: absolute;
@@ -50,7 +52,7 @@ class Modal extends React.Component {
         <ModalHeader>
           <ModalCloseImage
             onClick={() => this.closeModal()}
-            src={CloseOverlaySVG}
+            src={CloseIcon}
           />
         </ModalHeader>
         <ModalBody>

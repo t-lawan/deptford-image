@@ -8,7 +8,10 @@ const ExhibitionItemWrapper = styled.div`
 `;
 
 export const ResponsiveIFrameWrapper = styled.div`
-  padding: 1rem;
+  padding: 2rem;
+  width: 80%;
+  margin: auto;
+
   /* padding: 56.25% 0 0 0;
   position: relative; */
 `;
@@ -22,7 +25,6 @@ const DefaultExhibitionItem = props => {
             {" "}
             {item.title}, {item.participant}{" "}
           </h2>
-          <p>{item.description}</p>
           <ResponsiveIFrameWrapper>
             <VideoPlayer
               posterUrl={item.poster_url}

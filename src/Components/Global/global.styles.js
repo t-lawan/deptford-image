@@ -22,7 +22,8 @@ export const size = {
   desktop: "2260px"
 };
 export const Colour = {
-  green: "#7FFF00"
+  green: "#7FFF00",
+  grey: '#D8D7D5'
 };
 
 export const GlobalStyle = createGlobalStyle`
