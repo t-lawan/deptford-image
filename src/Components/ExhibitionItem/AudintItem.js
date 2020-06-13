@@ -19,7 +19,7 @@ const ExhibitionItemWrapper = styled.div`
   /* background: pink; */
 `;
 
-const AudintTitle = styled.h1`
+const AudintTitle = styled.h2`
   font-family: AudintTitle;
 `;
 

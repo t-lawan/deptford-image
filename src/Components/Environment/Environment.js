@@ -25,6 +25,7 @@ import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
+import { Colour } from "../Global/global.styles";
 
 const EnvironmentWrapper = styled.div`
   height: 100vh;
@@ -429,7 +430,7 @@ class Environment extends Component {
           let item = this.props.exhibition_items.find((exItem) => {
             return exItem.map_id === objectReference.id;
           })
-          let colour = item.is_live ? "green" : "black";
+          let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
           arr.push(item.title, item.participant);

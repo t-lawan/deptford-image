@@ -21,8 +21,9 @@ export const size = {
   desktopM: "1900px",
   desktop: "2260px"
 };
-
-
+export const Colour = {
+  green: "#7FFF00"
+};
 
 export const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -96,6 +97,8 @@ h1,h2,h3,h4,h5,h6 {
   margin-bottom: 1.45rem;
   font-size: 2.5rem;
   line-height: 1.1;
+  color: ${Colour.green};
+
 }
 h2 {
   margin-bottom: 1.45rem;
@@ -158,7 +161,3 @@ p {
 }
   `;
 
-
-  export const Colour = {
-    green: '#7FFF00'
-  }

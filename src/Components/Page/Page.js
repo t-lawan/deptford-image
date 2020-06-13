@@ -1,45 +1,35 @@
 import * as React from "react";
-import styled from "styled-components";
 import { connect } from "react-redux";
-import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import { richTextOptions } from "../../Utility/Richtext";
-import { Colour } from "../Global/global.styles";
-
-const PageWrapper = styled.div`
-  padding: 1rem;
-  width: 60%;
-`;
-
-const TextWrapper = styled.div`
-  text-align: left;
-`
-
-const PageTitle =  styled.h1`
-  padding-bottom: 2rem;
-  color: ${Colour.green};
-  border-bottom: 1px solid ${Colour.green};
-`
-
+import DefaultPage from "./DefaultPage";
+import ProgrammePage from "./ProgrammePage";
+import AboutPage from './AboutPage'
 const Page = props => {
   let item = props.pages.find(it => {
     return it.id === props.modal_item;
   });
-  return (
-    <PageWrapper>
-      {item ? (
-        <>
-          <PageTitle> {item.title}</PageTitle>
-          <TextWrapper> {documentToReactComponents(item.text, richTextOptions)} </TextWrapper>
-        </>
-      ) : null}
-    </PageWrapper>
-  );
+
+  let renderedComponent = <p></p>;
+  if (item) {
+    switch (item.title) {
+      case "Programme":
+        renderedComponent = <ProgrammePage item={item} />;
+        break;
+      case "About":
+        renderedComponent = <AboutPage item={item} />;
+        break;
+      default:
+        renderedComponent = <DefaultPage item={item} />;
+        break;
+    }
+  }
+  return renderedComponent;
 };
 
 const mapStateToProps = state => {
   return {
     pages: state.pages,
-    modal_item: state.modal_item
+    modal_item: state.modal_item,
+    exhibition_items: state.exhibition_items
   };
 };
 

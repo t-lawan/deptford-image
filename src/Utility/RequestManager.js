@@ -35,6 +35,7 @@ export default class RequestManager {
         item.sys.id,
         item.fields.mapId,
         item.fields.title,
+        item.fields.type,
         item.fields.shortDescription,
         item.fields.description,
         item.fields.participant,

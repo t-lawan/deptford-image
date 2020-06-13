@@ -51,9 +51,12 @@ export const ObjectExhibitionMap = {
         id: 'about',
         type: ModelTypes.PAGE
     },
+    "FbxScene_slunl_LOD0": {
+        id: 'programme',
+        type: ModelTypes.PAGE
+    },
     "Object_1": null,
-    "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": null,
     "FbxScene_Aset_wood_branch_M_rkku2_LOD0": null,
     "FbxScene_teufceuda_LOD0": null,
-    "FbxScene_slunl_LOD0": null,
+    "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": null,
 }

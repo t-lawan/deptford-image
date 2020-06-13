@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { showInstructions } from "../../Store/action";
 import ImageIcon from "../../Assets/info.png";
+import { Colour } from "../Global/global.styles";
 const InstructionWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -20,7 +21,7 @@ const Instructions = styled.div`
   position: sticky;
   top: 75%;
   text-align: center;
-  color: green;
+  color: ${Colour.green};
 `;
 
 const TextWrapper = styled.div`
