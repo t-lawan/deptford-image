@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import TransparentStar from "../../Assets/TransparentStar.png";
 const LoadingIconWrapper = styled.div`
-    width: 5%;
+    width: 10%;
+    padding: 0 1rem;
 `;
 
 const LoadingIconImage = styled.img`

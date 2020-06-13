@@ -26,6 +26,7 @@ const ModalHeader = styled.div`
   position: fixed;
   width: 100%;
   z-index: 550;
+  padding: 1rem;
 
 `;
 
