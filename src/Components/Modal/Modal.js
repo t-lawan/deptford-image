@@ -3,9 +3,11 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
+import CloseIcon from "../../Assets/CloseIcon.png";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 import { size } from "../Global/global.styles";
-import Page from "../Page/Page";import { ModelTypes } from "../../Utility/ObjectExhibitionMap";
+import Page from "../Page/Page";
+import { ModelTypes } from "../../Utility/ObjectExhibitionMap";
 
 const ModalWrapper = styled.div`
   position: absolute;
@@ -14,17 +16,22 @@ const ModalWrapper = styled.div`
   z-index: 500;
   background: white;
   display: ${props => (props.show ? "block" : "none")};
-  text-align: center;
+  /* text-align: center; */
 `;
 
 const ModalHeader = styled.div`
-  padding: 0.5em 0.25em;
+  /* padding: 0.5em 0.25em; */
   padding-bottom: 0;
   text-align: right;
+  position: fixed;
+  width: 100%;
+  z-index: 550;
+  padding: 1rem;
+
 `;
 
 const ModalBody = styled.div`
-  padding: 2em;
+  /* padding: 2em; */
   padding-bottom: 0;
 `;
 export const ModalCloseImage = styled.img`
@@ -46,7 +53,7 @@ class Modal extends React.Component {
         <ModalHeader>
           <ModalCloseImage
             onClick={() => this.closeModal()}
-            src={CloseOverlaySVG}
+            src={CloseIcon}
           />
         </ModalHeader>
         <ModalBody>

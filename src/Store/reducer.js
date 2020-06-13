@@ -6,7 +6,8 @@ import {
   LOADING,
   SHOW_INSTRUCTIONS,
   HIDE_INSTRUCTIONS,
-  SET_PAGES
+  SET_PAGES,
+  SET_MEDIA_ASSETS
 } from "./action";
 import { ModelTypes } from "../Utility/ObjectExhibitionMap";
 
@@ -18,6 +19,7 @@ const initalState = {
   loaded: 0.1,
   total: 1,
   exhibition_items: [],
+  media_assets: [],
   pages: [],
   show_instructions: true
 };
@@ -51,6 +53,11 @@ export const reducer = (state = initalState, action) => {
       return {
         ...state,
         pages: action.pages
+      };
+    case SET_MEDIA_ASSETS:
+      return {
+        ...state,
+        media_assets: action.media_assets
       };
     case LOADING:
       return {

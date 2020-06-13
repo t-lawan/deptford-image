@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import AudintItem from "./AudintItem";
+import DefaultExhibitionItem from "./DefaultExhibitionItem";
 
-const ExhibitionItemWrapper = styled.div``;
 
 export const ResponsiveIFrameWrapper = styled.div`
   padding: 1rem;
@@ -15,19 +15,19 @@ const ExhibitionItem = props => {
     return it.id === props.modal_item;
   });
 
-  return (
-    <ExhibitionItemWrapper>
-      {item ? <div>
-        <h2> {item.title}, {item.participant} </h2>
-        <p> 
-            {item.description}
-        </p>
-        <ResponsiveIFrameWrapper>
-          <VideoPlayer posterUrl={item.poster_url} videoUrl={item.video_url}/>
-        </ResponsiveIFrameWrapper>
-      </div> :  null}
-    </ExhibitionItemWrapper>
-  );
+  let renderedComponent = <p></p>;
+  if (item) {
+    switch (item.map_id) {
+      case "protocols_audint":
+        renderedComponent = <AudintItem item={item} />;
+        break;
+      default:
+        renderedComponent = <DefaultExhibitionItem item={item} />;
+        break;
+    }
+  }
+
+  return renderedComponent;
 };
 
 const mapStateToProps = state => {

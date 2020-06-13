@@ -15,7 +15,8 @@ import {
   openModal,
   setExhibitionItems,
   loading,
-  setPages
+  setPages,
+  setMediaAssets
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -25,6 +26,7 @@ import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
+import { Colour } from "../Global/global.styles";
 
 const EnvironmentWrapper = styled.div`
   height: 100vh;
@@ -107,7 +109,7 @@ class Environment extends Component {
     } else {
       this.setupFlyControls();
     }
-    this.setupStats();
+    // this.setupStats();
     this.addEventListeners();
   };
 
@@ -244,6 +246,7 @@ class Environment extends Component {
   startLoadingProcess = async () => {
     await this.setExhibitionItems();
     await this.setPages();
+    await this.setAssets();
     await this.loadFBXFile();
     this.loadAudio();
     this.loadFont();
@@ -362,6 +365,11 @@ class Environment extends Component {
     let pages = await RequestManager.getPages();
     this.props.setPages(pages);
   };
+  
+  setAssets = async () => {
+    let assets  = await RequestManager.getAssets();
+    this.props.setMediaAssets(assets);
+  };
 
   createAudioListener = () => {
     this.listener = new THREE.AudioListener();
@@ -429,7 +437,7 @@ class Environment extends Component {
           let item = this.props.exhibition_items.find((exItem) => {
             return exItem.map_id === objectReference.id;
           })
-          let colour = item.is_live ? "green" : "black";
+          let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
           arr.push(item.title, item.participant);
@@ -638,6 +646,7 @@ const mapDispatchToProps = dispatch => {
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     setPages: pages => dispatch(setPages(pages)),
+    setMediaAssets: assets => dispatch(setMediaAssets(assets)),
     loading: (loaded, total) => dispatch(loading(loaded, total))
   };
 };
