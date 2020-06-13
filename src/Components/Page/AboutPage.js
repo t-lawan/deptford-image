@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { richTextOptions } from "../../Utility/Richtext";
 import { Colour } from "../Global/global.styles";
+import { getMediaAsset } from "../../Store/action";
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -20,8 +21,27 @@ const PageTitle = styled.h1`
   border-bottom: 1px solid ${Colour.green};
 `;
 
+const PartnerWrapper = styled.div``;
+
+const PartnerImagesWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const PartnerImage = styled.img`
+  object-fit: contain;
+`;
+
+const ImageWrapper = styled.div`
+  width: 100px;
+  height: 100px;
+  /* height: auto; */
+  display: inline-flex;
+`;
+
 const AboutPage = props => {
   let item = props.item;
+  // let asset = getMediaAsset(props.media_assets, item.partners[0].images[0])
+  console.log("ITEM", item);
   return (
     <PageWrapper>
       {item ? (
@@ -31,6 +51,20 @@ const AboutPage = props => {
             {" "}
             {documentToReactComponents(item.text, richTextOptions)}{" "}
           </TextWrapper>
+          <TextWrapper>
+            {item.partners.map((partner, index) => (
+              <PartnerWrapper key={index}>
+                <p> {partner.title}</p>
+                <PartnerImagesWrapper>
+                  {partner.images.map((p, i) => (
+                    <ImageWrapper key={i}>
+                      <PartnerImage src={p.image.file.url} />
+                    </ImageWrapper>
+                  ))}
+                </PartnerImagesWrapper>
+              </PartnerWrapper>
+            ))}
+          </TextWrapper>
         </>
       ) : null}
     </PageWrapper>
@@ -39,8 +73,7 @@ const AboutPage = props => {
 
 const mapStateToProps = state => {
   return {
-    pages: state.pages,
-    modal_item: state.modal_item
+    media_assets: state.media_assets
   };
 };
 

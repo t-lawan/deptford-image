@@ -6,6 +6,7 @@ export const HIDE_INSTRUCTIONS = 'HIDE_INSTRUCTIONS';
 export const SET_EXHIBITION_ITEMS = 'SET_EXHIBITION_ITEMS';
 export const LOADING = 'LOADING';
 export const SET_PAGES = 'SET_PAGES';
+export const SET_MEDIA_ASSETS = 'SET_MEDIA_ASSETS';
 
 export const openModal = (item, type) => {
     return {
@@ -61,4 +62,17 @@ export const setPages = (pages) => {
         type: SET_PAGES,
         pages: pages
     }
+}
+
+export const setMediaAssets  = (mediaAssets) => {
+    return {
+        type: SET_MEDIA_ASSETS,
+        media_assets: mediaAssets
+    }
+}   
+
+export const getMediaAsset = (mediaAssets, id) =>{
+    return mediaAssets.find((asset) => {
+        return asset.id === id;
+    })
 }

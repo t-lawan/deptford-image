@@ -61,14 +61,20 @@ export default class RequestManager {
     });
 
     let response = await client.getEntries({
-      content_type: "page"
+      content_type: "page",
+      include: 3
+
     });
+
+    console.log('RESPONSE', response.items)
     let pages = response.items.map(item => {
       let partners = item.fields.partners
         ? item.fields.partners.map(partner => {
             let images = partner.fields.partnerImage
               ? partner.fields.partnerImage.map(image => {
-                  return image.sys;
+                  return {
+                    image: image.fields.image.fields
+                  }
                 })
               : null;
             return {
@@ -84,6 +90,8 @@ export default class RequestManager {
         partners
       );
     });
+    console.log('PAGES', pages)
+
     return pages;
   }
 

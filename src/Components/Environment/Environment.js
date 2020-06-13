@@ -15,7 +15,8 @@ import {
   openModal,
   setExhibitionItems,
   loading,
-  setPages
+  setPages,
+  setMediaAssets
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -366,7 +367,8 @@ class Environment extends Component {
   };
   
   setAssets = async () => {
-    await RequestManager.getAssets();
+    let assets  = await RequestManager.getAssets();
+    this.props.setMediaAssets(assets);
   };
 
   createAudioListener = () => {
@@ -644,6 +646,7 @@ const mapDispatchToProps = dispatch => {
     setExhibitionItems: exhibitionItems =>
       dispatch(setExhibitionItems(exhibitionItems)),
     setPages: pages => dispatch(setPages(pages)),
+    setMediaAssets: assets => dispatch(setMediaAssets(assets)),
     loading: (loaded, total) => dispatch(loading(loaded, total))
   };
 };
