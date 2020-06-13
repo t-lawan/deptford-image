@@ -25,7 +25,7 @@ const LoadingWrapper = styled.div`
 const LoadingTitle = styled.h1`
   color: white;
   z-index: 1000;
-
+  font-size: 3rem;
 `;
 
 const Loading = props => {
