@@ -6,7 +6,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import ExplosionFBX from "../../Assets/Models/Explosion.fbx";
+import Compare from "../../Assets/Models/compare.fbx";
+import ExplosionSceneFBX from "../../Assets/Models/ExplosionScene.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -27,7 +28,7 @@ import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
 import { Colour } from "../Global/global.styles";
-
+import TestImage from '../../Assets/AudintBackground.png'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
   overflow-y: hidden;
@@ -186,11 +187,16 @@ class Environment extends Component {
   };
   createScene = () => {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x72869d);
-    this.scene.fog = new THREE.FogExp2(0x72869d, 0.001);
+    this.scene.background = new THREE.Color(Colour.grey);
+    // this.scene.fog = new THREE.FogExp2(new THREE.Color('white'), 0.001);
   };
   createLight = () => {
-    this.light = new THREE.DirectionalLight(0xffffff, 0.8);
+    this.light = new THREE.DirectionalLight(0xffffff, 2);
+    // let targetObject = new THREE.Object3D();
+    // targetObject.position.set(this.centralPoint.x, this.centralPoint.y, this.centralPoint.z);
+    // this.scene.add(targetObject);
+
+    // this.light.target = targetObject
     this.scene.add(this.light);
   };
   createRayCaster = () => {
@@ -265,7 +271,7 @@ class Environment extends Component {
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
     loader.load(
-      ExplosionFBX,
+      ExplosionSceneFBX,
       object => {
         this.centerObject = object;
       },
@@ -312,18 +318,40 @@ class Environment extends Component {
   };
   addFBXFile = () => {
     if (this.centerObject) {
-      let meshes = [...this.centerObject.children];
+      let groups = [...this.centerObject.children];
       // console.log('MESHES', meshes)
       // let text = meshes.map((me) => {
       //   return me.name
       // })
+      let meshes = []
+      groups.forEach((group) => {
+        meshes.push(...group.children)
+      })
 
-      // console.log('TEXT MESH', text)
       meshes.forEach(mesh => {
         mesh.position.add(this.centralPoint);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;		
         mesh.updateMatrix();
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeBoundingBox();
+
+        if(mesh.material) {
+            // mesh.material.map.name = TestImage
+
+            // mesh.material.specular.r = 0
+            // mesh.material.specular.g = 0
+            // mesh.material.specular.b = 0  
+            // mesh.material.shininess = 2       
+            // mesh.material.emissive.r = 0.5
+            // mesh.material.emissive.g = 0.5
+            // mesh.material.emissive.b = 0.5
+
+            mesh.material.morphNormals = true;
+            mesh.material.morphTargets = true;
+          // console.log('MESHES', mesh.material)
+
+        }
 
         // Get World position of mesh
         let spherePosition = mesh.geometry.boundingSphere.center;
@@ -521,6 +549,7 @@ class Environment extends Component {
 
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
+       console.log('XxXXXX', mesh.object.material)
       if (mesh.object.callback && mesh.object.model_id) {
         mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
@@ -547,9 +576,9 @@ class Environment extends Component {
   };
 
   addColourToMesh = obj => {
-    obj.material.color.r = 0;
-    obj.material.color.g = 0;
-    obj.material.color.b = 0;
+    // obj.material.color.r = 0;
+    // obj.material.color.g = 0;
+    // obj.material.color.b = 0;
     obj.material.emissive.r = 0.4;
     obj.material.emissive.g = 1;
     obj.material.emissive.b = 0;
@@ -557,9 +586,9 @@ class Environment extends Component {
 
   removeColourFromAllMesh = () => {
     this.clickableObjects.forEach(obj => {
-      obj.material.color.r = 0;
-      obj.material.color.g = 0;
-      obj.material.color.b = 0;
+      // obj.material.color.r = 0;
+      // obj.material.color.g = 0;
+      // obj.material.color.b = 0;
       obj.material.emissive.r = 0;
       obj.material.emissive.g = 0;
       obj.material.emissive.b = 0;
