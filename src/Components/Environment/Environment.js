@@ -245,6 +245,7 @@ class Environment extends Component {
   startLoadingProcess = async () => {
     await this.setExhibitionItems();
     await this.setPages();
+    await this.setAssets();
     await this.loadFBXFile();
     this.loadAudio();
     this.loadFont();
@@ -362,6 +363,10 @@ class Environment extends Component {
   setPages = async () => {
     let pages = await RequestManager.getPages();
     this.props.setPages(pages);
+  };
+  
+  setAssets = async () => {
+    await RequestManager.getAssets();
   };
 
   createAudioListener = () => {

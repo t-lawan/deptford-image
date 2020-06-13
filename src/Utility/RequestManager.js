@@ -2,6 +2,7 @@ import ExhibitionItemModel from "../Models/ExhibitionItemModel";
 import * as contentful from "contentful";
 import PageModel from "../Models/PageModel";
 import moment from "moment";
+import MediaAssetModel from "../Models/MediaAssetModel";
 export default class RequestManager {
   static space = "nrx29ogwm4cn";
   static environment = "master";
@@ -28,9 +29,11 @@ export default class RequestManager {
         moment(item.fields.endDate)
       );
 
-      let audintSection = item.fields.audintSection ? item.fields.audintSection.map((section => {
-        return section.fields;
-      })) : null;
+      let audintSection = item.fields.audintSection
+        ? item.fields.audintSection.map(section => {
+            return section.fields;
+          })
+        : null;
       return new ExhibitionItemModel(
         item.sys.id,
         item.fields.mapId,
@@ -61,8 +64,40 @@ export default class RequestManager {
       content_type: "page"
     });
     let pages = response.items.map(item => {
-      return new PageModel(item.sys.id, item.fields.title, item.fields.text);
+      let partners = item.fields.partners
+        ? item.fields.partners.map(partner => {
+            let images = partner.fields.partnerImage
+              ? partner.fields.partnerImage.map(image => {
+                  return image.sys;
+                })
+              : null;
+            return {
+              title: partner.fields.title,
+              images: images
+            };
+          })
+        : null;
+      return new PageModel(
+        item.sys.id,
+        item.fields.title,
+        item.fields.text,
+        partners
+      );
     });
     return pages;
+  }
+
+  static async getAssets() {
+    let client = contentful.createClient({
+      space: this.space,
+      environment: this.environment, // defaults to 'master' if not set
+      accessToken: this.accessToken
+    });
+
+    let response = await client.getAssets();
+    let mediaAssets = response.items.map((asset) => {
+      return new MediaAssetModel(asset.sys.id,asset.fields.title, asset.fields.file.url, asset.fields.file.contentType);
+    });
+    return mediaAssets;
   }
 }
