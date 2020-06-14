@@ -337,7 +337,7 @@ class Environment extends Component {
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
-      text.position.y = position.y + 20;
+      text.position.y = position.y + 10;
       text.position.z = position.z;
       this.scene.add(text);
       return text;
@@ -392,7 +392,7 @@ class Environment extends Component {
         // Get Top position fo mesh by getting difference between min and max
         let diff = mesh.geometry.boundingBox.max;
         diff = diff.sub(mesh.geometry.boundingBox.min);
-        // this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
+        mesh.objectBoundary = this.createObjectBoundary(diff.x, diff.y, diff.z ,mesh.worldPosition)
 
         let topPosition = position;
         topPosition.y = topPosition.y + diff.y / 2;
@@ -400,7 +400,7 @@ class Environment extends Component {
 
         mesh.castShadow = true;
 
-        mesh.callback = (id, type) => this.objectSelected(id, type);
+        mesh.objectBoundary.callback = (id, type) => this.objectSelected(id, type);
 
         this.clickableObjects.push(mesh);
         // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
@@ -454,14 +454,13 @@ class Environment extends Component {
     this.sound = new THREE.PositionalAudio(this.listener)
   };
 
-  createObjectBoundary = (width, height, position) => {
+  createObjectBoundary = (width, height, depth, position) => {
     let material = new THREE.MeshStandardMaterial();
-    material.opacity = 0.2;
+    material.opacity = 0;
     material.transparent = true;
-    material.visible = true;
+    material.visible = false;
 
-    let geometry = new THREE.BoxGeometry(width, height);
-
+    let geometry = new THREE.BoxGeometry(width, height, depth);
     let boundary = new THREE.Mesh(geometry, material);
 
     boundary.position.x = position.x;
@@ -469,6 +468,8 @@ class Environment extends Component {
     boundary.position.z = position.z;
 
     this.scene.add(boundary);
+
+    return boundary;
   };
 
   objectSelected = (id, modelType) => {
@@ -517,9 +518,9 @@ class Environment extends Component {
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
-          arr.push(item.title, item.participant);
+          arr.push(item.displayed_time, item.title, item.participant);
           let position = this.clickableObjects[index].topPosition;
-          position.y = position.y + distance * arr.length;
+          position.y = position.y + (distance * arr.length);
           let text = [];
           arr.forEach(sentence => {
             text.push(this.addFont(sentence, position, colour));
@@ -528,10 +529,10 @@ class Environment extends Component {
 
           this.createLine(this.clickableObjects[index].topPosition, colour);
 
-          this.clickableObjects[index].model_id = item.id;
-          this.clickableObjects[index].model_title = item.title;
-          this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
-          this.clickableObjects[index].text = text;
+          this.clickableObjects[index].objectBoundary.model_id = item.id;
+          this.clickableObjects[index].objectBoundary.model_title = item.title;
+          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.EXHIBIITION_ITEM;
+          this.clickableObjects[index].objectBoundary.text = text;
         }
 
         if(objectReference.type === ModelTypes.PAGE) {
@@ -545,8 +546,8 @@ class Environment extends Component {
           position.y = position.y - distance * 2;
           this.createLine(this.clickableObjects[index].topPosition, "red");
     
-          this.clickableObjects[index].model_type = ModelTypes.PAGE;
-          this.clickableObjects[index].model_id = item.id;
+          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.PAGE;
+          this.clickableObjects[index].objectBoundary.model_id = item.id;
         }
       } else {
 
@@ -556,9 +557,9 @@ class Environment extends Component {
 
 
     // Remove Clickable that has no model type or Id
-    this.clickableObjects = this.clickableObjects.filter(obj => {
-      return obj.model_type;
-    });
+    // this.clickableObjects = this.clickableObjects.filter(obj => {
+    //   return obj.model_type;
+    // });
   };
 
   setupOrbitControls = () => {
@@ -590,13 +591,14 @@ class Environment extends Component {
 
   onDocumentDoubleClick = event => {
     this.setMouse(event);
-
+    let boundingBoxes = this.clickableObjects.map((object) => {
+      return object.objectBoundary;
+    })
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
-
+    this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+    console.log(this.intersects)
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
-       console.log('XxXXXX', mesh.object.material)
       if (mesh.object.callback && mesh.object.model_id) {
         mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
       }
@@ -607,7 +609,10 @@ class Environment extends Component {
     event.preventDefault();
     this.setMouse(event);
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects, true);
+    let boundingBoxes = this.clickableObjects.map((object) => {
+      return object.objectBoundary;
+    })
+    this.intersects = this.raycaster.intersectObjects(boundingBoxes, true);
     if (this.intersects.length > 0) {
       if (!this.isHovering) {
         this.isHovering = true;

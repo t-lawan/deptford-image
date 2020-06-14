@@ -114,7 +114,7 @@ const ProgrammePage = props => {
             {reader.map((item, index) => (
                 <ExhibitionItemWrapper key={index}>
                     <ExhibitionItem>
-                        <ExhibitionText> {moment(item.start_date).format('D')} - {moment(item.end_date).format('D MMMM')}</ExhibitionText>
+                        <ExhibitionText> {item.displayed_time}</ExhibitionText>
                     </ExhibitionItem>
                     <ExhibitionItem>
                         <ExhibitionText> {item.participant}</ExhibitionText>     

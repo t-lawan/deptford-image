@@ -1,3 +1,4 @@
+import moment from 'moment'
 export default class ExhibitionItemModel {
     id;
     title;
@@ -12,6 +13,7 @@ export default class ExhibitionItemModel {
     map_id;
     audint_section;
     type;
+    displayed_time;
     constructor(id, map_id, title, type, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive, audintSection) {
         this.id = id;
         this.title = title;
@@ -26,5 +28,6 @@ export default class ExhibitionItemModel {
         this.map_id = map_id;
         this.audint_section = audintSection;
         this.type = type;
+        this.displayed_time = `${moment(this.start_date).format('D')} - ${moment(this.end_date).format('D MMMM')}`
     }
 }

@@ -16,12 +16,12 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ti1vcenda_LOD0": {
-        id: 'contagion',
-        type: ModelTypes.PAGE
-    },
-    "FbxScene_uc1iccejw_LOD0": {
         id: 'comrade_caterina',
         type: ModelTypes.EXHIBIITION_ITEM
+    },
+    "FbxScene_uc1iccejw_LOD0": {
+        id: 'contagion',
+        type: ModelTypes.PAGE
     },
     "FbxScene_sjwoE_LOD0": {
         id: 'sonzai_emilia',
