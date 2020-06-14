@@ -125,6 +125,9 @@ p, li{
   font-size: 1.5rem  !important;
   line-height: 1.3;
   font-weight: 100 !important;
+  @media (max-width: ${size.tabletL}) {
+    padding: 1.2rem;
+  }
 }
 
 p {

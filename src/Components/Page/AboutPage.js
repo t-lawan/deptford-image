@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { richTextOptions } from "../../Utility/Richtext";
 import { Colour, size } from "../Global/global.styles";
-import { getMediaAsset } from "../../Store/action";
 import { PageWrapper } from "./DefaultPage";
 
 
@@ -38,8 +37,9 @@ const PartnerTitle = styled.p`
   color: ${Colour.green};
 `
 
-const TeamMemberWrapper = styled(PartnerWrapper)`
-  margin: 2rem 0;
+const TeamMemberWrapper = styled.div`
+  /* margin: 2rem 0; */
+  padding-bottom: 1rem;
 `
 
 const ImageWrapper = styled.div`
@@ -65,7 +65,7 @@ const AboutPage = props => {
             <PartnerTitle> DEMO TEAM:</PartnerTitle>
             {item.team_members.map((team_member, index) => (
               <TeamMemberWrapper key={index}>
-                <p> {team_member.name}, {team_member.role}</p>
+                {/* <p> {team_member.name}, {team_member.role}</p> */}
                 <p> {team_member.email}</p>
               </TeamMemberWrapper>
             ))}
