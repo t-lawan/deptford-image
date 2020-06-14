@@ -113,7 +113,7 @@ class Environment extends Component {
       this.setupFlyControls();
     }
 
-    this.playSound()
+    // this.playSound()
     // this.setupStats();
     this.addEventListeners();
   };
@@ -277,6 +277,7 @@ class Environment extends Component {
     await this.setAssets();
     await this.loadFBXFile();
     this.loadAudio();
+    this.loadLocalSound()
     this.loadFont();
   };
 
@@ -284,6 +285,7 @@ class Environment extends Component {
     this.addFBXFile();
     this.assignExhibitionItemsToClickableObjects();
     this.addSound();
+    this.addLocalSound();
     this.props.hasLoaded();
   };
 
@@ -305,16 +307,20 @@ class Environment extends Component {
 
   loadAudio = () => {
     this.globalAudioLoader = new THREE.AudioLoader(this.manager);
-    this.audioLoader = new THREE.AudioLoader(this.manager);
 
-    //
     this.globalAudioLoader.load(Sound, buffer => {
       this.globalSound.setBuffer(buffer);
     });
+
+  };
+
+  loadLocalSound = () => {
+    this.audioLoader = new THREE.AudioLoader(this.manager);
+
     this.audioLoader.load(PositionalSound, buffer => {
       this.sound.setBuffer(buffer);
     });
-  };
+  }
 
   loadProgressing = (url, itemsLoaded, itemsTotal) => {
     this.props.loading(itemsLoaded, itemsTotal);
@@ -411,13 +417,23 @@ class Environment extends Component {
     this.globalSound.setLoop(false);
     this.globalSound.setVolume(1);
     this.globalSound.duration = 1;
-    this.sound.setRefDistance( 100 );
-    this.sound.setLoop(true);
-    this.sound.setVolume(1);
-    this.clickableObjects[4].add(this.sound)
-    this.sound.play()
 
   };
+
+  addLocalSound  = () => {
+    this.sound.setRefDistance( 200 );
+    this.sound.setLoop(true);
+    this.sound.setVolume(1);
+
+    let item = this.clickableObjects.find((i) => {
+      return i.name === "FbxScene_udgkcewhw_LOD0"
+    })
+    console.log('ADDED SOUND')
+    if(item){
+      item.add(this.sound)
+    }
+    // this.sound.play()
+  }
 
   stopAllSound = () => {
     this.globalSound.setVolume(0);
@@ -425,10 +441,9 @@ class Environment extends Component {
   }
 
   playSound = () => {
-    this.globalSound.setVolume(1)
-    this.sound.setVolume(1)
-
-    this.sound.play()
+    if(!this.sound.isPlaying) {
+      this.sound.play()
+    }
   }
 
   setExhibitionItems = async () => {
@@ -471,6 +486,7 @@ class Environment extends Component {
   };
 
   objectSelected = (id, modelType) => {
+    this.sound.pause()
     this.globalSound.play();
     this.props.openModal(id, modelType);
     this.setState({
@@ -589,6 +605,7 @@ class Environment extends Component {
 
   onDocumentDoubleClick = event => {
     if(!this.state.pause){
+      console.log('', this.clickableObjects)
       this.setMouse(event);
       let boundingBoxes = this.clickableObjects.map((object) => {
         return object.objectBoundary;
@@ -629,6 +646,8 @@ class Environment extends Component {
 
   onDocumentMouseMove = event => {
     if(!this.state.pause){
+      
+      this.playSound()
       event.preventDefault();
       this.setMouse(event);
       this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -651,6 +670,8 @@ class Environment extends Component {
     }
 
   };
+
+
 
 
 

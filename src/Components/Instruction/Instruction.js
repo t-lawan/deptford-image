@@ -5,7 +5,7 @@ import { showInstructions } from "../../Store/action";
 import ImageIcon from "../../Assets/info.png";
 import { Colour } from "../Global/global.styles";
 const InstructionWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   width: 100%;
   /* height: 100%; */
   /* z-index: 1000; */
@@ -18,8 +18,8 @@ const InstructionWrapper = styled.div`
 `;
 
 const Instructions = styled.div`
-  position: sticky;
-  top: 75%;
+  /* position: sticky; */
+  /* top: 75%; */
   text-align: center;
   color: ${Colour.green};
 `;
