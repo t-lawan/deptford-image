@@ -2,20 +2,16 @@ import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
-import { Colour } from "../Global/global.styles";
+import { Colour, size } from "../Global/global.styles";
+import { ResponsiveIFrameWrapper } from "./DefaultExhibitionItem";
 
 const ExhibitionItemWrapper = styled.div`
   padding: 1rem;
+  @media (max-width: ${size.tabletL}) {
+    padding: 0.25rem;
+  }
 `;
 
-export const ResponsiveIFrameWrapper = styled.div`
-  padding: 2rem;
-  width: 80%;
-  margin: auto;
-
-  /* padding: 56.25% 0 0 0;
-  position: relative; */
-`;
 const ScreeningExhibitionItem = props => {
   let item = props.item;
   return (

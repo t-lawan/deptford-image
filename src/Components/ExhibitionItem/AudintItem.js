@@ -20,6 +20,12 @@ const ExhibitionItemWrapper = styled.div`
   /* background: pink; */
 `;
 
+const TextWrapper = styled.div`
+  padding: 1rem;
+`
+
+const AudioWrapper = styled(TextWrapper)``
+
 const AudintTitle = styled.h1`
   font-family: AudintTitle;
   font-weight: 100;
@@ -31,30 +37,30 @@ const generateSection = item => {
   switch (item.sectionType) {
     case "video":
       renderComponent = (
-        <div>
+        <TextWrapper>
           {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
           <AudIntResponsiveIFrameWrapper>
             <VideoPlayer
               videoUrl={item.videoUrl}
             />
           </AudIntResponsiveIFrameWrapper>
-        </div>
+        </TextWrapper>
       );
       break;
     case "text":
       renderComponent = (
-        <div>
+        <TextWrapper>
           {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
           {documentToReactComponents(item.text, richTextOptions)}
-        </div>
+        </TextWrapper>
       );
       break;
     case "audio":
       renderComponent = (
-        <div>
+        <AudioWrapper>
           {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
           <p> AUDIO</p>
-        </div>
+        </AudioWrapper>
       );
       break;
   }

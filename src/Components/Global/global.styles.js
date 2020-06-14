@@ -1,8 +1,4 @@
 import { createGlobalStyle } from "styled-components";
-import KarlaRegular from "../../Assets/Fonts/Karla-Regular.ttf";
-import KarlaBold from "../../Assets/Fonts/Karla-Bold.ttf";
-import KarlaBoldItalic from "../../Assets/Fonts/Karla-BoldItalic.ttf";
-import KarlaItalic from "../../Assets/Fonts/Karla-Italic.ttf";
 import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
 import GroteskLightExtender from "../../Assets/Fonts/Grotesk_Light_Extended.otf";
@@ -28,34 +24,6 @@ export const Colour = {
 };
 
 export const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: Karla;
-    src: url(${KarlaRegular}) format('ttf');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: Karla;
-    src: url(${KarlaBold}) format('ttf');
-    font-weight: bold;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: Karla;
-    src: url(${KarlaBoldItalic}) format('ttf');
-    font-weight: bold;
-    font-style: italic;
-  }
-
-  @font-face {
-    font-family: Karla;
-    src: url(${KarlaItalic}) format('ttf');
-    font-weight: normal;
-    font-style: italic;
-  }
-
   @font-face {
     font-family: AudintBody;
     src: url(${AudintBody}) format('ttf');

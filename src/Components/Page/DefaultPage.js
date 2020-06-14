@@ -3,11 +3,14 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { richTextOptions } from "../../Utility/Richtext";
-import { Colour } from "../Global/global.styles";
+import { Colour, size } from "../Global/global.styles";
 
-const PageWrapper = styled.div`
+export const PageWrapper = styled.div`
   padding: 1rem;
   width: 80%;
+  @media (max-width: ${size.tabletL}) {
+    width: 100%;
+  }
 `;
 
 const TextWrapper = styled.div`

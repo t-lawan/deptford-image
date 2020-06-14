@@ -6,7 +6,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import Compare from "../../Assets/Models/compare.fbx";
 import ExplosionSceneFBX from "../../Assets/Models/ExplosionScene.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
@@ -29,7 +28,6 @@ import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
 import { Colour } from "../Global/global.styles";
-import TestImage from '../../Assets/AudintBackground.png'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
   overflow-y: hidden;
