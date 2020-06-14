@@ -552,6 +552,7 @@ class Environment extends Component {
 
           this.clickableObjects[index].objectBoundary.model_id = item.id;
           this.clickableObjects[index].objectBoundary.model_title = item.title;
+          this.clickableObjects[index].objectBoundary.model = item;
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].objectBoundary.text = text;
@@ -608,6 +609,13 @@ class Environment extends Component {
   // Here should come custom code.
   // Code below is taken from Three.js BoxGeometry example
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
+  canOpen = (object) => {
+    if(object.model_type === ModelTypes.PAGE) {
+      return true
+    }
+
+    return object.model.is_live;
+  }
 
   onDocumentDoubleClick = event => {
     if (!this.state.pause) {
@@ -619,7 +627,9 @@ class Environment extends Component {
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
-        if (mesh.object.callback && mesh.object.model_id) {
+        console.log('MESH', mesh)
+
+        if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
           mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
         }
       }
@@ -677,6 +687,7 @@ class Environment extends Component {
       }
     }
   };
+
 
   addColourToMesh = obj => {
     // obj.material.color.r = 0;
