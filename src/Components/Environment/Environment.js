@@ -16,7 +16,8 @@ import {
   setExhibitionItems,
   loading,
   setPages,
-  setMediaAssets
+  setMediaAssets,
+  hideInstructions
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -200,7 +201,7 @@ class Environment extends Component {
     this.light.position.add(this.centralPoint);
 
     let point_one = new THREE.PointLight(0xffffff, 5, 1000);
-    let point_two = new THREE.PointLight(0xffffff, 5, 4000);
+    let point_two = new THREE.PointLight(0xffffff, 5, 1000);
 
     var sphereSize = 1;
 
@@ -220,7 +221,7 @@ class Environment extends Component {
     this.scene.add(this.light);
 
     this.scene.add(point_one);
-    this.scene.add(point_two);
+    // this.scene.add(point_two);
   };
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
@@ -565,9 +566,9 @@ class Environment extends Component {
           let text = [];
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * 2;
-          text.push(this.addFont(item.title, position, "red"));
+          text.push(this.addFont(item.title, position, Colour.green));
           position.y = position.y - distance * 2;
-          this.createLine(this.clickableObjects[index].topPosition, "red");
+          this.createLine(this.clickableObjects[index].topPosition, Colour.green);
 
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.PAGE;
@@ -660,9 +661,18 @@ class Environment extends Component {
 
   onKeyDown = event => {
     if (!this.state.pause) {
+      this.hideInstructions()
       this.playSound();
     }
   };
+
+  hideInstructions = () => {
+    if(this.props.show_instructions) {
+      setTimeout(() => {
+        this.props.hideInstructions();
+      }, 1500)
+    }
+  }
 
   onDocumentMouseMove = event => {
     if (!this.state.pause) {
@@ -777,7 +787,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(setExhibitionItems(exhibitionItems)),
     setPages: pages => dispatch(setPages(pages)),
     setMediaAssets: assets => dispatch(setMediaAssets(assets)),
-    loading: (loaded, total) => dispatch(loading(loaded, total))
+    loading: (loaded, total) => dispatch(loading(loaded, total)),
+    hideInstructions: () => dispatch(hideInstructions())
   };
 };
 

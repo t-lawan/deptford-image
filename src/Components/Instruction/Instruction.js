@@ -4,17 +4,19 @@ import { connect } from "react-redux";
 import { showInstructions } from "../../Store/action";
 import ImageIcon from "../../Assets/info.png";
 import { Colour } from "../Global/global.styles";
+import Device from "../../Utility/Device";
 const InstructionWrapper = styled.div`
   position: fixed;
   width: 100%;
-  /* height: 100%; */
-  /* z-index: 1000; */
+  height: 100%;
+  z-index: 1100;
   background: transparent;
-  display: ${props => (props.show ? "block" : "none")};
-  text-align: center;
-  opacity: ${props => (props.show ? 1 : 0)};
-  transition: opacity ease-out 1s;
-  bottom: 0;
+  display: ${props => (props.show ? "flex" : "none")};
+  /* text-align: center; */
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  align-content: space-between;
 `;
 
 const Instructions = styled.div`
@@ -25,16 +27,17 @@ const Instructions = styled.div`
 `;
 
 const TextWrapper = styled.div`
-  float: right;
   padding: 1rem;
-  display: ${props => (props.show ? "block" : "none")};
 `;
 
+const InstructionText = styled.p`
+  margin-bottom: 0.5rem;
+`;
 const ImageWrapper = styled.div`
-  float: right;
+  /* float: right; */
   /* padding: 1rem; */
   display: ${props => (props.show ? "block" : "none")};
-  text-align: right;
+  /* text-align: right; */
 `;
 
 const InstructionInfoImage = styled.img`
@@ -44,9 +47,9 @@ const InstructionInfoImage = styled.img`
 const CloseText = styled.p`
   text-decoration: underline;
   :hover {
-    font-style: italic; 
+    font-style: italic;
   }
-`
+`;
 class Instruction extends React.Component {
   constructor(props) {
     super(props);
@@ -58,15 +61,14 @@ class Instruction extends React.Component {
   showText = () => {
     this.setState({
       show: true
-    })
-  }
-
+    });
+  };
 
   hideText = () => {
     this.setState({
       show: false
-    })
-  }
+    });
+  };
 
   componentDidUpdate(prevProps) {
     // if (
@@ -85,18 +87,34 @@ class Instruction extends React.Component {
 
   render() {
     return (
-      <InstructionWrapper show={this.props.has_loaded}>
+      <InstructionWrapper show={this.props.show_instructions}>
         <Instructions>
-          <ImageWrapper show={!this.state.show} onClick={() => this.showText()}>
+          {/* <ImageWrapper show={!this.state.show} onClick={() => this.showText()}>
             <InstructionInfoImage src={ImageIcon} />
-          </ImageWrapper>
-
-          <TextWrapper show={this.state.show} onClick={() => this.hideText()}>
-            <p> Click and Drag or Touch to turn the view </p>
-            <p> Use the arrows buttons or WASD keys to move </p>
-            <p> Use the Q and E keys to rotate </p>
-            <p> Double click on an object to open modal </p>
-            <CloseText onClick={() => this.hideText()}> click here to close </CloseText>
+          </ImageWrapper> */}
+          <TextWrapper>
+            {!Device.isMobile() ? (
+              <>
+                <InstructionText>
+                  {" "}
+                  Use the arrows buttons or WASD keys to move{" "}
+                </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Click and Drag to turn the view{" "}
+                </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Use the Q and E keys to rotate{" "}
+                </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Double click on an object with green text to view content{" "}
+                </InstructionText>
+              </>
+            ) : (
+              <InstructionText> Touch to turn the view </InstructionText>
+            )}
           </TextWrapper>
         </Instructions>
       </InstructionWrapper>
