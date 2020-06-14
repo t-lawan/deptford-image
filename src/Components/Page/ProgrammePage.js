@@ -1,13 +1,11 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { Colour } from "../Global/global.styles";
+import { Colour, size } from "../Global/global.styles";
 import moment from 'moment';
+import { PageWrapper } from "./DefaultPage";
 
-const PageWrapper = styled.div`
-  padding: 1rem;
-  width: 80%;
-`;
+
 
 const TextWrapper = styled.div`
   text-align: left;
