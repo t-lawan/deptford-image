@@ -651,7 +651,7 @@ class Environment extends Component {
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
-        if (mesh.object.callback && mesh.object.model_id) {
+        if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
           mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
         }
       }
