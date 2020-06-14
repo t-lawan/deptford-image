@@ -18,6 +18,7 @@ export default class RequestManager {
     let response = await client.getEntries({
       content_type: "exhibitionItem"
     });
+
     let exhibitionItems = response.items.map(item => {
       let poster_image = item.fields.posterImage
         ? item.fields.posterImage.fields.file.url
@@ -29,11 +30,14 @@ export default class RequestManager {
         moment(item.fields.endDate)
       );
 
+      let pdf = item.fields.pdf ? item.fields.pdf.fields : null;
+
       let audintSection = item.fields.audintSection
         ? item.fields.audintSection.map(section => {
             return section.fields;
           })
         : null;
+
       return new ExhibitionItemModel(
         item.sys.id,
         item.fields.mapId,
@@ -47,7 +51,8 @@ export default class RequestManager {
         item.fields.startDate,
         item.fields.endDate,
         isAfterStartDate && isBeforeEndDate,
-        audintSection
+        audintSection,
+        pdf
       );
     });
     return exhibitionItems;

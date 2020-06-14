@@ -169,5 +169,12 @@ p {
   border: 0 !important;
   border-radius: 0 !important;
 }
+
+.react-pdf__Page__svg, svg{
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  
+}
   `;
 

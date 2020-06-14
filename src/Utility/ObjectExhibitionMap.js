@@ -12,11 +12,11 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "tbiwO_LOD0_2": {
-        id: 'waters_arjuna',
+        id: 'comrade_caterina',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ti1vcenda_LOD0": {
-        id: 'comrade_caterina',
+        id: 'waters_arjuna',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_uc1iccejw_LOD0": {
@@ -32,7 +32,7 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },    
     "FbxScene_tdpscfcda_LOD0": {
-        id: 'sunday_zoe',
+        id: 'protocols_audint',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_sifoc_LOD0": {
@@ -40,7 +40,7 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_Aset_rock_granite_M_rjznD_LOD0": {
-        id: 'protocols_audint',
+        id: 'sunday_zoe',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ucmjdfkhw_LOD0": {

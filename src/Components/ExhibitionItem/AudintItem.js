@@ -14,13 +14,16 @@ const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
 const ExhibitionItemWrapper = styled.div`
   background: url(${AudintBackground});
   font-family: AudintBody;
-  color: #cdc2fe;
+  color: #cdc2fe !important;
   width: 100%;
+  padding: 2rem;
   /* background: pink; */
 `;
 
-const AudintTitle = styled.h2`
+const AudintTitle = styled.h1`
   font-family: AudintTitle;
+  font-weight: 100;
+  color: #cdc2fe !important;
 `;
 
 const generateSection = item => {
