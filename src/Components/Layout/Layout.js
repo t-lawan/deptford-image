@@ -70,7 +70,7 @@ const Layout = props => {
       <GlobalStyle />
       <Loading />
       <Modal />
-      <Instruction />
+      {/* <Instruction /> */}
       <div>{props.children}</div>
     </>
   );

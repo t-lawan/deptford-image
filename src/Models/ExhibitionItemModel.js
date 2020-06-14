@@ -14,7 +14,8 @@ export default class ExhibitionItemModel {
     audint_section;
     type;
     displayed_time;
-    constructor(id, map_id, title, type, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive, audintSection) {
+    pdf;
+    constructor(id, map_id, title, type, short_description, description, participant, video_url, poster_url, start_date, end_date, isLive, audintSection, pdf) {
         this.id = id;
         this.title = title;
         this.short_description = short_description;
@@ -28,6 +29,7 @@ export default class ExhibitionItemModel {
         this.map_id = map_id;
         this.audint_section = audintSection;
         this.type = type;
+        this.pdf = pdf;
         this.displayed_time = `${moment(this.start_date).format('D')} - ${moment(this.end_date).format('D MMMM')}`
     }
 }

@@ -518,7 +518,7 @@ class Environment extends Component {
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
-          arr.push(item.displayed_time, item.title, item.participant);
+          arr.push(item.displayed_time, item.participant, item.title);
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + (distance * arr.length);
           let text = [];
@@ -590,42 +590,71 @@ class Environment extends Component {
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentDoubleClick = event => {
-    this.setMouse(event);
-    let boundingBoxes = this.clickableObjects.map((object) => {
-      return object.objectBoundary;
-    })
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(boundingBoxes);
-    console.log(this.intersects)
-    if (this.intersects.length > 0) {
-      let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.model_id) {
-        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+    if(!this.state.pause){
+      this.setMouse(event);
+      let boundingBoxes = this.clickableObjects.map((object) => {
+        return object.objectBoundary;
+      })
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        if (mesh.object.callback && mesh.object.model_id) {
+          mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        }
       }
     }
   };
 
-  onDocumentMouseMove = event => {
-    event.preventDefault();
-    this.setMouse(event);
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    let boundingBoxes = this.clickableObjects.map((object) => {
-      return object.objectBoundary;
-    })
-    this.intersects = this.raycaster.intersectObjects(boundingBoxes, true);
-    if (this.intersects.length > 0) {
-      if (!this.isHovering) {
-        this.isHovering = true;
-        let obj = this.intersects[0].object;
-        this.addColourToMesh(obj);
-      }
-    } else {
-      if (this.isHovering) {
-        this.isHovering = false;
-        this.removeColourFromAllMesh();
+  onDocumentTouchStart = event => {
+    if(!this.state.pause){
+        // event.preventDefault();
+        this.mouse.x =
+        (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
+      this.mouse.y =
+        -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+  
+      let boundingBoxes = this.clickableObjects.map((object) => {
+        return object.objectBoundary;
+      })
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        if (mesh.object.callback && mesh.object.model_id) {
+          mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        }
       }
     }
+
   };
+
+  onDocumentMouseMove = event => {
+    if(!this.state.pause){
+      event.preventDefault();
+      this.setMouse(event);
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      let boundingBoxes = this.clickableObjects.map((object) => {
+        return object.objectBoundary;
+      })
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes, true);
+      if (this.intersects.length > 0) {
+        if (!this.isHovering) {
+          this.isHovering = true;
+          let obj = this.intersects[0].object;
+          this.addColourToMesh(obj);
+        }
+      } else {
+        if (this.isHovering) {
+          this.isHovering = false;
+          this.removeColourFromAllMesh();
+        }
+      }
+    }
+
+  };
+
+
 
   addColourToMesh = obj => {
     // obj.material.color.r = 0;
@@ -647,21 +676,7 @@ class Environment extends Component {
     });
   };
 
-  onDocumentTouchStart = event => {
-    // event.preventDefault();
-    this.mouse.x =
-      (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
-    this.mouse.y =
-      -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
-    if (this.intersects.length > 0) {
-      let mesh = this.intersects[0];
-      if (mesh.object.callback && mesh.object.model_id) {
-        mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
-      }
-    }
-  };
+
 
   onWindowResize = () => {
     const width = this.mount.clientWidth;

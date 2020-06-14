@@ -43,7 +43,7 @@ const ModalBody = styled.div`
   flex-direction: column; */
 `;
 export const ModalCloseImage = styled.img`
-  width: 5%;
+  width: 7.5%;
   align-self: flex-end;
   @media (max-width: ${size.tabletL}) {
     width: 10%;
