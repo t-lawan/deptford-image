@@ -65,8 +65,6 @@ export default class RequestManager {
       include: 3
 
     });
-
-    console.log('RESPONSE', response.items)
     let pages = response.items.map(item => {
       let partners = item.fields.partners
         ? item.fields.partners.map(partner => {
@@ -83,14 +81,18 @@ export default class RequestManager {
             };
           })
         : null;
+
+        let team_members =  item.fields.teamMembers ? item.fields.teamMembers.map((tm) => {
+          return tm.fields
+        }) : null
       return new PageModel(
         item.sys.id,
         item.fields.title,
         item.fields.text,
-        partners
+        partners,
+        team_members
       );
     });
-    console.log('PAGES', pages)
 
     return pages;
   }

@@ -1,7 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import ReaderExhibitionItem from "./ReaderExhibitionItem";
+import ScreeningExhibitionItem from "./ScreeningExhibitionItem";
 
 const ExhibitionItemWrapper = styled.div`
   padding: 1rem;
@@ -17,24 +18,23 @@ export const ResponsiveIFrameWrapper = styled.div`
 `;
 const DefaultExhibitionItem = props => {
   let item = props.item;
-  return (
-    <ExhibitionItemWrapper>
-      {item ? (
-        <div>
-          <h2>
-            {" "}
-            {item.title}, {item.participant}{" "}
-          </h2>
-          <ResponsiveIFrameWrapper>
-            <VideoPlayer
-              posterUrl={item.poster_url}
-              videoUrl={item.video_url}
-            />
-          </ResponsiveIFrameWrapper>
-        </div>
-      ) : null}
-    </ExhibitionItemWrapper>
-  );
+
+  let renderedComponent = <p></p>;
+  if (item) {
+    console.log('ITEM', item.type)
+    switch (item.type) {
+      case "screening":
+        renderedComponent = <ScreeningExhibitionItem item={item} />;
+        break;
+      case "reader":
+        renderedComponent = <ReaderExhibitionItem item={item} />;
+        break;  
+      default:
+        renderedComponent = <ScreeningExhibitionItem item={item} />;
+        break;
+    }
+  }
+  return renderedComponent;
 };
 
 const mapStateToProps = state => {

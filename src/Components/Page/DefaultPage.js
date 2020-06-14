@@ -7,7 +7,7 @@ import { Colour } from "../Global/global.styles";
 
 const PageWrapper = styled.div`
   padding: 1rem;
-  width: 90%;
+  width: 80%;
 `;
 
 const TextWrapper = styled.div`

@@ -6,7 +6,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import ExplosionFBX from "../../Assets/Models/Explosion.fbx";
+import Compare from "../../Assets/Models/compare.fbx";
+import ExplosionSceneFBX from "../../Assets/Models/ExplosionScene.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -22,14 +23,18 @@ import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Birds.m4a";
+import PositionalSound from "../../Assets/POSITIONAL_TRACK.mp3";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
 import { Colour } from "../Global/global.styles";
-
+import TestImage from '../../Assets/AudintBackground.png'
 const EnvironmentWrapper = styled.div`
   height: 100vh;
+  overflow-y: hidden;
+  position: fixed;
+  width: 100%;
 `;
 
 
@@ -109,6 +114,8 @@ class Environment extends Component {
     } else {
       this.setupFlyControls();
     }
+
+    this.playSound()
     // this.setupStats();
     this.addEventListeners();
   };
@@ -183,12 +190,35 @@ class Environment extends Component {
   };
   createScene = () => {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x72869d);
-    this.scene.fog = new THREE.FogExp2(0x72869d, 0.001);
+    this.scene.background = new THREE.Color(Colour.grey);
+    this.scene.fog = new THREE.FogExp2(new THREE.Color('white'), 0.001);
   };
   createLight = () => {
-    this.light = new THREE.DirectionalLight(0xffffff, 0.8);
+    let distance = 1000
+    this.light = new THREE.DirectionalLight(0xffffff, 2);
+    this.light.position.add(this.centralPoint)
+
+    let point_one = new THREE.PointLight(0xffffff, 5, 1000);
+    let point_two = new THREE.PointLight(0xffffff, 5, 4000);
+    
+    var sphereSize = 1;
+    
+    point_one.position.add(this.centralPoint);
+    point_one.position.setY(point_one.position.y - distance)
+    point_two.position.add(this.centralPoint);
+    point_two.position.setY(point_one.position.y + distance);
+
+    let targetObject = new THREE.Object3D();
+    targetObject.position.set(this.centralPoint.x, this.centralPoint.y, this.centralPoint.z);
+    this.scene.add(targetObject);
+    this.light.target = targetObject
     this.scene.add(this.light);
+    
+
+    this.scene.add(point_one);
+    this.scene.add(point_two);
+    
+
   };
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
@@ -262,7 +292,7 @@ class Environment extends Component {
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
     loader.load(
-      ExplosionFBX,
+      ExplosionSceneFBX,
       object => {
         this.centerObject = object;
       },
@@ -276,8 +306,14 @@ class Environment extends Component {
   };
 
   loadAudio = () => {
+    this.globalAudioLoader = new THREE.AudioLoader(this.manager);
     this.audioLoader = new THREE.AudioLoader(this.manager);
-    this.audioLoader.load(Sound, buffer => {
+
+    //
+    this.globalAudioLoader.load(Sound, buffer => {
+      this.globalSound.setBuffer(buffer);
+    });
+    this.audioLoader.load(PositionalSound, buffer => {
       this.sound.setBuffer(buffer);
     });
   };
@@ -301,7 +337,7 @@ class Environment extends Component {
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
-      text.position.y = position.y + 20;
+      text.position.y = position.y + 10;
       text.position.z = position.z;
       this.scene.add(text);
       return text;
@@ -309,18 +345,40 @@ class Environment extends Component {
   };
   addFBXFile = () => {
     if (this.centerObject) {
-      let meshes = [...this.centerObject.children];
+      let groups = [...this.centerObject.children];
       // console.log('MESHES', meshes)
       // let text = meshes.map((me) => {
       //   return me.name
       // })
+      let meshes = []
+      groups.forEach((group) => {
+        meshes.push(...group.children)
+      })
 
-      // console.log('TEXT MESH', text)
       meshes.forEach(mesh => {
         mesh.position.add(this.centralPoint);
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;		
         mesh.updateMatrix();
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeBoundingBox();
+
+        if(mesh.material) {
+            // mesh.material.map.name = TestImage
+
+            mesh.material.specular.r = 0
+            mesh.material.specular.g = 0
+            mesh.material.specular.b = 0  
+            mesh.material.shininess = 2       
+            // mesh.material.emissive.r = 0.5
+            // mesh.material.emissive.g = 0.5
+            // mesh.material.emissive.b = 0.5
+
+            mesh.material.morphNormals = true;
+            mesh.material.morphTargets = true;
+          // console.log('MESHES', mesh.material)
+
+        }
 
         // Get World position of mesh
         let spherePosition = mesh.geometry.boundingSphere.center;
@@ -334,7 +392,7 @@ class Environment extends Component {
         // Get Top position fo mesh by getting difference between min and max
         let diff = mesh.geometry.boundingBox.max;
         diff = diff.sub(mesh.geometry.boundingBox.min);
-        // this.createObjectBoundary(diff.x, diff.y, mesh.worldPosition)
+        mesh.objectBoundary = this.createObjectBoundary(diff.x, diff.y, diff.z ,mesh.worldPosition)
 
         let topPosition = position;
         topPosition.y = topPosition.y + diff.y / 2;
@@ -342,7 +400,7 @@ class Environment extends Component {
 
         mesh.castShadow = true;
 
-        mesh.callback = (id, type) => this.objectSelected(id, type);
+        mesh.objectBoundary.callback = (id, type) => this.objectSelected(id, type);
 
         this.clickableObjects.push(mesh);
         // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
@@ -352,10 +410,28 @@ class Environment extends Component {
   };
 
   addSound = () => {
-    this.sound.setLoop(false);
+    this.globalSound.setLoop(false);
+    this.globalSound.setVolume(1);
+    this.globalSound.duration = 1;
+    this.sound.setRefDistance( 100 );
+    this.sound.setLoop(true);
     this.sound.setVolume(1);
-    this.sound.duration = 1;
+    this.clickableObjects[4].add(this.sound)
+    this.sound.play()
+
   };
+
+  stopAllSound = () => {
+    this.globalSound.setVolume(0);
+    this.sound.setVolume(0);
+  }
+
+  playSound = () => {
+    this.globalSound.setVolume(1)
+    this.sound.setVolume(1)
+
+    this.sound.play()
+  }
 
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
@@ -374,17 +450,17 @@ class Environment extends Component {
   createAudioListener = () => {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
-    this.sound = new THREE.Audio(this.listener);
+    this.globalSound = new THREE.Audio(this.listener);
+    this.sound = new THREE.PositionalAudio(this.listener)
   };
 
-  createObjectBoundary = (width, height, position) => {
+  createObjectBoundary = (width, height, depth, position) => {
     let material = new THREE.MeshStandardMaterial();
-    material.opacity = 0.2;
+    material.opacity = 0;
     material.transparent = true;
-    material.visible = true;
+    material.visible = false;
 
-    let geometry = new THREE.BoxGeometry(width, height);
-
+    let geometry = new THREE.BoxGeometry(width, height, depth);
     let boundary = new THREE.Mesh(geometry, material);
 
     boundary.position.x = position.x;
@@ -392,10 +468,12 @@ class Environment extends Component {
     boundary.position.z = position.z;
 
     this.scene.add(boundary);
+
+    return boundary;
   };
 
   objectSelected = (id, modelType) => {
-    this.sound.play();
+    this.globalSound.play();
     this.props.openModal(id, modelType);
     this.setState({
       pause: true
@@ -440,9 +518,9 @@ class Environment extends Component {
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
-          arr.push(item.title, item.participant);
+          arr.push(item.displayed_time, item.title, item.participant);
           let position = this.clickableObjects[index].topPosition;
-          position.y = position.y + distance * arr.length;
+          position.y = position.y + (distance * arr.length);
           let text = [];
           arr.forEach(sentence => {
             text.push(this.addFont(sentence, position, colour));
@@ -451,9 +529,10 @@ class Environment extends Component {
 
           this.createLine(this.clickableObjects[index].topPosition, colour);
 
-          this.clickableObjects[index].model_id = item.id;
-          this.clickableObjects[index].model_type = ModelTypes.EXHIBIITION_ITEM;
-          this.clickableObjects[index].text = text;
+          this.clickableObjects[index].objectBoundary.model_id = item.id;
+          this.clickableObjects[index].objectBoundary.model_title = item.title;
+          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.EXHIBIITION_ITEM;
+          this.clickableObjects[index].objectBoundary.text = text;
         }
 
         if(objectReference.type === ModelTypes.PAGE) {
@@ -467,8 +546,8 @@ class Environment extends Component {
           position.y = position.y - distance * 2;
           this.createLine(this.clickableObjects[index].topPosition, "red");
     
-          this.clickableObjects[index].model_type = ModelTypes.PAGE;
-          this.clickableObjects[index].model_id = item.id;
+          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.PAGE;
+          this.clickableObjects[index].objectBoundary.model_id = item.id;
         }
       } else {
 
@@ -478,9 +557,9 @@ class Environment extends Component {
 
 
     // Remove Clickable that has no model type or Id
-    this.clickableObjects = this.clickableObjects.filter(obj => {
-      return obj.model_type;
-    });
+    // this.clickableObjects = this.clickableObjects.filter(obj => {
+    //   return obj.model_type;
+    // });
   };
 
   setupOrbitControls = () => {
@@ -512,10 +591,12 @@ class Environment extends Component {
 
   onDocumentDoubleClick = event => {
     this.setMouse(event);
-
+    let boundingBoxes = this.clickableObjects.map((object) => {
+      return object.objectBoundary;
+    })
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
-
+    this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+    console.log(this.intersects)
     if (this.intersects.length > 0) {
       let mesh = this.intersects[0];
       if (mesh.object.callback && mesh.object.model_id) {
@@ -528,7 +609,10 @@ class Environment extends Component {
     event.preventDefault();
     this.setMouse(event);
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.intersects = this.raycaster.intersectObjects(this.clickableObjects);
+    let boundingBoxes = this.clickableObjects.map((object) => {
+      return object.objectBoundary;
+    })
+    this.intersects = this.raycaster.intersectObjects(boundingBoxes, true);
     if (this.intersects.length > 0) {
       if (!this.isHovering) {
         this.isHovering = true;
@@ -544,9 +628,9 @@ class Environment extends Component {
   };
 
   addColourToMesh = obj => {
-    obj.material.color.r = 0;
-    obj.material.color.g = 0;
-    obj.material.color.b = 0;
+    // obj.material.color.r = 0;
+    // obj.material.color.g = 0;
+    // obj.material.color.b = 0;
     obj.material.emissive.r = 0.4;
     obj.material.emissive.g = 1;
     obj.material.emissive.b = 0;
@@ -554,9 +638,9 @@ class Environment extends Component {
 
   removeColourFromAllMesh = () => {
     this.clickableObjects.forEach(obj => {
-      obj.material.color.r = 0;
-      obj.material.color.g = 0;
-      obj.material.color.b = 0;
+      // obj.material.color.r = 0;
+      // obj.material.color.g = 0;
+      // obj.material.color.b = 0;
       obj.material.emissive.r = 0;
       obj.material.emissive.g = 0;
       obj.material.emissive.b = 0;

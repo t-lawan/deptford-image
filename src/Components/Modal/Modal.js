@@ -14,7 +14,8 @@ const ModalWrapper = styled.div`
   width: 100%;
   min-height: 100%;
   z-index: 500;
-  background: white;
+  background: rgba(255,255,255, 0.3);
+  
   display: ${props => (props.show ? "block" : "none")};
   /* text-align: center; */
 `;
@@ -33,6 +34,13 @@ const ModalHeader = styled.div`
 const ModalBody = styled.div`
   /* padding: 2em; */
   padding-bottom: 0;
+  /* width: 100%;
+  display: flex;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-direction: column; */
 `;
 export const ModalCloseImage = styled.img`
   width: 5%;

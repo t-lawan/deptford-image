@@ -34,6 +34,18 @@ const ExhibitionItem = styled.div`
     
 `
 
+const ExhibitionListItem = styled.div`
+    /* display: list-item; */
+    margin: 1.3rem;
+    list-style-type: square;
+    ::before{
+        content: "•";
+        color: ${Colour.green};
+        display: inline-block;
+        width: 1rem;
+    }
+`
+
 const ExhibitionText = styled.p`
     margin-bottom: 0.5rem;
 `
@@ -72,7 +84,8 @@ const ProgrammePage = props => {
             {" "}
             <Title> Screenings </Title>
             {screenings.map((item, index) => (
-                <ExhibitionItemWrapper key={index}>
+                <ExhibitionListItem key={index}>
+                <ExhibitionItemWrapper >
                     <ExhibitionItem>
                         <ExhibitionText> {moment(item.start_date).format('D')} - {moment(item.end_date).format('D MMMM')}</ExhibitionText>
                     </ExhibitionItem>
@@ -81,6 +94,8 @@ const ProgrammePage = props => {
                         <ExhibitionText> {item.title}</ExhibitionText>     
                     </ExhibitionItem>
                 </ExhibitionItemWrapper>
+                </ExhibitionListItem>
+
             ))}
 
             <Title> Commisioned Special Projects </Title>
@@ -99,7 +114,7 @@ const ProgrammePage = props => {
             {reader.map((item, index) => (
                 <ExhibitionItemWrapper key={index}>
                     <ExhibitionItem>
-                        <ExhibitionText> {moment(item.start_date).format('D')} - {moment(item.end_date).format('D MMMM')}</ExhibitionText>
+                        <ExhibitionText> {item.displayed_time}</ExhibitionText>
                     </ExhibitionItem>
                     <ExhibitionItem>
                         <ExhibitionText> {item.participant}</ExhibitionText>     
