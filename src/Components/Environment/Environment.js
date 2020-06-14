@@ -26,7 +26,10 @@ import PositionalSound from "../../Assets/POSITIONAL_TRACK.mp3";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
-import { ObjectExhibitionMap, ModelTypes } from "../../Utility/ObjectExhibitionMap";
+import {
+  ObjectExhibitionMap,
+  ModelTypes
+} from "../../Utility/ObjectExhibitionMap";
 import { Colour } from "../Global/global.styles";
 const EnvironmentWrapper = styled.div`
   height: 100vh;
@@ -34,7 +37,6 @@ const EnvironmentWrapper = styled.div`
   position: fixed;
   width: 100%;
 `;
-
 
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
@@ -113,13 +115,13 @@ class Environment extends Component {
       this.setupFlyControls();
     }
 
-    // this.playSound()
     // this.setupStats();
     this.addEventListeners();
   };
 
   addEventListeners = () => {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
+    document.addEventListener("keydown", this.onKeyDown, false)
     document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
@@ -128,6 +130,7 @@ class Environment extends Component {
   removeEventListeners = () => {
     window.removeEventListener("resize", this.onWindowResize);
     document.removeEventListener("dblclick", this.onDocumentDoubleClick);
+    document.removeEventListener("keydown", this.onKeyDown)
     document.removeEventListener("mousemove", this.onDocumentMouseMove);
     document.removeEventListener(
       "touchstart",
@@ -189,34 +192,35 @@ class Environment extends Component {
   createScene = () => {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(Colour.grey);
-    this.scene.fog = new THREE.FogExp2(new THREE.Color('white'), 0.001);
+    this.scene.fog = new THREE.FogExp2(new THREE.Color("white"), 0.001);
   };
   createLight = () => {
-    let distance = 1000
+    let distance = 1000;
     this.light = new THREE.DirectionalLight(0xffffff, 2);
-    this.light.position.add(this.centralPoint)
+    this.light.position.add(this.centralPoint);
 
     let point_one = new THREE.PointLight(0xffffff, 5, 1000);
     let point_two = new THREE.PointLight(0xffffff, 5, 4000);
-    
+
     var sphereSize = 1;
-    
+
     point_one.position.add(this.centralPoint);
-    point_one.position.setY(point_one.position.y - distance)
+    point_one.position.setY(point_one.position.y - distance);
     point_two.position.add(this.centralPoint);
     point_two.position.setY(point_one.position.y + distance);
 
     let targetObject = new THREE.Object3D();
-    targetObject.position.set(this.centralPoint.x, this.centralPoint.y, this.centralPoint.z);
+    targetObject.position.set(
+      this.centralPoint.x,
+      this.centralPoint.y,
+      this.centralPoint.z
+    );
     this.scene.add(targetObject);
-    this.light.target = targetObject
+    this.light.target = targetObject;
     this.scene.add(this.light);
-    
 
     this.scene.add(point_one);
     this.scene.add(point_two);
-    
-
   };
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
@@ -277,7 +281,7 @@ class Environment extends Component {
     await this.setAssets();
     await this.loadFBXFile();
     this.loadAudio();
-    this.loadLocalSound()
+    this.loadLocalSound();
     this.loadFont();
   };
 
@@ -311,7 +315,6 @@ class Environment extends Component {
     this.globalAudioLoader.load(Sound, buffer => {
       this.globalSound.setBuffer(buffer);
     });
-
   };
 
   loadLocalSound = () => {
@@ -320,7 +323,7 @@ class Environment extends Component {
     this.audioLoader.load(PositionalSound, buffer => {
       this.sound.setBuffer(buffer);
     });
-  }
+  };
 
   loadProgressing = (url, itemsLoaded, itemsTotal) => {
     this.props.loading(itemsLoaded, itemsTotal);
@@ -354,34 +357,33 @@ class Environment extends Component {
       // let text = meshes.map((me) => {
       //   return me.name
       // })
-      let meshes = []
-      groups.forEach((group) => {
-        meshes.push(...group.children)
-      })
+      let meshes = [];
+      groups.forEach(group => {
+        meshes.push(...group.children);
+      });
 
       meshes.forEach(mesh => {
         mesh.position.add(this.centralPoint);
         mesh.castShadow = false;
-        mesh.receiveShadow = false;		
+        mesh.receiveShadow = false;
         mesh.updateMatrix();
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeBoundingBox();
 
-        if(mesh.material) {
-            // mesh.material.map.name = TestImage
+        if (mesh.material) {
+          // mesh.material.map.name = TestImage
 
-            mesh.material.specular.r = 0
-            mesh.material.specular.g = 0
-            mesh.material.specular.b = 0  
-            mesh.material.shininess = 2       
-            // mesh.material.emissive.r = 0.5
-            // mesh.material.emissive.g = 0.5
-            // mesh.material.emissive.b = 0.5
+          mesh.material.specular.r = 0;
+          mesh.material.specular.g = 0;
+          mesh.material.specular.b = 0;
+          mesh.material.shininess = 2;
+          // mesh.material.emissive.r = 0.5
+          // mesh.material.emissive.g = 0.5
+          // mesh.material.emissive.b = 0.5
 
-            mesh.material.morphNormals = true;
-            mesh.material.morphTargets = true;
+          mesh.material.morphNormals = true;
+          mesh.material.morphTargets = true;
           // console.log('MESHES', mesh.material)
-
         }
 
         // Get World position of mesh
@@ -396,7 +398,12 @@ class Environment extends Component {
         // Get Top position fo mesh by getting difference between min and max
         let diff = mesh.geometry.boundingBox.max;
         diff = diff.sub(mesh.geometry.boundingBox.min);
-        mesh.objectBoundary = this.createObjectBoundary(diff.x, diff.y, diff.z ,mesh.worldPosition)
+        mesh.objectBoundary = this.createObjectBoundary(
+          diff.x,
+          diff.y,
+          diff.z,
+          mesh.worldPosition
+        );
 
         let topPosition = position;
         topPosition.y = topPosition.y + diff.y / 2;
@@ -404,7 +411,8 @@ class Environment extends Component {
 
         mesh.castShadow = true;
 
-        mesh.objectBoundary.callback = (id, type) => this.objectSelected(id, type);
+        mesh.objectBoundary.callback = (id, type) =>
+          this.objectSelected(id, type);
 
         this.clickableObjects.push(mesh);
         // this.createObjectBoundary(mesh.geometry.boundingSphere.radius, boundary)
@@ -417,34 +425,33 @@ class Environment extends Component {
     this.globalSound.setLoop(false);
     this.globalSound.setVolume(1);
     this.globalSound.duration = 1;
-
   };
 
-  addLocalSound  = () => {
-    this.sound.setRefDistance( 200 );
+  addLocalSound = () => {
+    this.sound.setRefDistance(200);
     this.sound.setLoop(true);
     this.sound.setVolume(1);
 
-    let item = this.clickableObjects.find((i) => {
-      return i.name === "FbxScene_udgkcewhw_LOD0"
-    })
-    console.log('ADDED SOUND')
-    if(item){
-      item.add(this.sound)
+    let item = this.clickableObjects.find(i => {
+      return i.name === "FbxScene_udgkcewhw_LOD0";
+    });
+    console.log("ADDED SOUND");
+    if (item) {
+      item.add(this.sound);
     }
     // this.sound.play()
-  }
+  };
 
   stopAllSound = () => {
     this.globalSound.setVolume(0);
     this.sound.setVolume(0);
-  }
+  };
 
   playSound = () => {
-    if(!this.sound.isPlaying) {
-      this.sound.play()
+    if (!this.sound.isPlaying) {
+      this.sound.play();
     }
-  }
+  };
 
   setExhibitionItems = async () => {
     let exhibitionItems = await RequestManager.getExhibitionItems();
@@ -454,9 +461,9 @@ class Environment extends Component {
     let pages = await RequestManager.getPages();
     this.props.setPages(pages);
   };
-  
+
   setAssets = async () => {
-    let assets  = await RequestManager.getAssets();
+    let assets = await RequestManager.getAssets();
     this.props.setMediaAssets(assets);
   };
 
@@ -464,7 +471,7 @@ class Environment extends Component {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
     this.globalSound = new THREE.Audio(this.listener);
-    this.sound = new THREE.PositionalAudio(this.listener)
+    this.sound = new THREE.PositionalAudio(this.listener);
   };
 
   createObjectBoundary = (width, height, depth, position) => {
@@ -486,7 +493,7 @@ class Environment extends Component {
   };
 
   objectSelected = (id, modelType) => {
-    this.sound.pause()
+    this.sound.pause();
     this.globalSound.play();
     this.props.openModal(id, modelType);
     this.setState({
@@ -523,18 +530,18 @@ class Environment extends Component {
   assignExhibitionItemsToClickableObjects = () => {
     let distance = 10;
     this.clickableObjects.forEach((obj, index) => {
-      let objectReference = ObjectExhibitionMap[obj.name]
-      if(objectReference){
-        if(objectReference.type === ModelTypes.EXHIBIITION_ITEM) {
-          let item = this.props.exhibition_items.find((exItem) => {
+      let objectReference = ObjectExhibitionMap[obj.name];
+      if (objectReference) {
+        if (objectReference.type === ModelTypes.EXHIBIITION_ITEM) {
+          let item = this.props.exhibition_items.find(exItem => {
             return exItem.map_id === objectReference.id;
-          })
+          });
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
           arr.push(item.displayed_time, item.participant, item.title);
           let position = this.clickableObjects[index].topPosition;
-          position.y = position.y + (distance * arr.length);
+          position.y = position.y + distance * arr.length;
           let text = [];
           arr.forEach(sentence => {
             text.push(this.addFont(sentence, position, colour));
@@ -545,30 +552,29 @@ class Environment extends Component {
 
           this.clickableObjects[index].objectBoundary.model_id = item.id;
           this.clickableObjects[index].objectBoundary.model_title = item.title;
-          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.EXHIBIITION_ITEM;
+          this.clickableObjects[index].objectBoundary.model_type =
+            ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].objectBoundary.text = text;
         }
 
-        if(objectReference.type === ModelTypes.PAGE) {
-          let item = this.props.pages.find((pg) => {
+        if (objectReference.type === ModelTypes.PAGE) {
+          let item = this.props.pages.find(pg => {
             return pg.title.toLowerCase() === objectReference.id;
-          })
+          });
           let text = [];
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * 2;
           text.push(this.addFont(item.title, position, "red"));
           position.y = position.y - distance * 2;
           this.createLine(this.clickableObjects[index].topPosition, "red");
-    
-          this.clickableObjects[index].objectBoundary.model_type = ModelTypes.PAGE;
+
+          this.clickableObjects[index].objectBoundary.model_type =
+            ModelTypes.PAGE;
           this.clickableObjects[index].objectBoundary.model_id = item.id;
         }
       } else {
-
       }
-    })
-
-
+    });
 
     // Remove Clickable that has no model type or Id
     // this.clickableObjects = this.clickableObjects.filter(obj => {
@@ -604,12 +610,11 @@ class Environment extends Component {
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
 
   onDocumentDoubleClick = event => {
-    if(!this.state.pause){
-      console.log('', this.clickableObjects)
+    if (!this.state.pause) {
       this.setMouse(event);
-      let boundingBoxes = this.clickableObjects.map((object) => {
+      let boundingBoxes = this.clickableObjects.map(object => {
         return object.objectBoundary;
-      })
+      });
       this.raycaster.setFromCamera(this.mouse, this.camera);
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
@@ -622,17 +627,17 @@ class Environment extends Component {
   };
 
   onDocumentTouchStart = event => {
-    if(!this.state.pause){
-        // event.preventDefault();
-        this.mouse.x =
+    if (!this.state.pause) {
+      // event.preventDefault();
+      this.mouse.x =
         (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
       this.mouse.y =
         -(event.targetTouches[0].clientY / this.mount.clientHeight) * 2 + 1;
       this.raycaster.setFromCamera(this.mouse, this.camera);
-  
-      let boundingBoxes = this.clickableObjects.map((object) => {
+
+      let boundingBoxes = this.clickableObjects.map(object => {
         return object.objectBoundary;
-      })
+      });
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
@@ -641,19 +646,22 @@ class Environment extends Component {
         }
       }
     }
+  };
 
+  onKeyDown = event => {
+    if (!this.state.pause) {
+      this.playSound();
+    }
   };
 
   onDocumentMouseMove = event => {
-    if(!this.state.pause){
-      
-      this.playSound()
+    if (!this.state.pause) {
       event.preventDefault();
       this.setMouse(event);
       this.raycaster.setFromCamera(this.mouse, this.camera);
-      let boundingBoxes = this.clickableObjects.map((object) => {
+      let boundingBoxes = this.clickableObjects.map(object => {
         return object.objectBoundary;
-      })
+      });
       this.intersects = this.raycaster.intersectObjects(boundingBoxes, true);
       if (this.intersects.length > 0) {
         if (!this.isHovering) {
@@ -668,12 +676,7 @@ class Environment extends Component {
         }
       }
     }
-
   };
-
-
-
-
 
   addColourToMesh = obj => {
     // obj.material.color.r = 0;
@@ -694,8 +697,6 @@ class Environment extends Component {
       obj.material.emissive.b = 0;
     });
   };
-
-
 
   onWindowResize = () => {
     const width = this.mount.clientWidth;
