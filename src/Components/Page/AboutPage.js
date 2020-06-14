@@ -47,6 +47,7 @@ const TeamMemberWrapper = styled(PartnerWrapper)`
 const ImageWrapper = styled.div`
   width: 100px;
   height: 100px;
+  margin: 0 0.5rem;
   /* height: auto; */
   display: inline-flex;
 `;

@@ -27,10 +27,7 @@ export const ObjectExhibitionMap = {
         id: 'sonzai_emilia',
         type: ModelTypes.EXHIBIITION_ITEM
     },
-    "FbxScene_te4ufjyda_LOD0": {
-        id: 'holobiont_jenna',
-        type: ModelTypes.EXHIBIITION_ITEM
-    },    
+    "FbxScene_te4ufjyda_LOD0": null,    
     "FbxScene_tdpscfcda_LOD0": {
         id: 'protocols_audint',
         type: ModelTypes.EXHIBIITION_ITEM
@@ -58,6 +55,9 @@ export const ObjectExhibitionMap = {
     "Object_1": null,
     "FbxScene_Aset_wood_branch_M_rkku2_LOD0": null,
     "FbxScene_teufceuda_LOD0": null,
-    "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": null,
+    "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": {
+        id: 'holobiont_jenna',
+        type: ModelTypes.EXHIBIITION_ITEM
+    },
 
 }
