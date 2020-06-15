@@ -33,10 +33,10 @@ const PDFControls = styled.div`
 const Control = styled.p`
   color: ${Colour.green};
   opacity: ${props => (props.hide ? 0 : 1)};
+  cursor: pointer;
   :hover {
     font-style: italic;
   }
-
 `;
 
 const MobileWrapper = styled.div`
@@ -110,30 +110,35 @@ class ReaderExhibitionItem extends React.Component {
         {!Device.isMobile() ? (
           <>
             {this.item.pdf ? (
-              <PDFDocument
-                file={this.item.pdf.file.url}
-                renderMode={"svg"}
-                onLoadSuccess={this.onDocumentLoadSuccess}
-              >
-                {/* <View> */}
-                <Page pageNumber={this.state.pageNumber} />
-                {/* </View> */}
-              </PDFDocument>
+              <>
+                <PDFDocument
+                  file={this.item.pdf.file.url}
+                  renderMode={"svg"}
+                  onLoadSuccess={this.onDocumentLoadSuccess}
+                >
+                  {/* <View> */}
+                  <Page pageNumber={this.state.pageNumber} />
+                  {/* </View> */}
+                </PDFDocument>
+                <MobileTextWrapper>
+                    <MobileLink href={this.item.pdf.file.url} target="_blank"> Link to PDF</MobileLink>
+                </MobileTextWrapper>
+              </>
             ) : null}
             <FixedBox>
-            <PDFControls>
-              <Control
-                hide={this.isFirst()}
-                onClick={() => this.previousPage()}
-              >
-                {" "}
-                Back
-              </Control>
-              <Control hide={this.isLast()} onClick={() => this.nextPage()}>
-                {" "}
-                Next
-              </Control>
-            </PDFControls>
+              <PDFControls>
+                <Control
+                  hide={this.isFirst()}
+                  onClick={() => this.previousPage()}
+                >
+                  {" "}
+                  Back
+                </Control>
+                <Control hide={this.isLast()} onClick={() => this.nextPage()}>
+                  {" "}
+                  Next
+                </Control>
+              </PDFControls>
             </FixedBox>
           </>
         ) : (
