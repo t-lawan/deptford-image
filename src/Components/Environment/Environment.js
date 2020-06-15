@@ -6,7 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import ExplosionSceneFBX from "../../Assets/Models/ExplosionScene.fbx";
+import ExplosionSceneFBX from "../../Assets/Models/Test.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -22,8 +22,8 @@ import {
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
-import Sound from "../../Assets/Birds.m4a";
-import PositionalSound from "../../Assets/POSITIONAL_TRACK.mp3";
+import Sound from "../../Assets/Touch.mp3";
+import PositionalSound from "../../Assets/Contagion.mp3";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
@@ -431,7 +431,7 @@ class Environment extends Component {
   };
 
   addLocalSound = () => {
-    this.sound.setRefDistance(200);
+    this.sound.setRefDistance(25);
     this.sound.setLoop(true);
     this.sound.setVolume(1);
 
@@ -642,6 +642,8 @@ class Environment extends Component {
   onDocumentTouchStart = event => {
     if (!this.state.pause) {
       // event.preventDefault();
+      this.hideInstructions()
+
       this.mouse.x =
         (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
       this.mouse.y =

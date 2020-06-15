@@ -44,7 +44,17 @@ const MobileWrapper = styled.div`
   align-items: center;
   align-content: space-between;
 `;
-const MobileLink = styled.a``;
+const MobileLink = styled.a`
+  color: ${Colour.green};
+`;
+
+const MobileText = styled.p`
+  color: ${Colour.green};
+`;
+
+const MobileTextWrapper = styled.div`
+  text-align: center;
+`;
 
 const PDFPage = styled(Page)`
   /* div > .react-pdf__Page__svg, div > .react-pdf__Page__svg > svg{
@@ -123,7 +133,13 @@ class ReaderExhibitionItem extends React.Component {
           </>
         ) : (
           <MobileWrapper>
-            <MobileLink src={this.item.pdf.file.url} target="_blank"> LINK </MobileLink>
+            <MobileTextWrapper>
+              <MobileText> {this.item.title} </MobileText>
+              <MobileLink href={this.item.pdf.file.url} target="_blank">
+                {" "}
+                Link{" "}
+              </MobileLink>
+            </MobileTextWrapper>
           </MobileWrapper>
         )}
       </ExhibitionItemWrapper>
