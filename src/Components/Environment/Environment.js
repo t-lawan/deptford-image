@@ -22,8 +22,8 @@ import {
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
-import Sound from "../../Assets/Birds.m4a";
-import PositionalSound from "../../Assets/POSITIONAL_TRACK.mp3";
+import Sound from "../../Assets/Touch.mp3";
+import PositionalSound from "../../Assets/Contagion.mp3";
 import TypeFace from "../../Assets/Fonts/karla.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
@@ -431,7 +431,7 @@ class Environment extends Component {
   };
 
   addLocalSound = () => {
-    this.sound.setRefDistance(200);
+    this.sound.setRefDistance(25);
     this.sound.setLoop(true);
     this.sound.setVolume(1);
 
