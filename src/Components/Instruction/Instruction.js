@@ -113,7 +113,11 @@ class Instruction extends React.Component {
                 </InstructionText>
               </>
             ) : (
-              <InstructionText> Touch to turn the view </InstructionText>
+              <>
+              <InstructionText> Pinch using two fingers to zoom</InstructionText>
+              <InstructionText> Rotate using one finger </InstructionText>
+              <InstructionText> Tap on an object with green text to view content</InstructionText>
+              </>
             )}
           </TextWrapper>
         </Instructions>
