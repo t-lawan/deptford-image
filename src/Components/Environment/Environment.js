@@ -208,15 +208,14 @@ class Environment extends Component {
     this.light = new THREE.DirectionalLight(0xffffff, 10);
     this.light.position.add(this.centralPoint);
 
-    let point_one = new THREE.PointLight(0xffffff, 3, 1000);
-    let point_two = new THREE.PointLight(0xffffff, 3, 1000);
+    let point_one = new THREE.PointLight(0xffffff, 2, 1000);
+    let point_two = new THREE.PointLight(0xffffff, 1, 1000);
 
-    var sphereSize = 1;
 
     point_one.position.add(this.centralPoint);
     point_one.position.setZ(point_one.position.z - distance);
     point_two.position.add(this.centralPoint);
-    point_two.position.setZ(point_one.position.z + distance);
+    point_two.position.z  = point_two.position.z + distance;
 
     let targetObject = new THREE.Object3D();
     targetObject.position.set(
@@ -344,14 +343,16 @@ class Environment extends Component {
         font: this.font,
         size: 6,
         height: 1,
-        curveSegments: 20,
+        curveSegments: 30,
       });
 
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
         emissive: new THREE.Color(colour),
         emissiveIntensity: 1,
-        reflectivity: 0
+        reflectivity: 0,
+        shininess: 0,
+        specular: new THREE.Color('black')
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
