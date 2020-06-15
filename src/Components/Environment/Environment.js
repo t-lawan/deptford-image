@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -45,6 +44,7 @@ class Environment extends Component {
   isHovering = false;
   hasInteracted = false;
   isMobile = false;
+  textArray = [];
   constructor(props) {
     super(props);
     this.state = {
@@ -336,23 +336,31 @@ class Environment extends Component {
         font: this.font,
         size: 6,
         height: 1,
-        curveSegments: 20
+        curveSegments: 20,
       });
 
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
         emissive: new THREE.Color(colour),
         reflectivity:0,
-        shininess: 0
+        shininess: 0,
+        
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
       text.position.y = position.y + 10;
       text.position.z = position.z;
       this.scene.add(text);
+      this.textArray.push(text)
       return text;
     }
   };
+
+  rotateAllText = () => {
+    this.textArray.forEach((text) => {
+      return text.lookAt(this.camera.position)
+    })
+  }
   addFBXFile = () => {
     if (this.centerObject) {
       let groups = [...this.centerObject.children];
@@ -431,7 +439,7 @@ class Environment extends Component {
   };
 
   addLocalSound = () => {
-    this.sound.setRefDistance(25);
+    this.sound.setRefDistance(100);
     this.sound.setLoop(true);
     this.sound.setVolume(1);
 

@@ -20,6 +20,7 @@ export const PDFDocument = styled(Document)`
 const FixedBox = styled.div`
   position: fixed;
   bottom: 0;
+  width: 100%;
 `;
 
 const PDFControls = styled.div`
@@ -32,6 +33,10 @@ const PDFControls = styled.div`
 const Control = styled.p`
   color: ${Colour.green};
   opacity: ${props => (props.hide ? 0 : 1)};
+  :hover {
+    font-style: italic;
+  }
+
 `;
 
 const MobileWrapper = styled.div`
@@ -115,7 +120,7 @@ class ReaderExhibitionItem extends React.Component {
                 {/* </View> */}
               </PDFDocument>
             ) : null}
-            {/* <FixedBox> */}
+            <FixedBox>
             <PDFControls>
               <Control
                 hide={this.isFirst()}
@@ -129,7 +134,7 @@ class ReaderExhibitionItem extends React.Component {
                 Next
               </Control>
             </PDFControls>
-            {/* </FixedBox> */}
+            </FixedBox>
           </>
         ) : (
           <MobileWrapper>
