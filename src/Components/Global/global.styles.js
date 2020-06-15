@@ -77,6 +77,8 @@ h1,h2,h3,h4,h5,h6 {
   a {
     text-decoration: underline;
     color: black;
+  font-weight: 100 !important;
+
   }
   h1 {
   margin-bottom: 1.45rem;

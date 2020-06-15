@@ -28,6 +28,8 @@ const PDFControls = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-content: center;
+  align-items: baseline;
+
 `;
 
 const Control = styled.p`
@@ -51,6 +53,10 @@ const MobileWrapper = styled.div`
 `;
 const MobileLink = styled.a`
   color: ${Colour.green};
+  text-decoration: ${props => props.underline ? 'underline' : 'none'};
+  @media (min-width: ${size.laptop}) {
+    font-size: 1.5rem;
+  }
 `;
 
 const MobileText = styled.p`
@@ -120,9 +126,6 @@ class ReaderExhibitionItem extends React.Component {
                   <Page pageNumber={this.state.pageNumber} />
                   {/* </View> */}
                 </PDFDocument>
-                <MobileTextWrapper>
-                    <MobileLink href={this.item.pdf.file.url} target="_blank"> Link to PDF</MobileLink>
-                </MobileTextWrapper>
               </>
             ) : null}
             <FixedBox>
@@ -134,6 +137,8 @@ class ReaderExhibitionItem extends React.Component {
                   {" "}
                   Back
                 </Control>
+                <MobileLink href={this.item.pdf.file.url} target="_blank"> Download</MobileLink>
+
                 <Control hide={this.isLast()} onClick={() => this.nextPage()}>
                   {" "}
                   Next
@@ -145,7 +150,7 @@ class ReaderExhibitionItem extends React.Component {
           <MobileWrapper>
             <MobileTextWrapper>
               <MobileText> {this.item.title} </MobileText>
-              <MobileLink href={this.item.pdf.file.url} target="_blank">
+              <MobileLink underline href={this.item.pdf.file.url} target="_blank">
                 {" "}
                 Link{" "}
               </MobileLink>
