@@ -30,6 +30,11 @@ export default class ExhibitionItemModel {
         this.audint_section = audintSection;
         this.type = type;
         this.pdf = pdf;
-        this.displayed_time = `${moment(this.start_date).format('D')} - ${moment(this.end_date).format('D MMMM')}`
+        if(moment(this.start_date).month() === moment(this.end_date).month()) {
+            this.displayed_time = `${moment(this.start_date).format('D')} - ${moment(this.end_date).format('D MMMM')}`
+        } else {
+            this.displayed_time = `${moment(this.start_date).format('D MMMM')} - ${moment(this.end_date).format('D MMMM')}`
+
+        }
     }
 }

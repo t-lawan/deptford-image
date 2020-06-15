@@ -16,7 +16,8 @@ import {
   setExhibitionItems,
   loading,
   setPages,
-  setMediaAssets
+  setMediaAssets,
+  hideInstructions
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -195,12 +196,12 @@ class Environment extends Component {
     this.scene.fog = new THREE.FogExp2(new THREE.Color("white"), 0.001);
   };
   createLight = () => {
-    let distance = 1000;
+    let distance = 5000;
     this.light = new THREE.DirectionalLight(0xffffff, 2);
     this.light.position.add(this.centralPoint);
 
     let point_one = new THREE.PointLight(0xffffff, 5, 1000);
-    let point_two = new THREE.PointLight(0xffffff, 5, 4000);
+    let point_two = new THREE.PointLight(0xffffff, 5, 1000);
 
     var sphereSize = 1;
 
@@ -340,7 +341,9 @@ class Environment extends Component {
 
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
-        emissive: new THREE.Color(colour)
+        emissive: new THREE.Color(colour),
+        reflectivity:0,
+        shininess: 0
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
@@ -552,6 +555,7 @@ class Environment extends Component {
 
           this.clickableObjects[index].objectBoundary.model_id = item.id;
           this.clickableObjects[index].objectBoundary.model_title = item.title;
+          this.clickableObjects[index].objectBoundary.model = item;
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].objectBoundary.text = text;
@@ -564,9 +568,9 @@ class Environment extends Component {
           let text = [];
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * 2;
-          text.push(this.addFont(item.title, position, "red"));
+          text.push(this.addFont(item.title, position, Colour.green));
           position.y = position.y - distance * 2;
-          this.createLine(this.clickableObjects[index].topPosition, "red");
+          this.createLine(this.clickableObjects[index].topPosition, Colour.green);
 
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.PAGE;
@@ -608,6 +612,13 @@ class Environment extends Component {
   // Here should come custom code.
   // Code below is taken from Three.js BoxGeometry example
   // https://threejs.org/docs/#api/en/geometries/BoxGeometry
+  canOpen = (object) => {
+    if(object.model_type === ModelTypes.PAGE) {
+      return true
+    }
+
+    return object.model.is_live;
+  }
 
   onDocumentDoubleClick = event => {
     if (!this.state.pause) {
@@ -619,7 +630,9 @@ class Environment extends Component {
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
-        if (mesh.object.callback && mesh.object.model_id) {
+        console.log('MESH', mesh)
+
+        if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
           mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
         }
       }
@@ -641,7 +654,7 @@ class Environment extends Component {
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
-        if (mesh.object.callback && mesh.object.model_id) {
+        if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
           mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
         }
       }
@@ -650,9 +663,18 @@ class Environment extends Component {
 
   onKeyDown = event => {
     if (!this.state.pause) {
+      this.hideInstructions()
       this.playSound();
     }
   };
+
+  hideInstructions = () => {
+    if(this.props.show_instructions) {
+      setTimeout(() => {
+        this.props.hideInstructions();
+      }, 1500)
+    }
+  }
 
   onDocumentMouseMove = event => {
     if (!this.state.pause) {
@@ -677,6 +699,7 @@ class Environment extends Component {
       }
     }
   };
+
 
   addColourToMesh = obj => {
     // obj.material.color.r = 0;
@@ -766,7 +789,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(setExhibitionItems(exhibitionItems)),
     setPages: pages => dispatch(setPages(pages)),
     setMediaAssets: assets => dispatch(setMediaAssets(assets)),
-    loading: (loaded, total) => dispatch(loading(loaded, total))
+    loading: (loaded, total) => dispatch(loading(loaded, total)),
+    hideInstructions: () => dispatch(hideInstructions())
   };
 };
 

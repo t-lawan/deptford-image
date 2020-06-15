@@ -21,18 +21,31 @@ const LoadingWrapper = styled.div`
   align-items: center;
   align-content: space-between;
 `;
+const TextWrapper = styled.div`
+  text-align: center;
+`
 
+const LoadingText = styled.p`
+  color: ${Colour.green}
+
+`
 const LoadingTitle = styled.h1`
   color: white;
   z-index: 1000;
   font-size: 3rem;
-`;
+  font-family: FreightBigLight, Fallback, sans-serif;
 
+`;
+//
 const Loading = props => {
   return (
     <LoadingWrapper show={!props.has_loaded}>
       <LoadingIcon />
-      <LoadingTitle> CONTAGION</LoadingTitle>
+      <TextWrapper>
+        <LoadingTitle> CONTAGION</LoadingTitle>
+        <LoadingText> Loading </LoadingText>
+
+      </TextWrapper>
       <LoadingIcon />
     </LoadingWrapper>
   );

@@ -65,7 +65,7 @@ const AboutPage = props => {
             <PartnerTitle> DEMO TEAM:</PartnerTitle>
             {item.team_members.map((team_member, index) => (
               <TeamMemberWrapper key={index}>
-                {/* <p> {team_member.name}, {team_member.role}</p> */}
+                <p> {team_member.name}, {team_member.role}</p>
                 <p> {team_member.email}</p>
               </TeamMemberWrapper>
             ))}
