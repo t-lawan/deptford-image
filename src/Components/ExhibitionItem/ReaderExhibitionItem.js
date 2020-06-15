@@ -135,13 +135,13 @@ class ReaderExhibitionItem extends React.Component {
                   onClick={() => this.previousPage()}
                 >
                   {" "}
-                  &larr;
+                  Back
                 </Control>
                 <MobileLink href={this.item.pdf.file.url} target="_blank"> Download</MobileLink>
 
                 <Control hide={this.isLast()} onClick={() => this.nextPage()}>
                   {" "}
-                  &rarr;
+                  Next
                 </Control>
               </PDFControls>
             </FixedBox>
