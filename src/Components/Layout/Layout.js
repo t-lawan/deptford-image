@@ -4,7 +4,7 @@ import Loading from "../Loading/Loading";
 import Modal from "../Modal/Modal";
 import Instruction from "../Instruction/Instruction";
 import { GlobalStyle } from "../Global/global.styles";
-import SharingUrl from "../../Assets/DemoSharingImage.jpg";
+import SharingUrl from "../../Assets/seo_image.jpg";
 const Layout = props => {
   let description = "DEMO Moving Image Festival";
   let url = "https://demomovingimage.net/";
