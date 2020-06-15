@@ -196,7 +196,7 @@ class Environment extends Component {
     this.scene.fog = new THREE.FogExp2(new THREE.Color("white"), 0.001);
   };
   createLight = () => {
-    let distance = 1000;
+    let distance = 5000;
     this.light = new THREE.DirectionalLight(0xffffff, 2);
     this.light.position.add(this.centralPoint);
 
@@ -221,7 +221,7 @@ class Environment extends Component {
     this.scene.add(this.light);
 
     this.scene.add(point_one);
-    // this.scene.add(point_two);
+    this.scene.add(point_two);
   };
   createRayCaster = () => {
     this.raycaster = new THREE.Raycaster();
@@ -341,7 +341,9 @@ class Environment extends Component {
 
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
-        emissive: new THREE.Color(colour)
+        emissive: new THREE.Color(colour),
+        reflectivity:0,
+        shininess: 0
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
