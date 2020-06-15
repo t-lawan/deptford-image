@@ -90,7 +90,7 @@ class Environment extends Component {
     this.setupRenderer(width, height);
     // mount using React ref
     // Set Scene
-    this.createScene();
+    this.createScene(width, height);
 
     //Set Camera
     this.setupCamera(height, width);
@@ -190,25 +190,33 @@ class Environment extends Component {
     // this.renderer.setPixelRatio(width, height);
     this.mount.appendChild(this.renderer.domElement);
   };
-  createScene = () => {
+  createScene = (width, height) => {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(Colour.grey);
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext("2d");
+    var grd = ctx.createLinearGradient(0, 0, 0, height/16);
+    grd.addColorStop(0,'white');
+    grd.addColorStop(1, Colour.grey);
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height); 
+    let texture = new THREE.CanvasTexture(canvas)
+    this.scene.background = texture;
     this.scene.fog = new THREE.FogExp2(new THREE.Color("white"), 0.001);
   };
   createLight = () => {
     let distance = 5000;
-    this.light = new THREE.DirectionalLight(0xffffff, 2);
+    this.light = new THREE.DirectionalLight(0xffffff, 10);
     this.light.position.add(this.centralPoint);
 
-    let point_one = new THREE.PointLight(0xffffff, 5, 1000);
-    let point_two = new THREE.PointLight(0xffffff, 5, 1000);
+    let point_one = new THREE.PointLight(0xffffff, 3, 1000);
+    let point_two = new THREE.PointLight(0xffffff, 3, 1000);
 
     var sphereSize = 1;
 
     point_one.position.add(this.centralPoint);
-    point_one.position.setY(point_one.position.y - distance);
+    point_one.position.setZ(point_one.position.z - distance);
     point_two.position.add(this.centralPoint);
-    point_two.position.setY(point_one.position.y + distance);
+    point_two.position.setZ(point_one.position.z + distance);
 
     let targetObject = new THREE.Object3D();
     targetObject.position.set(
@@ -342,9 +350,8 @@ class Environment extends Component {
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
         emissive: new THREE.Color(colour),
-        reflectivity:0,
-        shininess: 0,
-        
+        emissiveIntensity: 1,
+        reflectivity: 0
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
