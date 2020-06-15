@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { showInstructions } from "../../Store/action";
 import ImageIcon from "../../Assets/info.png";
-import { Colour } from "../Global/global.styles";
+import { Colour, size } from "../Global/global.styles";
 import Device from "../../Utility/Device";
 const InstructionWrapper = styled.div`
   position: fixed;
@@ -32,6 +32,11 @@ const TextWrapper = styled.div`
 
 const InstructionText = styled.p`
   margin-bottom: 0.5rem;
+  @media (max-width: ${size.tabletL}) {
+    margin:0;
+    margin-bottom: 0.25rem;
+    padding: 0;
+  }
 `;
 const ImageWrapper = styled.div`
   /* float: right; */
