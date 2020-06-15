@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
-import GroteskLightExtender from "../../Assets/Fonts/Grotesk_Light_Extended.otf";
+import GroteskLightExtender from "../../Assets/Fonts/berthold-akzidenz-grotesk-be-light-extended.ttf";
 import FreightBigLight from "../../Assets/Fonts/Freight_Big_Light.otf";
 
 export const size = {
@@ -41,7 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: GroteskLightExtender;
-    src: url(${GroteskLightExtender}) format('otf');
+    src: url(${GroteskLightExtender}) format('ttf');
     font-weight: normal;
     font-style: normal;
   }
@@ -64,6 +64,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 h1,h2,h3,h4,h5,h6 {
+    font-family: GroteskLightExtender, Fallback, sans-serif;
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
@@ -78,6 +79,7 @@ h1,h2,h3,h4,h5,h6 {
     text-decoration: underline;
     color: black;
   font-weight: 100 !important;
+  font-family: GroteskLightExtender, Fallback, sans-serif;
 
   }
   h1 {
@@ -135,6 +137,7 @@ p, li{
   font-size: 1.5rem  !important;
   line-height: 1.3;
   font-weight: 100 !important;
+  font-family: GroteskLightExtender, Fallback, sans-serif;
   @media (max-width: ${size.tabletL}) {
     padding: 1.2rem;
   font-size: 1.2rem  !important;

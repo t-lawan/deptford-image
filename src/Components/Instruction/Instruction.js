@@ -23,7 +23,7 @@ const Instructions = styled.div`
   /* position: sticky; */
   /* top: 75%; */
   text-align: center;
-  color: ${Colour.green};
+  color: black;
 `;
 
 const TextWrapper = styled.div`

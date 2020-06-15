@@ -23,7 +23,7 @@ import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Touch.mp3";
 import PositionalSound from "../../Assets/Contagion.mp3";
-import TypeFace from "../../Assets/Fonts/karla.json";
+import TypeFace from "../../Assets/Fonts/Grotesk_Light_Extended.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import {
@@ -550,7 +550,7 @@ class Environment extends Component {
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
-          arr.push(item.displayed_time, item.participant, item.title);
+          arr.push(item.displayed_time, item.participant, `"${item.title}"`);
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * arr.length;
           let text = [];
