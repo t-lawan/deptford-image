@@ -6,7 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import ExplosionSceneFBX from "../../Assets/Models/ExplosionScene.fbx";
+import ExplosionSceneFBX from "../../Assets/Models/Test.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -642,6 +642,8 @@ class Environment extends Component {
   onDocumentTouchStart = event => {
     if (!this.state.pause) {
       // event.preventDefault();
+      this.hideInstructions()
+
       this.mouse.x =
         (event.targetTouches[0].clientX / this.mount.clientWidth) * 2 - 1;
       this.mouse.y =
