@@ -114,14 +114,14 @@ class Instruction extends React.Component {
                 </InstructionText>
                 <InstructionText>
                   {" "}
-                  Double click on an object with green text to view content{" "}
+                  Double click on an object attached to the green box to view content{" "}
                 </InstructionText>
               </>
             ) : (
               <>
               <InstructionText> Pinch using two fingers to zoom</InstructionText>
               <InstructionText> Rotate using one finger </InstructionText>
-              <InstructionText> Tap on an object with green text to view content</InstructionText>
+              <InstructionText> Tap on an object attached to the green box to view content</InstructionText>
               </>
             )}
           </TextWrapper>

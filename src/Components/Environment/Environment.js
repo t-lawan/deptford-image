@@ -563,11 +563,11 @@ class Environment extends Component {
           position.y = position.y + distance * arr.length;
           let text = [];
           arr.forEach(sentence => {
-            text.push(this.addFont(sentence, position, colour));
+            text.push(this.addFont(sentence, position, 'black'));
             position.y = position.y - distance;
           });
 
-          this.createLine(this.clickableObjects[index].topPosition, colour);
+          this.createLine(this.clickableObjects[index].topPosition, 'black');
 
           this.clickableObjects[index].objectBoundary.model_id = item.id;
           this.clickableObjects[index].objectBoundary.model_title = item.title;
@@ -575,6 +575,13 @@ class Environment extends Component {
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].objectBoundary.text = text;
+          // if(index === 10) {
+          // console.log('EX TEXT', text)
+          if(item.is_live){
+            this.createTextBox(text);
+          }
+
+          // }
         }
 
         if (objectReference.type === ModelTypes.PAGE) {
@@ -584,13 +591,16 @@ class Environment extends Component {
           let text = [];
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * 2;
-          text.push(this.addFont(item.title, position, Colour.green));
+          text.push(this.addFont(item.title, position, 'black'));
           position.y = position.y - distance * 2;
-          this.createLine(this.clickableObjects[index].topPosition, Colour.green);
+          this.createLine(this.clickableObjects[index].topPosition, 'black');
 
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.PAGE;
           this.clickableObjects[index].objectBoundary.model_id = item.id;
+          this.clickableObjects[index].objectBoundary.text = text;
+
+          this.createTextBox(text);
         }
       } else {
       }
@@ -601,6 +611,80 @@ class Environment extends Component {
     //   return obj.model_type;
     // });
   };
+
+  createTextBox = (arrayOfText) => {
+    let padding = 5;
+    let vPadding = 5;
+    let hPadding = 5;
+    let box = new THREE.Box3()
+    let text;
+    let diff;
+    if(arrayOfText.length > 1) {
+      arrayOfText.forEach((text) => {
+        text.geometry.computeBoundingBox(); 
+
+      box = box.union(text.geometry.boundingBox) 
+      })
+      // console.log('GEO BOX', text.geometry.boundingBox)
+      // console.log('BEFORE BOX', box)
+      // box = box.union(text.geometry.boundingBox)
+      // console.log('AFTER BOX', box)
+      // box = arrayOfText[0].geometry.boundingBox
+      // box.union(arrayOfText[2].geometry.boundingBox)
+      vPadding = 20;
+      diff = box.max;
+      diff = diff.sub(box.min);
+      text = arrayOfText[1];
+
+    } else {
+      text = arrayOfText[0];
+      text.geometry.computeBoundingBox();
+      box = text.geometry.boundingBox;
+      diff = box.max;
+      diff = diff.sub(box.min);
+      // this.createObjectBoundary(diff.x,diff.y, diff.z, text.position)
+    }
+
+    var material = new THREE.LineBasicMaterial({
+      color: Colour.green,
+      linewidth: 10,
+
+    });
+
+    var points = [];
+
+    let startPosition = box.min.add(text.position)
+
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + vPadding, startPosition.z)
+    );
+    // Add to Y axis
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + diff.y + (vPadding), startPosition.z)
+    );
+
+    // Add to X + Y axis
+    points.push(
+      new THREE.Vector3(startPosition.x + diff.x + hPadding, startPosition.y + diff.y + vPadding, startPosition.z)
+    );
+
+    // Add to Y axis
+    points.push(
+        new THREE.Vector3(startPosition.x + diff.x + hPadding, startPosition.y - vPadding, startPosition.z)
+    );
+    // // Add to X + Y Axis
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y - vPadding, startPosition.z)
+    );
+
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + ( vPadding), startPosition.z)
+    );
+
+    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var line = new THREE.Line(geometry, material);
+    this.scene.add(line);
+  }
 
   setupOrbitControls = () => {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
