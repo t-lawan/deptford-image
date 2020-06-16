@@ -5,9 +5,6 @@ import ReaderExhibitionItem from "./ReaderExhibitionItem";
 import ScreeningExhibitionItem from "./ScreeningExhibitionItem";
 import { size } from "../Global/global.styles";
 
-const ExhibitionItemWrapper = styled.div`
-  padding: 1rem;
-`;
 
 export const ResponsiveIFrameWrapper = styled.div`
   padding: 2rem;

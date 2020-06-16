@@ -6,10 +6,6 @@ const PARAGRAPH = styled.p`
     margin-bottom: 0.5rem;
 `
 
-const TEAMNAME = styled.p`
-    margin-bottom: 0;
-`
-
 const NAMEARTICLE = styled.ul`
     list-style-type: none;
     margin: 0;
@@ -21,11 +17,6 @@ const LOGO = styled.img`
     width: 10%;
     margin-right: 1rem;
 
-`
-const LogoWrapper = styled.div`
-    width: 20%;
-    height: 20%;
-    display: inline-block;
 `
 
 const NAME = styled.li`

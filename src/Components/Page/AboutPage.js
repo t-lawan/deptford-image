@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { richTextOptions } from "../../Utility/Richtext";
-import { Colour, size } from "../Global/global.styles";
+import { Colour } from "../Global/global.styles";
 import { PageWrapper } from "./DefaultPage";
 
 
