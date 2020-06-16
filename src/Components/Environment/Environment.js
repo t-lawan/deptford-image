@@ -303,13 +303,21 @@ class Environment extends Component {
 
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
-    loader.load(
-      ExplosionSceneFBX,
+    
+    await loader.load(
+      "https://dl.dropboxusercontent.com/s/gzb2gz1m9cg0h49/Test.fbx",
       object => {
         this.centerObject = object;
       },
       this.loadProgressing
     );
+    // loader.load(
+    //   ExplosionSceneFBX,
+    //   object => {
+    //     this.centerObject = object;
+    //   },
+    //   this.loadProgressing
+    // );
   };
 
   loadFont = () => {
@@ -794,7 +802,7 @@ class Environment extends Component {
           //   return box.
           // })
           let obj = this.intersects[0].object;
-          if(this.canOpen(mesh.object)) {
+          if(this.canOpen(obj)) {
             let index = boundingBoxes.findIndex((box) => {
               return box.id === obj.id;
             })
