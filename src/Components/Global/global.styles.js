@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
-import GroteskLightExtender from "../../Assets/Fonts/Grotesk_Light_Extended.otf";
+import GroteskLightExtender from "../../Assets/Fonts/berthold-akzidenz-grotesk-be-light-extended.ttf";
 import FreightBigLight from "../../Assets/Fonts/Freight_Big_Light.otf";
 
 export const size = {
@@ -42,7 +42,7 @@ export const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: GroteskLightExtender;
-    src: url(${GroteskLightExtender}) format('otf');
+    src: url(${GroteskLightExtender}) format('ttf');
     font-weight: normal;
     font-style: normal;
   }
