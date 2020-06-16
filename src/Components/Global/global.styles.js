@@ -3,6 +3,7 @@ import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
 import GroteskLightExtender from "../../Assets/Fonts/berthold-akzidenz-grotesk-be-light-extended.ttf";
 import FreightBigLight from "../../Assets/Fonts/Freight_Big_Light.otf";
+import MattoneRegular from "../../Assets/Fonts/Mattone-Regular.woff";
 
 export const size = {
   mobileS: "320px",
@@ -50,6 +51,13 @@ export const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: FreightBigLight;
     src: url(${FreightBigLight}) format('otf');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: MattoneRegular;
+    src: url(${MattoneRegular}) format('woff');
     font-weight: normal;
     font-style: normal;
   }
