@@ -113,7 +113,7 @@ class ReaderExhibitionItem extends React.Component {
     this.item = this.props.item;
     return (
       <ExhibitionItemWrapper>
-        {!Device.isMobile() ? (
+        {1 === 2 ? (
           <>
             {this.item.pdf ? (
               <>
@@ -149,10 +149,10 @@ class ReaderExhibitionItem extends React.Component {
         ) : (
           <MobileWrapper>
             <MobileTextWrapper>
-              <MobileText> {this.item.title} </MobileText>
+              {/* <MobileText> {this.item.title} </MobileText> */}
               <MobileLink underline href={this.item.pdf.file.url} target="_blank">
                 {" "}
-                Link{" "}
+                Download{" "}
               </MobileLink>
             </MobileTextWrapper>
           </MobileWrapper>
