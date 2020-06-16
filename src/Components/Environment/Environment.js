@@ -5,7 +5,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
-import ExplosionSceneFBX from "../../Assets/Models/Test.fbx";
+import ExplosionSceneFBX from "../../Assets/Models/Small_Explosion.fbx";
+import ExplosionFBX from "../../Assets/Models/Test.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
@@ -304,20 +305,20 @@ class Environment extends Component {
   loadFBXFile = async () => {
     let loader = new FBXLoader(this.manager);
     
-    await loader.load(
-      "https://dl.dropboxusercontent.com/s/gzb2gz1m9cg0h49/Test.fbx",
-      object => {
-        this.centerObject = object;
-      },
-      this.loadProgressing
-    );
-    // loader.load(
-    //   ExplosionSceneFBX,
+    // await loader.load(
+    //   "https://dl.dropboxusercontent.com/s/gzb2gz1m9cg0h49/Test.fbx",
     //   object => {
     //     this.centerObject = object;
     //   },
     //   this.loadProgressing
     // );
+    loader.load(
+      ExplosionSceneFBX,
+      object => {
+        this.centerObject = object;
+      },
+      this.loadProgressing
+    );
   };
 
   loadFont = () => {
@@ -725,6 +726,10 @@ class Environment extends Component {
       return true
     }
 
+    if(!object.model) {
+      return false;
+    }
+
     return object.model.is_live;
   }
 
@@ -738,7 +743,6 @@ class Environment extends Component {
       this.intersects = this.raycaster.intersectObjects(boundingBoxes);
       if (this.intersects.length > 0) {
         let mesh = this.intersects[0];
-        console.log('MESH', mesh)
 
         if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
           mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
@@ -821,13 +825,13 @@ class Environment extends Component {
 
 
   addColourToMesh = obj => {
-    obj.material.color.r = 0;
+    obj.material.color.r = 1;
     obj.material.color.g = 1;
-    obj.material.color.b = 0;
+    obj.material.color.b = 1;
 
-    obj.material.emissive.r = 1;
+    obj.material.emissive.r = 0;
     obj.material.emissive.g = 1;
-    obj.material.emissive.b = 1;
+    obj.material.emissive.b = 0;
 
   };
 
