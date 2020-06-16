@@ -3,6 +3,7 @@ import AudintBody from "../../Assets/Fonts/AudIntBody.ttf";
 import AudintTitle from "../../Assets/Fonts/AudIntTitle.woff";
 import GroteskLightExtender from "../../Assets/Fonts/berthold-akzidenz-grotesk-be-light-extended.ttf";
 import FreightBigLight from "../../Assets/Fonts/Freight_Big_Light.otf";
+import MattoneRegular from "../../Assets/Fonts/Mattone-Regular.otf";
 
 export const size = {
   mobileS: "320px",
@@ -41,15 +42,22 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   @font-face {
-    font-family: GroteskLightExtender;
-    src: url(${GroteskLightExtender}) format('ttf');
+    font-family: 'GroteskLightExtender';
+    src: url(${GroteskLightExtender}) format('truetype');
     font-weight: normal;
     font-style: normal;
   }
 
   @font-face {
-    font-family: FreightBigLight;
-    src: url(${FreightBigLight}) format('otf');
+    font-family: 'FreightBigLight';
+    src: url(${FreightBigLight}) format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: MattoneRegular;
+    src: url(${MattoneRegular}) format('opentype');
     font-weight: normal;
     font-style: normal;
   }
@@ -60,12 +68,12 @@ export const GlobalStyle = createGlobalStyle`
 
 html, body {
   margin: 0;
-  font-family: GroteskLightExtender, Fallback, sans-serif;
+  font-family: 'GroteskLightExtender', sans-serif;
   width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 h1,h2,h3,h4,h5,h6 {
-    font-family: GroteskLightExtender, Fallback, sans-serif;
+    font-family: 'GroteskLightExtender', sans-serif;
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
@@ -80,7 +88,7 @@ h1,h2,h3,h4,h5,h6 {
     text-decoration: underline;
     color: black;
   font-weight: 100 !important;
-  font-family: GroteskLightExtender, Fallback, sans-serif;
+  font-family: 'GroteskLightExtender', sans-serif;
 
   }
   h1 {
@@ -138,7 +146,7 @@ p, li{
   font-size: 1.5rem  !important;
   line-height: 1.3;
   font-weight: 100 !important;
-  font-family: GroteskLightExtender, Fallback, sans-serif;
+  font-family: 'GroteskLightExtender', sans-serif;
   @media (max-width: ${size.tabletL}) {
     padding: 1.2rem;
   font-size: 1.2rem  !important;
