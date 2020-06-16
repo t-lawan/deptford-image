@@ -6,7 +6,7 @@ import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
 import ExplosionSceneFBX from "../../Assets/Models/Small_Explosion.fbx";
-import ExplosionFBX from "../../Assets/Models/Test.fbx";
+// import ExplosionFBX from "../../Assets/Models/Test.fbx";
 import { MTLLoader } from "../../Utility/Loaders/MTLLoader";
 import { OBJLoader } from "../../Utility/Loaders/OBJLoader";
 import Stats from "../../Utility/Stats";
