@@ -790,8 +790,15 @@ class Environment extends Component {
       if (this.intersects.length > 0) {
         if (!this.isHovering) {
           this.isHovering = true;
+          // let index = boundingBoxes.findIndex((box) => {
+          //   return box.
+          // })
           let obj = this.intersects[0].object;
-          this.addColourToMesh(obj);
+          let index = boundingBoxes.findIndex((box) => {
+            return box.id === obj.id;
+          })
+
+          this.addColourToMesh(this.clickableObjects[index]);
         }
       } else {
         if (this.isHovering) {
@@ -804,19 +811,21 @@ class Environment extends Component {
 
 
   addColourToMesh = obj => {
-    // obj.material.color.r = 0;
-    // obj.material.color.g = 0;
-    // obj.material.color.b = 0;
-    obj.material.emissive.r = 0.4;
+    obj.material.color.r = 0;
+    obj.material.color.g = 1;
+    obj.material.color.b = 0;
+
+    obj.material.emissive.r = 1;
     obj.material.emissive.g = 1;
-    obj.material.emissive.b = 0;
+    obj.material.emissive.b = 1;
+
   };
 
   removeColourFromAllMesh = () => {
     this.clickableObjects.forEach(obj => {
-      // obj.material.color.r = 0;
-      // obj.material.color.g = 0;
-      // obj.material.color.b = 0;
+      obj.material.color.r = 1;
+      obj.material.color.g = 1;
+      obj.material.color.b = 1;
       obj.material.emissive.r = 0;
       obj.material.emissive.g = 0;
       obj.material.emissive.b = 0;
