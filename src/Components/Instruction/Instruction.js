@@ -33,7 +33,7 @@ const TextWrapper = styled.div`
 const InstructionText = styled.p`
   margin-bottom: 0.5rem;
   @media (max-width: ${size.tabletL}) {
-    margin:0;
+    margin: 0;
     margin-bottom: 0.25rem;
     padding: 0;
   }
@@ -114,14 +114,25 @@ class Instruction extends React.Component {
                 </InstructionText>
                 <InstructionText>
                   {" "}
-                  Double click on an object attached to the green box to view content{" "}
+                  Double click on an object attached to the green box to view
+                  content{" "}
                 </InstructionText>
               </>
             ) : (
               <>
-              <InstructionText> Pinch using two fingers to zoom</InstructionText>
-              <InstructionText> Rotate using one finger </InstructionText>
-              <InstructionText> Tap on an object attached to the green box to view content</InstructionText>
+                <InstructionText>
+                  {" "}
+                  Pinch using two fingers to zoom
+                </InstructionText>
+                <InstructionText> Rotate using one finger </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Tap on an object attached to the green box to view content
+                </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Recommended to be viewed on desktop
+                </InstructionText>
               </>
             )}
           </TextWrapper>
