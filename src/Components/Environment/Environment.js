@@ -622,7 +622,6 @@ class Environment extends Component {
   };
 
   createTextBox = (arrayOfText) => {
-    let padding = 5;
     let vPadding = 5;
     let hPadding = 5;
     let box = new THREE.Box3()
@@ -656,7 +655,7 @@ class Environment extends Component {
 
     var material = new THREE.LineBasicMaterial({
       color: Colour.green,
-      linewidth: 10,
+      linewidth: Device.isMobile() ? 5 : 10,
 
     });
 
