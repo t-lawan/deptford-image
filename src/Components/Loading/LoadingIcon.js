@@ -16,7 +16,7 @@ const LoadingIcon = props => {
   let percent = 0;
 
   if (props.loaded && props.total) {
-    percent = Math.round(props.loaded / props.total);
+    percent = props.loaded / props.total;
   }
   let gValue = percent * 255;
   return (

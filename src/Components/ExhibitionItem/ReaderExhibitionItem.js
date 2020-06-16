@@ -20,6 +20,7 @@ export const PDFDocument = styled(Document)`
 const FixedBox = styled.div`
   position: fixed;
   bottom: 0;
+  width: 100%;
 `;
 
 const PDFControls = styled.div`
@@ -27,11 +28,17 @@ const PDFControls = styled.div`
   flex-direction: row;
   justify-content: space-around;
   align-content: center;
+  align-items: baseline;
+
 `;
 
 const Control = styled.p`
   color: ${Colour.green};
   opacity: ${props => (props.hide ? 0 : 1)};
+  cursor: pointer;
+  :hover {
+    font-style: italic;
+  }
 `;
 
 const MobileWrapper = styled.div`
@@ -46,6 +53,10 @@ const MobileWrapper = styled.div`
 `;
 const MobileLink = styled.a`
   color: ${Colour.green};
+  text-decoration: ${props => props.underline ? 'underline' : 'none'};
+  @media (min-width: ${size.laptop}) {
+    font-size: 1.5rem;
+  }
 `;
 
 const MobileText = styled.p`
@@ -105,37 +116,41 @@ class ReaderExhibitionItem extends React.Component {
         {!Device.isMobile() ? (
           <>
             {this.item.pdf ? (
-              <PDFDocument
-                file={this.item.pdf.file.url}
-                renderMode={"svg"}
-                onLoadSuccess={this.onDocumentLoadSuccess}
-              >
-                {/* <View> */}
-                <Page pageNumber={this.state.pageNumber} />
-                {/* </View> */}
-              </PDFDocument>
+              <>
+                <PDFDocument
+                  file={this.item.pdf.file.url}
+                  renderMode={"svg"}
+                  onLoadSuccess={this.onDocumentLoadSuccess}
+                >
+                  {/* <View> */}
+                  <Page pageNumber={this.state.pageNumber} />
+                  {/* </View> */}
+                </PDFDocument>
+              </>
             ) : null}
-            {/* <FixedBox> */}
-            <PDFControls>
-              <Control
-                hide={this.isFirst()}
-                onClick={() => this.previousPage()}
-              >
-                {" "}
-                Back
-              </Control>
-              <Control hide={this.isLast()} onClick={() => this.nextPage()}>
-                {" "}
-                Next
-              </Control>
-            </PDFControls>
-            {/* </FixedBox> */}
+            <FixedBox>
+              <PDFControls>
+                <Control
+                  hide={this.isFirst()}
+                  onClick={() => this.previousPage()}
+                >
+                  {" "}
+                  Back
+                </Control>
+                <MobileLink href={this.item.pdf.file.url} target="_blank"> Download</MobileLink>
+
+                <Control hide={this.isLast()} onClick={() => this.nextPage()}>
+                  {" "}
+                  Next
+                </Control>
+              </PDFControls>
+            </FixedBox>
           </>
         ) : (
           <MobileWrapper>
             <MobileTextWrapper>
               <MobileText> {this.item.title} </MobileText>
-              <MobileLink href={this.item.pdf.file.url} target="_blank">
+              <MobileLink underline href={this.item.pdf.file.url} target="_blank">
                 {" "}
                 Link{" "}
               </MobileLink>

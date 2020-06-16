@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import { FlyControls } from "three/examples/jsm/controls/FlyControls";
 import { Water } from "../../Utility/Objects/Water";
 import waternormals from "../../Assets/waternormals.jpg";
 import { Sky } from "../../Utility/Objects/Sky";
@@ -24,7 +23,7 @@ import styled from "styled-components";
 import { FBXLoader } from "../../Utility/Loaders/FBXLoader";
 import Sound from "../../Assets/Touch.mp3";
 import PositionalSound from "../../Assets/Contagion.mp3";
-import TypeFace from "../../Assets/Fonts/karla.json";
+import TypeFace from "../../Assets/Fonts/Grotesk_Light_Extended.json";
 import { FlyControls } from "../../Utility/FlyControl";
 import Device from "../../Utility/Device";
 import {
@@ -45,6 +44,7 @@ class Environment extends Component {
   isHovering = false;
   hasInteracted = false;
   isMobile = false;
+  textArray = [];
   constructor(props) {
     super(props);
     this.state = {
@@ -90,7 +90,7 @@ class Environment extends Component {
     this.setupRenderer(width, height);
     // mount using React ref
     // Set Scene
-    this.createScene();
+    this.createScene(width, height);
 
     //Set Camera
     this.setupCamera(height, width);
@@ -190,25 +190,32 @@ class Environment extends Component {
     // this.renderer.setPixelRatio(width, height);
     this.mount.appendChild(this.renderer.domElement);
   };
-  createScene = () => {
+  createScene = (width, height) => {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(Colour.grey);
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext("2d");
+    var grd = ctx.createLinearGradient(0, 0, 0, height/16);
+    grd.addColorStop(0,'white');
+    grd.addColorStop(1, Colour.grey);
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height); 
+    let texture = new THREE.CanvasTexture(canvas)
+    this.scene.background = texture;
     this.scene.fog = new THREE.FogExp2(new THREE.Color("white"), 0.001);
   };
   createLight = () => {
     let distance = 5000;
-    this.light = new THREE.DirectionalLight(0xffffff, 2);
+    this.light = new THREE.DirectionalLight(0xffffff, 10);
     this.light.position.add(this.centralPoint);
 
-    let point_one = new THREE.PointLight(0xffffff, 5, 1000);
-    let point_two = new THREE.PointLight(0xffffff, 5, 1000);
+    let point_one = new THREE.PointLight(0xffffff, 2, 1000);
+    let point_two = new THREE.PointLight(0xffffff, 1, 1000);
 
-    var sphereSize = 1;
 
     point_one.position.add(this.centralPoint);
-    point_one.position.setY(point_one.position.y - distance);
+    point_one.position.setZ(point_one.position.z - distance);
     point_two.position.add(this.centralPoint);
-    point_two.position.setY(point_one.position.y + distance);
+    point_two.position.z  = point_two.position.z + distance;
 
     let targetObject = new THREE.Object3D();
     targetObject.position.set(
@@ -336,23 +343,32 @@ class Environment extends Component {
         font: this.font,
         size: 6,
         height: 1,
-        curveSegments: 20
+        curveSegments: 30,
       });
 
       let material = new THREE.MeshPhongMaterial({
         color: new THREE.Color(colour),
         emissive: new THREE.Color(colour),
-        reflectivity:0,
-        shininess: 0
+        emissiveIntensity: 1,
+        reflectivity: 0,
+        shininess: 0,
+        specular: new THREE.Color('black')
       });
       let text = new THREE.Mesh(geometry, material);
       text.position.x = position.x + 50;
       text.position.y = position.y + 10;
       text.position.z = position.z;
       this.scene.add(text);
+      this.textArray.push(text)
       return text;
     }
   };
+
+  rotateAllText = () => {
+    this.textArray.forEach((text) => {
+      return text.lookAt(this.camera.position)
+    })
+  }
   addFBXFile = () => {
     if (this.centerObject) {
       let groups = [...this.centerObject.children];
@@ -431,7 +447,7 @@ class Environment extends Component {
   };
 
   addLocalSound = () => {
-    this.sound.setRefDistance(25);
+    this.sound.setRefDistance(100);
     this.sound.setLoop(true);
     this.sound.setVolume(1);
 
@@ -542,16 +558,16 @@ class Environment extends Component {
           let colour = item.is_live ? Colour.green : "black";
           //  Push
           let arr = [];
-          arr.push(item.displayed_time, item.participant, item.title);
+          arr.push(item.displayed_time, item.participant, `"${item.title}"`);
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * arr.length;
           let text = [];
           arr.forEach(sentence => {
-            text.push(this.addFont(sentence, position, colour));
+            text.push(this.addFont(sentence, position, 'black'));
             position.y = position.y - distance;
           });
 
-          this.createLine(this.clickableObjects[index].topPosition, colour);
+          this.createLine(this.clickableObjects[index].topPosition, 'black');
 
           this.clickableObjects[index].objectBoundary.model_id = item.id;
           this.clickableObjects[index].objectBoundary.model_title = item.title;
@@ -559,6 +575,13 @@ class Environment extends Component {
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.EXHIBIITION_ITEM;
           this.clickableObjects[index].objectBoundary.text = text;
+          // if(index === 10) {
+          // console.log('EX TEXT', text)
+          if(item.is_live){
+            this.createTextBox(text);
+          }
+
+          // }
         }
 
         if (objectReference.type === ModelTypes.PAGE) {
@@ -568,13 +591,16 @@ class Environment extends Component {
           let text = [];
           let position = this.clickableObjects[index].topPosition;
           position.y = position.y + distance * 2;
-          text.push(this.addFont(item.title, position, Colour.green));
+          text.push(this.addFont(item.title, position, 'black'));
           position.y = position.y - distance * 2;
-          this.createLine(this.clickableObjects[index].topPosition, Colour.green);
+          this.createLine(this.clickableObjects[index].topPosition, 'black');
 
           this.clickableObjects[index].objectBoundary.model_type =
             ModelTypes.PAGE;
           this.clickableObjects[index].objectBoundary.model_id = item.id;
+          this.clickableObjects[index].objectBoundary.text = text;
+
+          this.createTextBox(text);
         }
       } else {
       }
@@ -585,6 +611,80 @@ class Environment extends Component {
     //   return obj.model_type;
     // });
   };
+
+  createTextBox = (arrayOfText) => {
+    let padding = 5;
+    let vPadding = 5;
+    let hPadding = 5;
+    let box = new THREE.Box3()
+    let text;
+    let diff;
+    if(arrayOfText.length > 1) {
+      arrayOfText.forEach((text) => {
+        text.geometry.computeBoundingBox(); 
+
+      box = box.union(text.geometry.boundingBox) 
+      })
+      // console.log('GEO BOX', text.geometry.boundingBox)
+      // console.log('BEFORE BOX', box)
+      // box = box.union(text.geometry.boundingBox)
+      // console.log('AFTER BOX', box)
+      // box = arrayOfText[0].geometry.boundingBox
+      // box.union(arrayOfText[2].geometry.boundingBox)
+      vPadding = 20;
+      diff = box.max;
+      diff = diff.sub(box.min);
+      text = arrayOfText[1];
+
+    } else {
+      text = arrayOfText[0];
+      text.geometry.computeBoundingBox();
+      box = text.geometry.boundingBox;
+      diff = box.max;
+      diff = diff.sub(box.min);
+      // this.createObjectBoundary(diff.x,diff.y, diff.z, text.position)
+    }
+
+    var material = new THREE.LineBasicMaterial({
+      color: Colour.green,
+      linewidth: 10,
+
+    });
+
+    var points = [];
+
+    let startPosition = box.min.add(text.position)
+
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + vPadding, startPosition.z)
+    );
+    // Add to Y axis
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + diff.y + (vPadding), startPosition.z)
+    );
+
+    // Add to X + Y axis
+    points.push(
+      new THREE.Vector3(startPosition.x + diff.x + hPadding, startPosition.y + diff.y + vPadding, startPosition.z)
+    );
+
+    // Add to Y axis
+    points.push(
+        new THREE.Vector3(startPosition.x + diff.x + hPadding, startPosition.y - vPadding, startPosition.z)
+    );
+    // // Add to X + Y Axis
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y - vPadding, startPosition.z)
+    );
+
+    points.push(
+      new THREE.Vector3(startPosition.x - hPadding, startPosition.y + ( vPadding), startPosition.z)
+    );
+
+    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var line = new THREE.Line(geometry, material);
+    this.scene.add(line);
+  }
 
   setupOrbitControls = () => {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);

@@ -21,6 +21,7 @@ export const size = {
 };
 export const Colour = {
   green: "#7FFF00",
+  // green: '#008000',
   grey: '#D8D7D5'
 };
 
@@ -64,6 +65,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 h1,h2,h3,h4,h5,h6 {
+    font-family: GroteskLightExtender, Fallback, sans-serif;
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
@@ -77,6 +79,9 @@ h1,h2,h3,h4,h5,h6 {
   a {
     text-decoration: underline;
     color: black;
+  font-weight: 100 !important;
+  font-family: GroteskLightExtender, Fallback, sans-serif;
+
   }
   h1 {
   margin-bottom: 1.45rem;
@@ -133,6 +138,7 @@ p, li{
   font-size: 1.5rem  !important;
   line-height: 1.3;
   font-weight: 100 !important;
+  font-family: GroteskLightExtender, Fallback, sans-serif;
   @media (max-width: ${size.tabletL}) {
     padding: 1.2rem;
   font-size: 1.2rem  !important;
