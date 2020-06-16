@@ -33,7 +33,7 @@ const LoadingTitle = styled.h1`
   color: white;
   z-index: 1000;
   font-size: 3rem;
-  font-family: MattoneRegular, Fallback, sans-serif;
+  font-family: 'FreightBigLight', sans-serif;
 
 `;
 //
