@@ -794,11 +794,13 @@ class Environment extends Component {
           //   return box.
           // })
           let obj = this.intersects[0].object;
-          let index = boundingBoxes.findIndex((box) => {
-            return box.id === obj.id;
-          })
-
-          this.addColourToMesh(this.clickableObjects[index]);
+          if(this.canOpen(mesh.object)) {
+            let index = boundingBoxes.findIndex((box) => {
+              return box.id === obj.id;
+            })
+  
+            this.addColourToMesh(this.clickableObjects[index]);
+          }
         }
       } else {
         if (this.isHovering) {
