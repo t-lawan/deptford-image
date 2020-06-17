@@ -227,7 +227,7 @@ class Environment extends Component {
   };
   createLight = () => {
     let distance = 5000;
-    this.light = new THREE.DirectionalLight(0xffffff, 10);
+    this.light = new THREE.DirectionalLight(0xffffff, 5);
     this.light.position.add(this.centralPoint);
 
     let point_one = new THREE.PointLight(0xffffff, 2, 1000);
@@ -236,8 +236,10 @@ class Environment extends Component {
 
     point_one.position.add(this.centralPoint);
     point_one.position.setZ(point_one.position.z - distance);
+    point_one.position.setX(point_one.position.x - distance);
     point_two.position.add(this.centralPoint);
     point_two.position.z  = point_two.position.z + distance;
+    point_two.position.x  = point_two.position.x + distance;
 
     let targetObject = new THREE.Object3D();
     targetObject.position.set(
