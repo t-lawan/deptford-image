@@ -17,7 +17,8 @@ import {
   loading,
   setPages,
   setMediaAssets,
-  hideInstructions
+  hideInstructions,
+  showInstructions
 } from "../../Store/action";
 import RequestManager from "../../Utility/RequestManager";
 import styled from "styled-components";
@@ -39,8 +40,28 @@ const EnvironmentWrapper = styled.div`
   width: 100%;
 `;
 
+const DisplayContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`
+
+const DisplayText = styled.p`
+  color: 'black';
+  display: ${props => props.show ? 'block': 'none'};
+  cursor: pointer;
+  :hover {
+    font-style: italic;
+  }
+`
+
 class Environment extends Component {
   centralPoint = new THREE.Vector3(0, 500, 10);
+  cameraPosition = new THREE.Vector3(-414, 514, 1544);
   clickableObjects = [];
   isHovering = false;
   hasInteracted = false;
@@ -148,7 +169,7 @@ class Environment extends Component {
       5000 // far plane
     );
     this.camera.aspect = width / height;
-    this.camera.position.set(-414, 514, 1544);
+    this.camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
     this.camera.lookAt(this.centralPoint);
     this.camera.updateProjectionMatrix();
   };
@@ -463,7 +484,6 @@ class Environment extends Component {
     let item = this.clickableObjects.find(i => {
       return i.name === "FbxScene_udgkcewhw_LOD0";
     });
-    console.log("ADDED SOUND");
     if (item) {
       item.add(this.sound);
     }
@@ -845,6 +865,13 @@ class Environment extends Component {
     });
   };
 
+  returnHome = () => {
+    this.camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
+    this.camera.lookAt(this.centralPoint);
+    this.camera.updateProjectionMatrix();
+    this.props.showInstructions()
+  }
+
   onWindowResize = () => {
     const width = this.mount.clientWidth;
     const height = this.mount.clientHeight;
@@ -891,7 +918,11 @@ class Environment extends Component {
   };
 
   render() {
-    return <EnvironmentWrapper ref={ref => (this.mount = ref)} />;
+    return (
+    <EnvironmentWrapper ref={ref => (this.mount = ref)}> 
+      <DisplayContainer> <DisplayText onClick={() => this.returnHome()} show={!this.props.show_instructions}> Return </DisplayText> </DisplayContainer>  
+    </EnvironmentWrapper>
+    );
   }
 }
 
@@ -914,7 +945,8 @@ const mapDispatchToProps = dispatch => {
     setPages: pages => dispatch(setPages(pages)),
     setMediaAssets: assets => dispatch(setMediaAssets(assets)),
     loading: (loaded, total) => dispatch(loading(loaded, total)),
-    hideInstructions: () => dispatch(hideInstructions())
+    hideInstructions: () => dispatch(hideInstructions()),
+    showInstructions: () => dispatch(showInstructions())
   };
 };
 
