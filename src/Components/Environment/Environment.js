@@ -398,7 +398,7 @@ class Environment extends Component {
 
   rotateAllText = () => {
     this.textArray.forEach((text) => {
-      return text.lookAt(this.camera.position)
+      return text.geometry.lookAt(this.camera.position)
     })
   }
   addFBXFile = () => {
