@@ -36,6 +36,7 @@ const InstructionText = styled.p`
     margin: 0;
     margin-bottom: 0.25rem;
     padding: 0;
+    font-size: 1rem !important;
   }
 `;
 const ImageWrapper = styled.div`
