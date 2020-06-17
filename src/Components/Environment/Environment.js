@@ -398,7 +398,7 @@ class Environment extends Component {
 
   rotateAllText = () => {
     this.textArray.forEach((text) => {
-      return text.lookAt(this.camera.position)
+      return text.geometry.lookAt(this.camera.position)
     })
   }
   addFBXFile = () => {
@@ -677,7 +677,7 @@ class Environment extends Component {
 
     var material = new THREE.LineBasicMaterial({
       color: Colour.green,
-      linewidth: Device.isMobile() ? 5 : 10,
+      linewidth: Device.isMobile() ? 1 : 10,
 
     });
 
