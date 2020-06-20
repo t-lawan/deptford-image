@@ -731,6 +731,7 @@ class Environment extends Component {
     this.controls.maxPolarAngle = 2 * Math.PI;
     this.controls.maxAzimuthAngle = Infinity;
     this.controls.update();
+    this.controls.saveState()
   };
 
   setupFlyControls = () => {
@@ -875,6 +876,9 @@ class Environment extends Component {
     this.camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
     this.camera.lookAt(this.centralPoint);
     this.camera.updateProjectionMatrix();
+    if(Device.isMobile()) {
+      this.controls.reset()
+    }
     this.props.showInstructions()
   }
 
