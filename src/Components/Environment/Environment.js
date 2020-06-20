@@ -758,6 +758,7 @@ class Environment extends Component {
 
   onDocumentDoubleClick = event => {
     if (!this.state.pause) {
+      this.hideInstructions()
       this.setMouse(event);
       let boundingBoxes = this.clickableObjects.map(object => {
         return object.objectBoundary;
@@ -806,7 +807,7 @@ class Environment extends Component {
   };
 
   hideInstructions = () => {
-    if(this.props.show_instructions) {
+    if(this.props.show_instructions && this.props.has_loaded) {
       setTimeout(() => {
         this.props.hideInstructions();
       }, 1500)
@@ -816,6 +817,7 @@ class Environment extends Component {
   onDocumentMouseMove = event => {
     if (!this.state.pause) {
       event.preventDefault();
+      this.hideInstructions()
       this.setMouse(event);
       this.raycaster.setFromCamera(this.mouse, this.camera);
       let boundingBoxes = this.clickableObjects.map(object => {
@@ -936,7 +938,8 @@ const mapStateToProps = state => {
     modal_item: state.modal_item,
     exhibition_items: state.exhibition_items,
     pages: state.pages,
-    show_instructions: state.show_instructions
+    show_instructions: state.show_instructions,
+    has_loaded: state.has_loaded,
   };
 };
 
