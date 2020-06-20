@@ -206,7 +206,9 @@ class Environment extends Component {
   };
 
   setupRenderer = (width, height) => {
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
     this.renderer.setSize(width, height);
     this.renderer.setViewport(0, 0, width, height);
     // this.renderer.setPixelRatio(width, height);

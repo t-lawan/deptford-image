@@ -6,25 +6,57 @@ import { richTextOptions } from "../../Utility/Richtext";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import { ResponsiveIFrameWrapper } from "./DefaultExhibitionItem";
 import AudintBackground from "../../Assets/AudintBackground.png";
-
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
-  width: 60%;
   text-align: center;
-`
+`;
 const ExhibitionItemWrapper = styled.div`
   background: url(${AudintBackground});
   font-family: AudintBody;
   color: #cdc2fe !important;
-  width: 100%;
+  width: auto;
+  height: 100vh;
   padding: 2rem;
-  /* background: pink; */
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  position: absolute;
 `;
 
 const TextWrapper = styled.div`
   padding: 1rem;
+  display: inline-block;
+  width: 60%;
+  height: 60%;
+  flex: 0 0 auto;
+  text-align: center;
+  :first-of-type {
+    width: 100%;
+  }
+  p {
+    /* width: 40%; */
+    white-space: break-spaces;
+  }
+`;
+
+const AudioTextWrapper = styled.div`
+  margin: 0 2rem;
 `
 
-const AudioWrapper = styled(TextWrapper)``
+const AudioWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+`;
 
 const AudintTitle = styled.h1`
   font-family: AudintTitle;
@@ -32,35 +64,25 @@ const AudintTitle = styled.h1`
   color: #cdc2fe !important;
 `;
 
-const generateSection = item => {
+const generateSection = (item, index) => {
   let renderComponent = <p> Hello</p>;
   switch (item.sectionType) {
     case "video":
       renderComponent = (
-        <TextWrapper>
+        <TextWrapper key={index}>
           {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
           <AudIntResponsiveIFrameWrapper>
-            <VideoPlayer
-              videoUrl={item.videoUrl}
-            />
+            <VideoPlayer videoUrl={item.videoUrl} />
           </AudIntResponsiveIFrameWrapper>
         </TextWrapper>
       );
       break;
     case "text":
       renderComponent = (
-        <TextWrapper>
+        <TextWrapper key={index}>
           {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
           {documentToReactComponents(item.text, richTextOptions)}
         </TextWrapper>
-      );
-      break;
-    case "audio":
-      renderComponent = (
-        <AudioWrapper>
-          {item.showTitle ? <AudintTitle> {item.title}</AudintTitle> : null}
-          <p> AUDIO</p>
-        </AudioWrapper>
       );
       break;
   }
@@ -69,29 +91,20 @@ const generateSection = item => {
 
 const AudintItem = props => {
   let item = props.item;
-  console.log("AUDINT", item);
+  console.log("AUDINT", item.audio);
   return (
     <ExhibitionItemWrapper>
       {item ? (
-        <div>
+        <>
           {item.audint_section.map((section, index) =>
-            generateSection(section)
+            generateSection(section, index)
           )}
-        </div>
-      ) : /* <div>
-          <AudintTitle>
-            {" "}
-            {item.title}, {item.participant}{" "}
-          </AudintTitle>
-          <p>{item.description}</p>
-          <ResponsiveIFrameWrapper>
-            <VideoPlayer
-              posterUrl={item.poster_url}
-              videoUrl={item.video_url}
-            />
-          </ResponsiveIFrameWrapper>
-        </div> */
-      null}
+        </>
+      ) : null}
+      <AudioWrapper>
+        <AudioTextWrapper>{documentToReactComponents(item.audio.text, richTextOptions)}</AudioTextWrapper>
+        <AudioPlayer url={item.audio.audio.fields.file.url} />
+      </AudioWrapper>
     </ExhibitionItemWrapper>
   );
 };

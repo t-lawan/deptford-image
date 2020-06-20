@@ -30,7 +30,9 @@ export default class RequestManager {
         moment(item.fields.endDate)
       );
 
+
       let pdf = item.fields.pdf ? item.fields.pdf.fields : null;
+      let audio = item.fields.audio ? item.fields.audio.fields : null;
 
       let audintSection = item.fields.audintSection
         ? item.fields.audintSection.map(section => {
@@ -50,9 +52,11 @@ export default class RequestManager {
         poster_image,
         item.fields.startDate,
         item.fields.endDate,
-        isAfterStartDate && isBeforeEndDate,
+        // item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate),
+        (isAfterStartDate && isBeforeEndDate),
         audintSection,
-        pdf
+        pdf, 
+        audio
       );
     });
     return exhibitionItems;
