@@ -52,7 +52,8 @@ export default class RequestManager {
         poster_image,
         item.fields.startDate,
         item.fields.endDate,
-        item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate),
+        // item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate),
+        (isAfterStartDate && isBeforeEndDate),
         audintSection,
         pdf, 
         audio
