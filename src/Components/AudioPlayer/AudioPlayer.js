@@ -2,13 +2,14 @@ import * as React from "react";
 import styled from "styled-components";
 import WaveSurfer from "wavesurfer.js";
 import ContagionMusic from '../../Assets/Contagion.mp3'
+import { Colour } from "../Global/global.styles";
 const WaveformWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   height: 100px;
-  width: 100%;
+  /* width: 100%; */
   background: transparent;
 `;
 
@@ -44,15 +45,16 @@ class AudioPlayer extends React.Component {
     const track = document.querySelector("#track");
 
     this.waveform = WaveSurfer.create({
-      barWidth: 3,
+      barWidth: 2,
       cursorWidth: 1,
       container: "#waveform",
       backend: "WebAudio",
       height: 80,
-      progressColor: "#2D5BFF",
-      responsive: true,
-      waveColor: "#EFEFEF",
-      cursorColor: "transparent"
+      progressColor: Colour.dark_pink,
+      responsive: false,
+      waveColor: Colour.pink,
+      cursorColor: "transparent",
+      barGap: 5
     });
 
     this.waveform.load(this.props.url);

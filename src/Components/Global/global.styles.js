@@ -23,7 +23,9 @@ export const size = {
 export const Colour = {
   green: "#7FFF00",
   // green: '#008000',
-  grey: '#D8D7D5'
+  grey: '#D8D7D5',
+  pink: '#cdc2fe',
+  dark_pink: '#ecc2ff'
 };
 
 export const GlobalStyle = createGlobalStyle`
