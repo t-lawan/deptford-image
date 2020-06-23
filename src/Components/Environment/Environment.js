@@ -337,8 +337,9 @@ class Environment extends Component {
     //   },
     //   this.loadProgressing
     // );
+    // loader.crossOrigin = "*"
     loader.load(
-      ExplosionSceneFBX,
+      'https://dt8c09yje207j.cloudfront.net/Small_Explosion.fbx',
       object => {
         this.centerObject = object;
       },
@@ -731,6 +732,7 @@ class Environment extends Component {
     this.controls.maxPolarAngle = 2 * Math.PI;
     this.controls.maxAzimuthAngle = Infinity;
     this.controls.update();
+    this.controls.saveState()
   };
 
   setupFlyControls = () => {
@@ -875,6 +877,9 @@ class Environment extends Component {
     this.camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
     this.camera.lookAt(this.centralPoint);
     this.camera.updateProjectionMatrix();
+    if(Device.isMobile()) {
+      this.controls.reset()
+    }
     this.props.showInstructions()
   }
 

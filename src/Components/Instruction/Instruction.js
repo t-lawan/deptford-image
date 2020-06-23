@@ -103,7 +103,7 @@ class Instruction extends React.Component {
               <>
                 <InstructionText>
                   {" "}
-                  Use the arrows buttons or WASD keys to move{" "}
+                  Use the arrow or WASD keys to move{" "}
                 </InstructionText>
                 <InstructionText>
                   {" "}
