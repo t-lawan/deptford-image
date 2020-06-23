@@ -337,8 +337,9 @@ class Environment extends Component {
     //   },
     //   this.loadProgressing
     // );
+    // loader.crossOrigin = "*"
     loader.load(
-      ExplosionSceneFBX,
+      'https://dt8c09yje207j.cloudfront.net/Small_Explosion.fbx',
       object => {
         this.centerObject = object;
       },
