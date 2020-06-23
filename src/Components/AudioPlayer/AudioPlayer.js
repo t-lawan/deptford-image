@@ -9,7 +9,7 @@ const WaveformWrapper = styled.div`
   align-items: center;
   justify-content: center;
   height: 100px;
-  /* width: 100%; */
+  width: 100%;
   background: transparent;
 `;
 

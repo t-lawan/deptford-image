@@ -10,12 +10,18 @@ import AudioPlayer from "../AudioPlayer/AudioPlayer";
 const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
   text-align: center;
 `;
-const ExhibitionItemWrapper = styled.div`
+
+const GridDiv = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 9fr 1fr;
   background: url(${AudintBackground});
   font-family: AudintBody;
   color: #cdc2fe !important;
   width: auto;
   height: 100vh;
+`;
+const ExhibitionItemWrapper = styled.div`
   padding: 2rem;
   overflow-x: auto;
   display: flex;
@@ -25,6 +31,9 @@ const ExhibitionItemWrapper = styled.div`
   align-items: center;
   align-content: center;
   position: absolute;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const TextWrapper = styled.div`
@@ -45,7 +54,8 @@ const TextWrapper = styled.div`
 
 const AudioTextWrapper = styled.div`
   margin: 0 2rem;
-`
+  color: #cdc2fe !important;
+`;
 
 const AudioWrapper = styled.div`
   position: fixed;
@@ -55,7 +65,6 @@ const AudioWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-
 `;
 
 const AudintTitle = styled.h1`
@@ -93,19 +102,23 @@ const AudintItem = props => {
   let item = props.item;
   console.log("AUDINT", item.audio);
   return (
-    <ExhibitionItemWrapper>
-      {item ? (
-        <>
-          {item.audint_section.map((section, index) =>
-            generateSection(section, index)
-          )}
-        </>
-      ) : null}
+    <GridDiv>
+      <ExhibitionItemWrapper>
+        {item ? (
+          <>
+            {item.audint_section.map((section, index) =>
+              generateSection(section, index)
+            )}
+          </>
+        ) : null}
+      </ExhibitionItemWrapper>
       <AudioWrapper>
-        <AudioTextWrapper>{documentToReactComponents(item.audio.text, richTextOptions)}</AudioTextWrapper>
+        <AudioTextWrapper>
+          {documentToReactComponents(item.audio.text, richTextOptions)}
+        </AudioTextWrapper>
         <AudioPlayer url={item.audio.audio.fields.file.url} />
       </AudioWrapper>
-    </ExhibitionItemWrapper>
+    </GridDiv>
   );
 };
 
