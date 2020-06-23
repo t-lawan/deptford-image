@@ -89,6 +89,11 @@ var FBXLoader = ( function () {
 			var path = ( scope.path === '' ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 			var loader = new FileLoader( this.manager );
+			loader.setRequestHeader({
+				'Access-Control-Allow-Origin': "*",
+				"Access-Control-Allow-Credentials" : true,
+				"Content-Type": "binary/octet-stream"
+			})
 			loader.setPath( scope.path );
 			loader.setResponseType( 'arraybuffer' );
 
