@@ -36,7 +36,7 @@ const InstructionText = styled.p`
     margin: 0;
     margin-bottom: 0.25rem;
     padding: 0;
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
   }
 `;
 const ImageWrapper = styled.div`
@@ -123,9 +123,9 @@ class Instruction extends React.Component {
               <>
                 <InstructionText>
                   {" "}
-                  Pinch using two fingers to zoom
+                  Pinch and Spread with two fingers to zoom
                 </InstructionText>
-                <InstructionText> Rotate using one finger </InstructionText>
+                <InstructionText>  Press and drag with one finger to rotate </InstructionText>
                 <InstructionText>
                   {" "}
                   Tap on an object attached to the green box to view content
@@ -133,6 +133,10 @@ class Instruction extends React.Component {
                 <InstructionText>
                   {" "}
                   Recommended to be viewed on desktop
+                </InstructionText>
+                <InstructionText>
+                  {" "}
+                  Tap to start
                 </InstructionText>
               </>
             )}

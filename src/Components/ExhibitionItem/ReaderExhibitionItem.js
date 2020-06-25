@@ -16,15 +16,18 @@ const ImageWrapper = styled.div`
   max-height: 100vh;
   margin: auto;
   text-align: center;
-
-`
+`;
 
 const LinkImage = styled.img`
-  height: 90vh; 
+  height: 90vh;
   :hover {
     border: 1px solid ${Colour.green};
+    @media (max-width: ${size.tabletL}) {
+      border: 0;
+    }
   }
-`
+  object-fit: contain;
+`;
 
 const MobileWrapper = styled.div`
   position: absolute;
@@ -38,15 +41,13 @@ const MobileWrapper = styled.div`
 `;
 const MobileLink = styled.a`
   color: ${Colour.green};
-  text-decoration: ${props => props.underline ? 'underline' : 'none'};
+  text-decoration: ${props => (props.underline ? "underline" : "none")};
   @media (min-width: ${size.laptop}) {
     font-size: 1.5rem;
   }
 `;
 
-const ImageLink = styled.a`
-
-`
+const ImageLink = styled.a``;
 
 const MobileText = styled.p`
   color: ${Colour.green};
@@ -57,13 +58,12 @@ const MobileTextWrapper = styled.div`
 `;
 
 class ReaderExhibitionItem extends React.Component {
-
   render() {
     this.item = this.props.item;
-    console.log('ITEM', this.item)
+    console.log("ITEM", this.item);
     return (
       <ExhibitionItemWrapper>
-        {!Device.isMobile() ? (
+        {1 === 1 ? (
           <ImageWrapper>
             <ImageLink href={this.item.pdf.file.url} target="_blank">
               <LinkImage src={this.item.poster_url} />
@@ -74,7 +74,11 @@ class ReaderExhibitionItem extends React.Component {
           <MobileWrapper>
             <MobileTextWrapper>
               {/* <MobileText> {this.item.title} </MobileText> */}
-              <MobileLink underline href={this.item.pdf.file.url} target="_blank">
+              <MobileLink
+                underline
+                href={this.item.pdf.file.url}
+                target="_blank"
+              >
                 {" "}
                 Download{" "}
               </MobileLink>
