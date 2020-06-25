@@ -1,11 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { Document, Page, View } from "react-pdf";
-import { pdfjs } from "react-pdf";
 import { Colour, size } from "../Global/global.styles";
 import Device from "../../Utility/Device";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import PDFReader from "../PDFReader/PDFReader";
 const ExhibitionItemWrapper = styled.div`
   padding: 1rem;
   @media (max-width: ${size.tabletL}) {
@@ -13,32 +11,22 @@ const ExhibitionItemWrapper = styled.div`
   }
 `;
 
-export const PDFDocument = styled(Document)`
+const ImageWrapper = styled.div`
+  padding: 2rem;
+  max-height: 100vh;
   margin: auto;
+  text-align: center;
 `;
 
-const FixedBox = styled.div`
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-`;
-
-const PDFControls = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-content: center;
-  align-items: baseline;
-
-`;
-
-const Control = styled.p`
-  color: ${Colour.green};
-  opacity: ${props => (props.hide ? 0 : 1)};
-  cursor: pointer;
+const LinkImage = styled.img`
+  height: 90vh;
   :hover {
-    font-style: italic;
+    border: 1px solid ${Colour.green};
+    @media (max-width: ${size.tabletL}) {
+      border: 0;
+    }
   }
+  object-fit: contain;
 `;
 
 const MobileWrapper = styled.div`
@@ -53,11 +41,13 @@ const MobileWrapper = styled.div`
 `;
 const MobileLink = styled.a`
   color: ${Colour.green};
-  text-decoration: ${props => props.underline ? 'underline' : 'none'};
+  text-decoration: ${props => (props.underline ? "underline" : "none")};
   @media (min-width: ${size.laptop}) {
     font-size: 1.5rem;
   }
 `;
+
+const ImageLink = styled.a``;
 
 const MobileText = styled.p`
   color: ${Colour.green};
@@ -67,90 +57,28 @@ const MobileTextWrapper = styled.div`
   text-align: center;
 `;
 
-const PDFPage = styled(Page)`
-  /* div > .react-pdf__Page__svg, div > .react-pdf__Page__svg > svg{
-    width: 100% !important;
-    height: 100% !important;
-  } */
-`;
 class ReaderExhibitionItem extends React.Component {
-  state = {
-    numPages: null,
-    pageNumber: 1
-  };
-
-  previousPage = () => {
-    if (this.state.numPages) {
-      if (this.state.pageNumber > 1) {
-        this.setState({
-          pageNumber: this.state.pageNumber - 1
-        });
-      }
-    }
-  };
-
-  nextPage = () => {
-    if (this.state.numPages) {
-      if (this.state.pageNumber < this.state.numPages) {
-        this.setState({
-          pageNumber: this.state.pageNumber + 1
-        });
-      }
-    }
-  };
-
-  isLast = () => {
-    return this.state.pageNumber === this.state.numPages;
-  };
-
-  isFirst = () => {
-    return this.state.pageNumber === 1;
-  };
-  onDocumentLoadSuccess = ({ numPages }) => {
-    this.setState({ numPages });
-  };
   render() {
     this.item = this.props.item;
+    console.log("ITEM", this.item);
     return (
       <ExhibitionItemWrapper>
-        {1 === 2 ? (
-          <>
-            {this.item.pdf ? (
-              <>
-                <PDFDocument
-                  file={this.item.pdf.file.url}
-                  renderMode={"svg"}
-                  onLoadSuccess={this.onDocumentLoadSuccess}
-                >
-                  {/* <View> */}
-                  <Page pageNumber={this.state.pageNumber} />
-                  {/* </View> */}
-                </PDFDocument>
-              </>
-            ) : null}
-            <FixedBox>
-              <PDFControls>
-                <Control
-                  hide={this.isFirst()}
-                  onClick={() => this.previousPage()}
-                >
-                  {" "}
-                  Back
-                </Control>
-                <MobileLink href={this.item.pdf.file.url} target="_blank"> Download</MobileLink>
-
-                <Control hide={this.isLast()} onClick={() => this.nextPage()}>
-                  {" "}
-                  Next
-                </Control>
-              </PDFControls>
-            </FixedBox>
-          </>
+        {1 === 1 ? (
+          <ImageWrapper>
+            <ImageLink href={this.item.pdf.file.url} target="_blank">
+              <LinkImage src={this.item.poster_url} />
+            </ImageLink>
+            {/* <PDFReader item={this.item}/> */}
+          </ImageWrapper>
         ) : (
           <MobileWrapper>
             <MobileTextWrapper>
               {/* <MobileText> {this.item.title} </MobileText> */}
-              <MobileLink underline href={this.item.pdf.file.url} target="_blank">
+              <MobileLink
+                underline
+                href={this.item.pdf.file.url}
+                target="_blank"
+              >
                 {" "}
                 Download{" "}
               </MobileLink>
