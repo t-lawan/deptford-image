@@ -3,6 +3,10 @@ import styled from "styled-components";
 import WaveSurfer from "wavesurfer.js";
 import ContagionMusic from '../../Assets/Contagion.mp3'
 import { Colour } from "../Global/global.styles";
+import PlayImage from '../../Assets/play.png'
+import PlayHoverImage from '../../Assets/play_on_hover.png'
+import PauseImage from '../../Assets/pause.png'
+import PauseHoverImage from '../../Assets/pause_on_hover.png'
 const WaveformWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -18,27 +22,32 @@ const Wave = styled.div`
     height: 90px;
 `;
 
-const PlayButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 60px;
-  height: 60px;
-  background: #EFEFEF;
-  border-radius: 50%;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding-bottom: 3px;  
-  &:hover {
-    background: #DDD;
-  }
-`;
+const PlayButton = styled.img`
+
+`
+
+// const PlayButton = styled.button`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 60px;
+//   height: 60px;
+//   background: #EFEFEF;
+//   border-radius: 50%;
+//   border: none;
+//   outline: none;
+//   cursor: pointer;
+//   padding-bottom: 3px;  
+//   &:hover {
+//     background: #DDD;
+//   }
+// `;
 
 class AudioPlayer extends React.Component {
   waveform;
   state = {
-    playing: false
+    playing: false,
+    hover: false
   };
 
   componentDidMount() {
@@ -46,15 +55,17 @@ class AudioPlayer extends React.Component {
 
     this.waveform = WaveSurfer.create({
       barWidth: 2,
+      barHeight: 2,
       cursorWidth: 1,
       container: "#waveform",
       backend: "WebAudio",
       height: 80,
       progressColor: Colour.dark_pink,
-      responsive: false,
+      responsive: true,
       waveColor: Colour.pink,
-      cursorColor: "transparent",
-      barGap: 5
+      cursorColor: Colour.dark_pink,
+      barGap: 5,
+      scrollParent: true
     });
 
     this.waveform.load(this.props.url);
@@ -65,10 +76,23 @@ class AudioPlayer extends React.Component {
     this.waveform.playPause();
   };
 
+  onMouseEnter = () => {
+    this.setState({
+      hover: true
+    })
+  }
+
+  onMouseLeave = () => {
+    this.setState({
+      hover: false
+    })
+  }
+
   render() {
     return (
       <WaveformWrapper>
-        <PlayButton onClick={this.handlePlay}>Play</PlayButton>
+        <PlayButton onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.handlePlay} src={this.state.playing ? (this.state.hover ? PauseHoverImage : PauseImage): (this.state.hover ? PlayHoverImage : PlayImage)} />
+        {/* <PlayButton onClick={this.handlePlay}>Play</PlayButton> */}
         <Wave id="waveform" />
         <audio id="track" src={ContagionMusic} />
       </WaveformWrapper>

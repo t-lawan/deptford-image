@@ -24,8 +24,9 @@ export const Colour = {
   green: "#7FFF00",
   // green: '#008000',
   grey: '#D8D7D5',
-  pink: '#cdc2fe',
-  dark_pink: '#ecc2ff'
+  pink: '#f3dbff',
+  dark_pink: '#f3dbff',
+  audint_black: '#0c0924'
 };
 
 export const GlobalStyle = createGlobalStyle`
