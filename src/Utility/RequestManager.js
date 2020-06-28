@@ -52,8 +52,7 @@ export default class RequestManager {
         poster_image,
         item.fields.startDate,
         item.fields.endDate,
-        // item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate),
-        (isAfterStartDate && isBeforeEndDate),
+        process.env.REACT_APP_SHOW_AUDINT ? item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate) : (isAfterStartDate && isBeforeEndDate),
         audintSection,
         pdf, 
         audio

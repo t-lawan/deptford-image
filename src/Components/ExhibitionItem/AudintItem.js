@@ -162,16 +162,10 @@ class AudintItem extends React.Component {
     let topScrollWidth = this.topRowRef.current.scrollWidth - this.topRowRef.current.offsetWidth;
     let topScrollLeft = this.topRowRef.current.scrollLeft
     let topRowPercentScroll = topScrollLeft/topScrollWidth;
-    // console.log('PERCENTAGE', topRowPercentScroll)
     this.bottomRowRef.current.scrollLeft = topRowPercentScroll * (this.bottomRowRef.current.scrollWidth - this.bottomRowRef.current.offsetWidth)
-    // console.log('scrollWidth', this.bottomRowRef.current.scrollWidth)
-    // console.log('offsetWidth', this.bottomRowRef.current.offsetWidth)
-    console.log('scrollLeft', this.bottomRowRef.current.scrollLeft)
-    
   }
   render() {
     this.item = this.props.item;
-    console.log("AUDINT", this.item);
     return (
       <GridDiv>
         <ExhibitionItemWrapper ref={this.topRowRef} onScroll={this.onTopRowScroll}>
