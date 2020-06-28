@@ -67,6 +67,7 @@ class Environment extends Component {
   hasInteracted = false;
   isMobile = false;
   textArray = [];
+  previouslySelectedMesh;
   constructor(props) {
     super(props);
     this.state = {
@@ -146,13 +147,18 @@ class Environment extends Component {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
     document.addEventListener("keydown", this.onKeyDown, false)
     document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
+    // document.addEventListener("mouseup", this.onDocumentMouseUp, false);
+    // document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
+
   };
 
   removeEventListeners = () => {
     window.removeEventListener("resize", this.onWindowResize);
     document.removeEventListener("dblclick", this.onDocumentDoubleClick);
+    // document.removeEventListener("mouseup", this.onDocumentMouseUp);
+    // document.removeEventListener("mousedown", this.onDocumentMouseDown);
     document.removeEventListener("keydown", this.onKeyDown)
     document.removeEventListener("mousemove", this.onDocumentMouseMove);
     document.removeEventListener(
@@ -777,6 +783,46 @@ class Environment extends Component {
     }
   };
 
+  onDocumentMouseDown = event => {
+    if (!this.state.pause) {
+      this.hideInstructions()
+      this.setMouse(event);
+      let boundingBoxes = this.clickableObjects.map(object => {
+        return object.objectBoundary;
+      });
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        this.previouslySelectedMesh = mesh;
+        console.log('onDocumentMouseDown', this.previouslySelectedMesh)
+
+        // if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
+        //   mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        // }
+      }
+    }
+  };
+
+  onDocumentMouseUp = event => {
+    if (!this.state.pause) {
+      this.hideInstructions()
+      this.setMouse(event);
+      let boundingBoxes = this.clickableObjects.map(object => {
+        return object.objectBoundary;
+      });
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        console.log(mesh, this.previouslySelectedMesh)
+        if (this.previouslySelectedMesh === mesh && mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
+          mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        }
+        this.previouslySelectedMesh = null;
+      }
+    }
+  };
   onDocumentTouchStart = event => {
     if (!this.state.pause) {
       // event.preventDefault();
