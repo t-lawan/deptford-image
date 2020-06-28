@@ -19,6 +19,8 @@ export default class RequestManager {
       content_type: "exhibitionItem"
     });
 
+    console.log('EXXXXXXX', process.env.REACT_APP_SHOW_AUDINT)
+    console.log('EXXXXXXX', response)
     let exhibitionItems = response.items.map(item => {
       let poster_image = item.fields.posterImage
         ? item.fields.posterImage.fields.file.url
@@ -40,6 +42,8 @@ export default class RequestManager {
           })
         : null;
 
+
+
       return new ExhibitionItemModel(
         item.sys.id,
         item.fields.mapId,
@@ -52,7 +56,7 @@ export default class RequestManager {
         poster_image,
         item.fields.startDate,
         item.fields.endDate,
-        process.env.REACT_APP_SHOW_AUDINT ? item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate) : (isAfterStartDate && isBeforeEndDate),
+        process.env.REACT_APP_SHOW_AUDINT === "true" ? item.fields.mapId === 'protocols_audint' ? true : (isAfterStartDate && isBeforeEndDate) : (isAfterStartDate && isBeforeEndDate),
         audintSection,
         pdf, 
         audio
