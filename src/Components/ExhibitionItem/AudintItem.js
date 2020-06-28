@@ -34,6 +34,7 @@ const ExhibitionItemWrapper = styled.div`
   align-items: center;
   align-content: center;
   overflow-y: hidden;
+  scrollbar-width: 0;
   /* position: absolute; */
   ::-webkit-scrollbar {
     display: none;
@@ -52,6 +53,7 @@ const AudioWrapper = styled.div`
   overflow-x: hidden;
   width: 100%;
   align-items: center;
+  scrollbar-width: 0;
   ::-webkit-scrollbar {
     display: none;
   }
