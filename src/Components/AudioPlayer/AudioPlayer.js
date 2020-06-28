@@ -15,6 +15,8 @@ const WaveformWrapper = styled.div`
   height: 100px;
   width: 100%;
   background: transparent;
+  flex: 0 0 auto;
+  /* margin-right: 80%; */
 `;
 
 const Wave = styled.div`
@@ -25,23 +27,6 @@ const Wave = styled.div`
 const PlayButton = styled.img`
 
 `
-
-// const PlayButton = styled.button`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 60px;
-//   height: 60px;
-//   background: #EFEFEF;
-//   border-radius: 50%;
-//   border: none;
-//   outline: none;
-//   cursor: pointer;
-//   padding-bottom: 3px;  
-//   &:hover {
-//     background: #DDD;
-//   }
-// `;
 
 class AudioPlayer extends React.Component {
   waveform;
@@ -63,9 +48,9 @@ class AudioPlayer extends React.Component {
       progressColor: Colour.dark_pink,
       responsive: true,
       waveColor: Colour.pink,
-      cursorColor: Colour.dark_pink,
+      cursorColor: 'transparent',
       barGap: 5,
-      scrollParent: true
+      scrollParent: false
     });
 
     this.waveform.load(this.props.url);

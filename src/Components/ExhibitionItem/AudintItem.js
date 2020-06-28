@@ -8,14 +8,16 @@ import { ResponsiveIFrameWrapper } from "./DefaultExhibitionItem";
 import AudintBackground from "../../Assets/AudintBackground.png";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Colour } from "../Global/global.styles";
+import { render } from "@testing-library/react";
 const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
   text-align: center;
 `;
 
 const GridDiv = styled.div`
+  overflow-x: auto;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 9fr 1fr;
+  grid-template-rows: 9fr 2fr;
   background: url(${AudintBackground});
   font-family: AudintBody;
   color: ${Colour.pink} !important;
@@ -24,7 +26,7 @@ const GridDiv = styled.div`
 `;
 const ExhibitionItemWrapper = styled.div`
   /* padding: 2rem; */
-  overflow-x: auto;
+  /* overflow-x: auto; */
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -38,9 +40,33 @@ const ExhibitionItemWrapper = styled.div`
   }
 `;
 
+const AudioWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  background: transparent;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  align-items: center;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const AudioTextWrapper = styled.div`
+  margin: 0 2rem;
+  flex: 0 0 auto;
+  color: ${Colour.pink} !important;
+  margin-left: 100%;
+`;
+
 const TextWrapper = styled.div`
   padding: 1rem;
-  display: inline-block;
+  display: flex;
   width: 60%;
   height: 60%;
   flex: 0 0 auto;
@@ -51,6 +77,7 @@ const TextWrapper = styled.div`
   p {
     /* width: 40%; */
     white-space: break-spaces;
+    margin: auto;
   }
 `;
 
@@ -64,13 +91,11 @@ const IntroTextWrapper = styled.div`
 `;
 
 const IntroHeadingWrapper = styled.div`
-margin-bottom: 1.5rem;
-
-
-`
+  margin-bottom: 1.5rem;
+`;
 
 const VideoWrapper = styled.div`
-  padding: 1rem;
+  /* padding: 1rem; */
 
   width: 100%;
   display: grid;
@@ -79,20 +104,7 @@ const VideoWrapper = styled.div`
   grid-template-columns: ${props => (props.oneColumn ? "1fr" : "3fr 5fr")};
 `;
 
-const AudioTextWrapper = styled.div`
-  margin: 0 2rem;
-  color: ${Colour.pink} !important;
-`;
 
-const AudioWrapper = styled.div`
-  /* position: fixed; */
-  /* bottom: 0; */
-  background: transparent;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
 
 const AudintTitle = styled.h1`
   font-family: AudintTitle;
@@ -105,7 +117,6 @@ const generateSection = (item, index) => {
   let renderComponent = <p> Hello</p>;
   switch (item.sectionType) {
     case "video":
-
       renderComponent = (
         <VideoWrapper oneColumn={!item.showTitle} key={index}>
           <IntroTextWrapper>
@@ -116,7 +127,6 @@ const generateSection = (item, index) => {
               ) : null}
             </IntroHeadingWrapper>
             {documentToReactComponents(item.text, richTextOptions)}
-
           </IntroTextWrapper>
 
           <AudIntResponsiveIFrameWrapper>
@@ -139,30 +149,50 @@ const generateSection = (item, index) => {
   return renderComponent;
 };
 
-const AudintItem = props => {
-  let item = props.item;
-  console.log("AUDINT", item);
+class AudintItem extends React.Component {
+  topRowRef;
+  bottomRowRef;
 
-  return (
-    <GridDiv>
-      <ExhibitionItemWrapper>
-        {item ? (
-          <>
-            {item.audint_section.map((section, index) =>
-              generateSection(section, index)
-            )}
-          </>
-        ) : null}
-      </ExhibitionItemWrapper>
-      <AudioWrapper>
-        <AudioTextWrapper>
-          {documentToReactComponents(item.audio.text, richTextOptions)}
-        </AudioTextWrapper>
-        <AudioPlayer url={item.audio.audio.fields.file.url} />
-      </AudioWrapper>
-    </GridDiv>
-  );
-};
+  constructor(props) {
+    super(props);
+    this.topRowRef = React.createRef()
+    this.bottomRowRef = React.createRef()
+  }
+  onTopRowScroll = () => {
+    let topScrollWidth = this.topRowRef.current.scrollWidth - this.topRowRef.current.offsetWidth;
+    let topScrollLeft = this.topRowRef.current.scrollLeft
+    let topRowPercentScroll = topScrollLeft/topScrollWidth;
+    // console.log('PERCENTAGE', topRowPercentScroll)
+    this.bottomRowRef.current.scrollLeft = topRowPercentScroll * (this.bottomRowRef.current.scrollWidth - this.bottomRowRef.current.offsetWidth)
+    // console.log('scrollWidth', this.bottomRowRef.current.scrollWidth)
+    // console.log('offsetWidth', this.bottomRowRef.current.offsetWidth)
+    console.log('scrollLeft', this.bottomRowRef.current.scrollLeft)
+    
+  }
+  render() {
+    this.item = this.props.item;
+    console.log("AUDINT", this.item);
+    return (
+      <GridDiv>
+        <ExhibitionItemWrapper ref={this.topRowRef} onScroll={this.onTopRowScroll}>
+          {this.item ? (
+            <>
+              {this.item.audint_section.map((section, index) =>
+                generateSection(section, index)
+              )}
+            </>
+          ) : null}
+        </ExhibitionItemWrapper>
+        <AudioWrapper ref={this.bottomRowRef}>
+          <AudioTextWrapper>
+            {documentToReactComponents(this.item.audio.text,richTextOptions)}
+          </AudioTextWrapper>
+          <AudioPlayer url={this.item.audio.audio.fields.file.url} />
+        </AudioWrapper>
+      </GridDiv>
+    );
+  }
+}
 
 const mapStateToProps = state => {
   return {
