@@ -151,7 +151,6 @@ class Environment extends Component {
     // document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
-
   };
 
   removeEventListeners = () => {
@@ -169,7 +168,7 @@ class Environment extends Component {
   };
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
-      70, // fov = field of view
+      Device.isMobile() ? 100 : 70, // fov = field of view
       width / height, // aspect ratio
       1, // near plane
       5000 // far plane
@@ -731,7 +730,7 @@ class Environment extends Component {
     this.controls.enableKeys = true;
     this.controls.enablePan = true;
     this.controls.minDistance = 0;
-    this.controls.maxDistance = 2000;
+    this.controls.maxDistance = 4000;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
     this.controls.panSpeed = 3;
