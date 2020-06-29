@@ -11,6 +11,8 @@ import { Colour, size } from "../Global/global.styles";
 import { render } from "@testing-library/react";
 const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
   text-align: center;
+  padding: ${props => props.fullScreen ? '0' : '2rem'};
+  width: ${props => props.fullScreen ? '100%' : '80%'};
 `;
 
 const GridDiv = styled.div`
@@ -69,7 +71,7 @@ const AudioTextWrapper = styled.div`
 const TextWrapper = styled.div`
   padding: 1rem;
   display: flex;
-  width: 60%;
+  width: 100%;
   height: 60%;
   flex: 0 0 auto;
   text-align: center;
@@ -141,8 +143,8 @@ const generateSection = (item, index) => {
             {documentToReactComponents(item.text, richTextOptions)}
           </IntroTextWrapper>
 
-          <AudIntResponsiveIFrameWrapper>
-            <VideoPlayer videoUrl={item.videoUrl} />
+          <AudIntResponsiveIFrameWrapper fullScreen={!item.text}>
+            <VideoPlayer autoPlay={index === 0} fullScreen={!item.text} videoUrl={item.videoUrl} />
           </AudIntResponsiveIFrameWrapper>
         </VideoWrapper>
       );
