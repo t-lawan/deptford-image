@@ -6,6 +6,7 @@ import { Player, BigPlayButton } from "video-react";
 import { Colour } from "../Global/global.styles";
 const VideoPlayerWrapper = styled.div`
     border: ${props => props.withBorder ? `1px solid ${Colour.green}` : 0};
+    width: ${props => props.fullScreen ? `100%` : 'auto'};
 `
 
 class VideoPlayer extends React.Component {
