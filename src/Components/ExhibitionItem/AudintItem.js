@@ -8,15 +8,16 @@ import { ResponsiveIFrameWrapper } from "./DefaultExhibitionItem";
 import AudintBackground from "../../Assets/AudintBackground.png";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Colour, size } from "../Global/global.styles";
-import { render } from "@testing-library/react";
+
 const AudIntResponsiveIFrameWrapper = styled(ResponsiveIFrameWrapper)`
   text-align: center;
-  padding: ${props => props.fullScreen ? '0' : '2rem'};
-  width: ${props => props.fullScreen ? '100%' : '80%'};
+  padding: ${props => (props.fullScreen ? "0" : "2rem")};
+  width: ${props => (props.fullScreen ? "100%" : "80%")};
+  /* padding-right: ${props => (props.fullScreen ? "2rem" : "")}; */
 `;
 
 const GridDiv = styled.div`
-  overflow-x: auto;
+  /* overflow-x: auto; */
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 9fr 2fr;
@@ -25,17 +26,28 @@ const GridDiv = styled.div`
   color: ${Colour.pink} !important;
   width: auto;
   height: 100vh;
+  flex: 0 0 auto;
 `;
+const AudintWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  /* flex-wrap: nowrap; */
+  /* justify-content: space-between; */
+  /* overflow-x: scroll; */
+  /* overflow-y: hidden; */
+  align-items: center;
+  align-content: center;
+  
+`;
+
 const ExhibitionItemWrapper = styled.div`
-  /* padding: 2rem; */
-  /* overflow-x: auto; */
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
   align-content: center;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   scrollbar-width: 0;
   /* position: absolute; */
   ::-webkit-scrollbar {
@@ -47,9 +59,9 @@ const AudioWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: space-between;
+  /* justify-content: space-between;
   align-items: center;
-  align-content: center;
+  align-content: center; */
   background: transparent;
   overflow-y: hidden;
   overflow-x: hidden;
@@ -63,21 +75,24 @@ const AudioWrapper = styled.div`
 
 const AudioTextWrapper = styled.div`
   margin: 0 2rem;
-  flex: 0 0 auto;
+  /* flex: 0 0 auto; */
   color: ${Colour.pink} !important;
-  margin-left: 100%;
+  margin-left: 2%;
+  flex-wrap: nowrap;
 `;
+
+
 
 const TextWrapper = styled.div`
   padding: 1rem;
   display: flex;
-  width: 100%;
+  width: 100vw;
   height: 60%;
-  flex: 0 0 auto;
+  /* flex: 0 0 auto; */
   text-align: center;
-  :first-of-type {
+  /* :first-of-type {
     width: 100%;
-  }
+  } */
   p {
     /* width: 40%; */
     white-space: break-spaces;
@@ -85,7 +100,7 @@ const TextWrapper = styled.div`
   }
 
   @media (max-width: ${size.tabletL}) {
-    p{
+    p {
       font-size: 0.9rem !important;
     }
   }
@@ -108,11 +123,11 @@ const IntroHeadingWrapper = styled.div`
 `;
 
 const VideoWrapper = styled.div`
-  /* padding: 1rem; */
+  padding: ${props => (props.oneColumn ? "0" : "0 1rem")};
+  width: ${props => (props.oneColumn ? '100%' : '100vw')};
 
-  width: 100%;
   display: grid;
-  flex: 0 0 auto;
+  /* flex: 0 0 auto; */
   text-align: center;
   grid-template-columns: ${props => (props.oneColumn ? "1fr" : "3fr 5fr")};
 `;
@@ -126,6 +141,15 @@ const AudintTitle = styled.h1`
     font-size: 0.9rem !important;
   }
 `;
+
+const OpeningDiv = styled.div`
+  width: auto;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  background: black;
+  flex: 0 0 auto;
+`
 
 const generateSection = (item, index) => {
   let renderComponent = <p> Hello</p>;
@@ -144,7 +168,11 @@ const generateSection = (item, index) => {
           </IntroTextWrapper>
 
           <AudIntResponsiveIFrameWrapper fullScreen={!item.text}>
-            <VideoPlayer autoPlay={index === 0} fullScreen={!item.text} videoUrl={item.videoUrl} />
+            <VideoPlayer
+              autoPlay={index === 10}
+              fullScreen={!item.text}
+              videoUrl={item.videoUrl}
+            />
           </AudIntResponsiveIFrameWrapper>
         </VideoWrapper>
       );
@@ -159,6 +187,10 @@ const generateSection = (item, index) => {
         </TextWrapper>
       );
       break;
+  }
+
+  if(index === 0) {
+    renderComponent = (<></>)
   }
   return renderComponent;
 };
@@ -185,26 +217,35 @@ class AudintItem extends React.Component {
   render() {
     this.item = this.props.item;
     return (
-      <GridDiv>
-        <ExhibitionItemWrapper
-          ref={this.topRowRef}
-          onScroll={this.onTopRowScroll}
-        >
-          {this.item ? (
-            <>
-              {this.item.audint_section.map((section, index) =>
-                generateSection(section, index)
-              )}
-            </>
-          ) : null}
-        </ExhibitionItemWrapper>
-        <AudioWrapper ref={this.bottomRowRef}>
-          <AudioTextWrapper>
-            {documentToReactComponents(this.item.audio.text, richTextOptions)}
-          </AudioTextWrapper>
-          <AudioPlayer url={this.item.audio.audio.fields.file.url} />
-        </AudioWrapper>
-      </GridDiv>
+            
+      <AudintWrapper
+        ref={this.topRowRef} 
+        onScroll={this.onTopRowScroll}
+      >
+        <OpeningDiv>
+          {generateSection(this.item.audint_section[0], 10)}
+        </OpeningDiv>
+        <GridDiv>
+          <ExhibitionItemWrapper
+
+          >
+            {this.item ? (
+              <>
+                {this.item.audint_section.map((section, index) =>
+                  generateSection(section, index)
+                )}
+              </>
+            ) : null}
+          </ExhibitionItemWrapper>
+          <AudioWrapper ref={this.bottomRowRef}>
+            <AudioTextWrapper>
+              {documentToReactComponents(this.item.audio.text, richTextOptions)}
+            </AudioTextWrapper>
+            <AudioPlayer url={this.item.audio.audio.fields.file.url} />
+          </AudioWrapper>
+        </GridDiv>
+
+      </AudintWrapper>
     );
   }
 }
