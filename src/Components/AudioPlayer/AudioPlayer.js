@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import WaveSurfer from "wavesurfer.js";
 import ContagionMusic from '../../Assets/Contagion.mp3'
-import { Colour } from "../Global/global.styles";
+import { Colour, size } from "../Global/global.styles";
 import PlayImage from '../../Assets/play.png'
 import PlayHoverImage from '../../Assets/play_on_hover.png'
 import PauseImage from '../../Assets/pause.png'
@@ -25,6 +25,13 @@ const Wave = styled.div`
     align-self: flex-end;
 `;
 
+const PlayButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  @media (max-width: ${size.tabletL}) {
+    width: 30%
+  }
+`
 const PlayButton = styled.img`
 
 `
@@ -79,7 +86,9 @@ class AudioPlayer extends React.Component {
   render() {
     return (
       <WaveformWrapper>
-        <PlayButton onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.handlePlay} src={this.state.playing ? (this.state.hover ? PauseHoverImage : PauseImage): (this.state.hover ? PlayHoverImage : PlayImage)} />
+        <PlayButtonWrapper>
+          <PlayButton onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.handlePlay} src={this.state.playing ? (this.state.hover ? PauseHoverImage : PauseImage): (this.state.hover ? PlayHoverImage : PlayImage)} />
+        </PlayButtonWrapper>
         {/* <PlayButton onClick={this.handlePlay}>Play</PlayButton> */}
         <Wave id="waveform" />
         <audio id="track" src={ContagionMusic} />

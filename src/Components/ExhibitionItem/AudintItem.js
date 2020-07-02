@@ -21,12 +21,19 @@ const GridDiv = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 9fr 2fr;
-  background: url(${AudintBackground});
+  /* background: url(${AudintBackground}); */
+  background-image: url(${AudintBackground});
+  background-position: center;
+  background-attachment: fixed;
   font-family: AudintBody;
   color: ${Colour.pink} !important;
   width: auto;
   height: 100vh;
   flex: 0 0 auto;
+
+  @media (max-width: ${size.tabletL}) {
+    height: auto;
+  }
 `;
 const AudintWrapper = styled.div`
   display: flex;
@@ -37,7 +44,10 @@ const AudintWrapper = styled.div`
   /* overflow-y: hidden; */
   align-items: center;
   align-content: center;
-  
+
+  @media (max-width: ${size.tabletL}) {
+    flex-direction: column;
+  }
 `;
 
 const ExhibitionItemWrapper = styled.div`
@@ -52,6 +62,10 @@ const ExhibitionItemWrapper = styled.div`
   /* position: absolute; */
   ::-webkit-scrollbar {
     display: none;
+  }
+
+  @media (max-width: ${size.tabletL}) {
+    flex-direction: column;
   }
 `;
 
@@ -71,6 +85,10 @@ const AudioWrapper = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
+
+  @media (max-width: ${size.tabletL}) {
+    flex-direction: column;
+  }
 `;
 
 const AudioTextWrapper = styled.div`
@@ -79,6 +97,19 @@ const AudioTextWrapper = styled.div`
   color: ${Colour.pink} !important;
   margin-left: 2%;
   flex-wrap: nowrap;
+  p {
+      font-size: 1.15rem !important;
+      white-space: nowrap;
+    }
+
+  @media (max-width: ${size.tabletL}) {
+    p {
+      font-size: 0.9rem !important;
+      margin: 0 !important;
+      margin-bottom: 0.5rem !important;
+      padding: 0 !important;
+    }
+  }
 `;
 
 
@@ -113,6 +144,10 @@ const IntroTextWrapper = styled.div`
     font-size: 1.15rem !important;
     @media (max-width: ${size.tabletL}) {
       font-size: 0.7rem !important;
+      margin: 0 !important;
+      margin-bottom: 0.5rem !important;
+      padding: 0 !important;
+      text-align: left;
     }
     text-align: right;
   }
@@ -130,6 +165,10 @@ const VideoWrapper = styled.div`
   /* flex: 0 0 auto; */
   text-align: center;
   grid-template-columns: ${props => (props.oneColumn ? "1fr" : "3fr 5fr")};
+  @media (max-width: ${size.tabletL}) {
+    grid-template-columns: 1fr;
+    padding-top: 1rem;
+  }
 `;
 
 const AudintTitle = styled.h1`
@@ -138,7 +177,7 @@ const AudintTitle = styled.h1`
   color: ${Colour.pink} !important;
   margin: 0;
   @media (max-width: ${size.tabletL}) {
-    font-size: 0.9rem !important;
+    font-size: 1rem !important;
   }
 `;
 
@@ -149,6 +188,9 @@ const OpeningDiv = styled.div`
   /* display: grid; */
   background: black;
   flex: 0 0 auto;
+  @media (max-width: ${size.tabletL}) {
+    height: auto;
+  }
 `
 
 const generateSection = (item, index) => {
@@ -216,8 +258,7 @@ class AudintItem extends React.Component {
   };
   render() {
     this.item = this.props.item;
-    return (
-            
+    return (    
       <AudintWrapper
         ref={this.topRowRef} 
         onScroll={this.onTopRowScroll}
@@ -226,9 +267,7 @@ class AudintItem extends React.Component {
           {generateSection(this.item.audint_section[0], 10)}
         </OpeningDiv>
         <GridDiv>
-          <ExhibitionItemWrapper
-
-          >
+          <ExhibitionItemWrapper>
             {this.item ? (
               <>
                 {this.item.audint_section.map((section, index) =>
@@ -244,7 +283,6 @@ class AudintItem extends React.Component {
             <AudioPlayer url={this.item.audio.audio.fields.file.url} />
           </AudioWrapper>
         </GridDiv>
-
       </AudintWrapper>
     );
   }
