@@ -22,6 +22,7 @@ const WaveformWrapper = styled.div`
 const Wave = styled.div`
     width: 100%;
     height: 90px;
+    align-self: flex-end;
 `;
 
 const PlayButton = styled.img`
@@ -39,18 +40,20 @@ class AudioPlayer extends React.Component {
     const track = document.querySelector("#track");
 
     this.waveform = WaveSurfer.create({
-      barWidth: 2,
+      barWidth: 1,
       barHeight: 2,
       cursorWidth: 1,
       container: "#waveform",
       backend: "WebAudio",
       height: 80,
-      progressColor: Colour.dark_pink,
+      progressColor: Colour.audint_black,
       responsive: true,
       waveColor: Colour.pink,
       cursorColor: 'transparent',
       barGap: 5,
-      scrollParent: false
+      scrollParent: true,
+      minPxPerSec: 1,
+      normalize: true
     });
 
     this.waveform.load(this.props.url);

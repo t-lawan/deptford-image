@@ -146,7 +146,7 @@ const OpeningDiv = styled.div`
   width: auto;
   height: 100vh;
   width: 100vw;
-  display: grid;
+  /* display: grid; */
   background: black;
   flex: 0 0 auto;
 `
