@@ -104,7 +104,7 @@ const AudioTextWrapper = styled.div`
 
   @media (max-width: ${size.tabletL}) {
     p {
-      font-size: 0.9rem !important;
+      font-size: 0.7rem !important;
       margin: 0 !important;
       margin-bottom: 0.5rem !important;
       padding: 0 !important;
@@ -132,7 +132,7 @@ const TextWrapper = styled.div`
 
   @media (max-width: ${size.tabletL}) {
     p {
-      font-size: 0.9rem !important;
+      font-size: 0.7rem !important;
     }
   }
 `;
