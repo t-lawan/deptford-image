@@ -63,6 +63,8 @@ const ExhibitionItemWrapper = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
+  margin-left: 5%;
+
 
   @media (max-width: ${size.tabletL}) {
     flex-direction: column;
@@ -95,7 +97,7 @@ const AudioTextWrapper = styled.div`
   margin: 0 2rem;
   /* flex: 0 0 auto; */
   color: ${Colour.pink} !important;
-  margin-left: 2%;
+  margin-left: 1%;
   flex-wrap: nowrap;
   p {
       font-size: 1.15rem !important;
@@ -214,6 +216,7 @@ const generateSection = (item, index) => {
               autoPlay={index === 10}
               fullScreen={!item.text}
               videoUrl={item.videoUrl}
+              posterUrl={item.videoPosterImage ? item.videoPosterImage.fields.file.url : null}
             />
           </AudIntResponsiveIFrameWrapper>
         </VideoWrapper>
