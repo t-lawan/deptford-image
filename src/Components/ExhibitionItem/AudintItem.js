@@ -157,6 +157,8 @@ const IntroTextWrapper = styled.div`
 
 const IntroHeadingWrapper = styled.div`
   margin-bottom: 1.5rem;
+  text-align: right;
+  
 `;
 
 const VideoWrapper = styled.div`
@@ -216,6 +218,7 @@ const generateSection = (item, index) => {
               autoPlay={index === 10}
               fullScreen={!item.text}
               videoUrl={item.videoUrl}
+              withShadow={item.text}
               posterUrl={item.videoPosterImage ? item.videoPosterImage.fields.file.url : null}
             />
           </AudIntResponsiveIFrameWrapper>
