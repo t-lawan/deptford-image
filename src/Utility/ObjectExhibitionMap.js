@@ -53,7 +53,10 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "Object_1": null,
-    "FbxScene_Aset_wood_branch_M_rkku2_LOD0": null,
+    "FbxScene_Aset_wood_branch_M_rkku2_LOD0":  {
+        id: 'pattaki_everlane',
+        type: ModelTypes.EXHIBIITION_ITEM
+    },
     "FbxScene_teufceuda_LOD0": null,
     "FbxScene_Aset_rock_granite_S_rjkvf_LOD0": {
         id: 'holobiont_jenna',
