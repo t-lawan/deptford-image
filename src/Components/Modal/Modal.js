@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { closeModal } from "../../Store/action";
 import CloseOverlaySVG from "../../Assets/close_overlay.svg";
 import CloseIcon from "../../Assets/CloseIcon.png";
+import CloseIconPurple from "../../Assets/CloseIconPurple.png";
 import ExhibitionItem from "../ExhibitionItem/ExhibitionItem";
 import { size } from "../Global/global.styles";
 import Page from "../Page/Page";
@@ -55,13 +56,12 @@ class Modal extends React.Component {
     this.props.closeModal();
   };
   render() {
-
     return (
       <ModalWrapper show={this.props.open}>
         <ModalHeader>
           <ModalCloseImage
             onClick={() => this.closeModal()}
-            src={CloseIcon}
+            src={this.props.item === "2ElJR3xtpGypzIPA7cUY9q" ? CloseIconPurple : CloseIcon}
           />
         </ModalHeader>
         <ModalBody>
@@ -76,7 +76,7 @@ class Modal extends React.Component {
 const mapStateToProps = state => {
   return {
     open: state.modal_open,
-    component: state.component,
+    item: state.modal_item,
     type: state.modal_type
   };
 };

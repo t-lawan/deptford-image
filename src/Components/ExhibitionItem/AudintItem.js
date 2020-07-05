@@ -40,13 +40,25 @@ const AudintWrapper = styled.div`
   flex-direction: row;
   /* flex-wrap: nowrap; */
   /* justify-content: space-between; */
-  /* overflow-x: scroll; */
-  /* overflow-y: hidden; */
+  overflow-x: overlay;
+  overflow-y: hidden;
   align-items: center;
   align-content: center;
 
+
   @media (max-width: ${size.tabletL}) {
     flex-direction: column;
+  }
+
+  ::-webkit-scrollbar {
+    height: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: ${Colour.pink}; 
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${Colour.audint_black};     
   }
 `;
 
