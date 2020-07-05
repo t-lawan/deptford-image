@@ -100,13 +100,17 @@ const AudioTextWrapper = styled.div`
   margin-left: 1%;
   flex-wrap: nowrap;
   p {
-      font-size: 1.15rem !important;
+      font-size: 2.5rem !important;
       white-space: nowrap;
+      font-family: AudintTitle;
+
     }
 
   @media (max-width: ${size.tabletL}) {
     p {
-      font-size: 0.7rem !important;
+      /* font-size: 0.7rem !important; */
+      font-size: 1rem !important;
+
       margin: 0 !important;
       margin-bottom: 0.5rem !important;
       padding: 0 !important;
@@ -123,18 +127,29 @@ const TextWrapper = styled.div`
   height: 60%;
   /* flex: 0 0 auto; */
   text-align: center;
+  @media (max-width: ${size.tabletL}) {
+
+      /* font-size: 0.7rem !important; */
+      display: none;
+
+  }
   /* :first-of-type {
     width: 100%;
   } */
   p {
     /* width: 40%; */
+    font-family: AudintTitle;
     white-space: break-spaces;
     margin: auto;
+    font-size: 2.5rem !important;
+
   }
 
   @media (max-width: ${size.tabletL}) {
     p {
-      font-size: 0.7rem !important;
+      /* font-size: 0.7rem !important; */
+      font-size: 1rem !important;
+
     }
   }
 `;
