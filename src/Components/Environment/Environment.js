@@ -67,6 +67,7 @@ class Environment extends Component {
   hasInteracted = false;
   isMobile = false;
   textArray = [];
+  previouslySelectedMesh;
   constructor(props) {
     super(props);
     this.state = {
@@ -146,6 +147,8 @@ class Environment extends Component {
     document.addEventListener("touchstart", this.onDocumentTouchStart, false);
     document.addEventListener("keydown", this.onKeyDown, false)
     document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
+    // document.addEventListener("mouseup", this.onDocumentMouseUp, false);
+    // document.addEventListener("mousedown", this.onDocumentMouseDown, false);
     document.addEventListener("mousemove", this.onDocumentMouseMove, false);
     window.addEventListener("resize", this.onWindowResize, false);
   };
@@ -153,6 +156,8 @@ class Environment extends Component {
   removeEventListeners = () => {
     window.removeEventListener("resize", this.onWindowResize);
     document.removeEventListener("dblclick", this.onDocumentDoubleClick);
+    // document.removeEventListener("mouseup", this.onDocumentMouseUp);
+    // document.removeEventListener("mousedown", this.onDocumentMouseDown);
     document.removeEventListener("keydown", this.onKeyDown)
     document.removeEventListener("mousemove", this.onDocumentMouseMove);
     document.removeEventListener(
@@ -163,7 +168,7 @@ class Environment extends Component {
   };
   setupCamera = (width, height) => {
     this.camera = new THREE.PerspectiveCamera(
-      70, // fov = field of view
+      Device.isMobile() ? 100 : 70, // fov = field of view
       width / height, // aspect ratio
       1, // near plane
       5000 // far plane
@@ -725,7 +730,7 @@ class Environment extends Component {
     this.controls.enableKeys = true;
     this.controls.enablePan = true;
     this.controls.minDistance = 0;
-    this.controls.maxDistance = 2000;
+    this.controls.maxDistance = 4000;
     this.controls.target = this.centralPoint;
     this.controls.keyPanSpeed = 20;
     this.controls.panSpeed = 3;
@@ -777,6 +782,46 @@ class Environment extends Component {
     }
   };
 
+  onDocumentMouseDown = event => {
+    if (!this.state.pause) {
+      this.hideInstructions()
+      this.setMouse(event);
+      let boundingBoxes = this.clickableObjects.map(object => {
+        return object.objectBoundary;
+      });
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        this.previouslySelectedMesh = mesh;
+        console.log('onDocumentMouseDown', this.previouslySelectedMesh)
+
+        // if (mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
+        //   mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        // }
+      }
+    }
+  };
+
+  onDocumentMouseUp = event => {
+    if (!this.state.pause) {
+      this.hideInstructions()
+      this.setMouse(event);
+      let boundingBoxes = this.clickableObjects.map(object => {
+        return object.objectBoundary;
+      });
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.intersects = this.raycaster.intersectObjects(boundingBoxes);
+      if (this.intersects.length > 0) {
+        let mesh = this.intersects[0];
+        console.log(mesh, this.previouslySelectedMesh)
+        if (this.previouslySelectedMesh === mesh && mesh.object.callback && mesh.object.model_id && this.canOpen(mesh.object)) {
+          mesh.object.callback(mesh.object.model_id, mesh.object.model_type);
+        }
+        this.previouslySelectedMesh = null;
+      }
+    }
+  };
   onDocumentTouchStart = event => {
     if (!this.state.pause) {
       // event.preventDefault();

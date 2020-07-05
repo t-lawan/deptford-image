@@ -29,11 +29,13 @@
     "wavesurfer.js": "^3.3.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_SHOW_AUDINT=true react-scripts start",
+    "build": " REACT_APP_SHOW_AUDINT=false react-scripts build",
+    "build:dev": "REACT_APP_SHOW_AUDINT=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serve": "react-scripts build && serve -s build"
+    "serve": "npm run build && serve -s build",
+    "serve:dev": "npm run build:dev && serve -s build"
   },
   "eslintConfig": {
     "extends": "react-app"
