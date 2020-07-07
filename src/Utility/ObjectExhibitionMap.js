@@ -37,7 +37,7 @@ export const ObjectExhibitionMap = {
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_Aset_rock_granite_M_rjznD_LOD0": {
-        id: 'sunday_zoe',
+        id: 'pattaki_everlane',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_ucmjdfkhw_LOD0": {
@@ -54,7 +54,7 @@ export const ObjectExhibitionMap = {
     },
     "Object_1": null,
     "FbxScene_Aset_wood_branch_M_rkku2_LOD0":  {
-        id: 'pattaki_everlane',
+        id: 'sunday_zoe',
         type: ModelTypes.EXHIBIITION_ITEM
     },
     "FbxScene_teufceuda_LOD0": null,

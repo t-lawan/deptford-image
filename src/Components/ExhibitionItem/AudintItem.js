@@ -35,6 +35,21 @@ const GridDiv = styled.div`
     height: auto;
   }
 `;
+
+const InstructionsWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: ${props => props.show ? 'flex' : 'none'};
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 2rem;
+  z-index: 100;
+  @media (max-width: ${size.tabletL}) {
+    display: none;
+  }
+`
 const AudintWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -278,7 +293,11 @@ class AudintItem extends React.Component {
     super(props);
     this.topRowRef = React.createRef();
     this.bottomRowRef = React.createRef();
+    this.state = {
+      showInstructions: true
+    }
   }
+
   onTopRowScroll = () => {
     let topScrollWidth =
       this.topRowRef.current.scrollWidth - this.topRowRef.current.offsetWidth;
@@ -288,10 +307,25 @@ class AudintItem extends React.Component {
       topRowPercentScroll *
       (this.bottomRowRef.current.scrollWidth -
         this.bottomRowRef.current.offsetWidth);
+
   };
+
+  hideInstructions = () => {
+    if(this.state.showInstructions) {
+      setTimeout(() => {
+        this.setState({
+          showInstructions: false
+        })
+      }, 2000)
+    }
+  }
   render() {
     this.item = this.props.item;
-    return (    
+    return (  
+      <>
+      <InstructionsWrapper onMouseMove={this.hideInstructions } onWheel={this.hideInstructions} show={this.state.showInstructions}>
+        <AudintTitle> scroll right</AudintTitle>
+      </InstructionsWrapper>
       <AudintWrapper
         ref={this.topRowRef} 
         onScroll={this.onTopRowScroll}
@@ -317,6 +351,8 @@ class AudintItem extends React.Component {
           </AudioWrapper>
         </GridDiv>
       </AudintWrapper>
+      </>  
+
     );
   }
 }
