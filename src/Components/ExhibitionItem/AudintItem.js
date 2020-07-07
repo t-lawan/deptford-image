@@ -323,8 +323,8 @@ class AudintItem extends React.Component {
     this.item = this.props.item;
     return (  
       <>
-      <InstructionsWrapper onMouseMove={this.hideInstructions} onWheel={this.hideInstructions} show={this.state.showInstructions}>
-        <AudintTitle> swipe right</AudintTitle>
+      <InstructionsWrapper onMouseMove={this.hideInstructions } onWheel={this.hideInstructions} show={this.state.showInstructions}>
+        <AudintTitle> scroll right</AudintTitle>
       </InstructionsWrapper>
       <AudintWrapper
         ref={this.topRowRef} 
