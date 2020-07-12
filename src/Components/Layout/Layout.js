@@ -7,17 +7,17 @@ import { GlobalStyle } from "../Global/global.styles";
 import SharingUrl from "../../Assets/seo_image.jpg";
 import ReactGA from "react-ga";
 const Layout = props => {
-  let description = "DEMO Moving Image Festival";
+  let description = "DEMO moving image festival is pleased to present its first online edition, taking place from the 15th of June to the 24th of July. As a response to the Covid-19 emergency, this edition of the festival will focus on the topic of Contagion.";
   let url = "https://demomovingimage.net/";
   let title = "DEMO";
 
   function initializeReactGA() {
-    ReactGA.initialize("UA-153315241-1");
+    ReactGA.initialize("UA-153315241-2");
     ReactGA.pageview("/");
   }
-
-  initializeReactGA();
-
+  // if(1 === 0) {
+    initializeReactGA();
+  // }
 
   return (
     <>
