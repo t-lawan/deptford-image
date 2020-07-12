@@ -5,15 +5,25 @@ import Modal from "../Modal/Modal";
 import Instruction from "../Instruction/Instruction";
 import { GlobalStyle } from "../Global/global.styles";
 import SharingUrl from "../../Assets/seo_image.jpg";
+import ReactGA from "react-ga";
 const Layout = props => {
   let description = "DEMO Moving Image Festival";
   let url = "https://demomovingimage.net/";
   let title = "DEMO";
+
+  function initializeReactGA() {
+    ReactGA.initialize("UA-153315241-1");
+    ReactGA.pageview("/");
+  }
+
+  initializeReactGA();
+
+
   return (
     <>
       <Helmet
         htmlAttributes={{
-          lang: 'en'
+          lang: "en"
         }}
         title={title}
         meta={[
