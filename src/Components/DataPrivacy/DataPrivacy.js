@@ -15,6 +15,7 @@ class DataPrivacy extends React.Component {
       if (window.sessionStorage.getItem("AGREED_TO_PRIVACY")) {
         if (!this.props.has_agreed_to_terms) {
           this.props.hasAgreedToTerms();
+          this.initializeReactGA()
         }
       }
     }
@@ -31,6 +32,7 @@ class DataPrivacy extends React.Component {
       if (typeof window !== `undefined`) {
         if (!window.sessionStorage.getItem("AGREED_TO_PRIVACY")) {
           window.sessionStorage.setItem("AGREED_TO_PRIVACY", true);
+          this.initializeReactGA()
         }
       }
     }
