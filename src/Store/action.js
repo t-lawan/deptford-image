@@ -1,6 +1,7 @@
 export const OPEN_MODAL = "OPEN_MODAL";
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export const HAS_LOADED = 'HAS_LOADED';
+export const HAS_AGREED_TO_TERMS = 'HAS_AGREED_TO_TERMS';
 export const SHOW_INSTRUCTIONS = 'SHOW_INSTRUCTIONS';
 export const HIDE_INSTRUCTIONS = 'HIDE_INSTRUCTIONS';
 export const SET_EXHIBITION_ITEMS = 'SET_EXHIBITION_ITEMS';
@@ -25,6 +26,12 @@ export const closeModal = () => {
 export const hasLoaded = () => {
     return {
         type: HAS_LOADED
+    }
+}
+
+export const hasAgreedToTerms = () => {
+    return {
+        type: HAS_AGREED_TO_TERMS
     }
 }
 

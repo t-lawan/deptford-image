@@ -7,7 +7,8 @@ import {
   SHOW_INSTRUCTIONS,
   HIDE_INSTRUCTIONS,
   SET_PAGES,
-  SET_MEDIA_ASSETS
+  SET_MEDIA_ASSETS,
+  HAS_AGREED_TO_TERMS
 } from "./action";
 import { ModelTypes } from "../Utility/ObjectExhibitionMap";
 
@@ -21,7 +22,8 @@ const initalState = {
   exhibition_items: [],
   media_assets: [],
   pages: [],
-  show_instructions: true
+  show_instructions: true,
+  has_agreed_to_terms: false
 };
 
 export const reducer = (state = initalState, action) => {
@@ -43,6 +45,11 @@ export const reducer = (state = initalState, action) => {
       return {
         ...state,
         has_loaded: true
+      };
+    case HAS_AGREED_TO_TERMS:
+      return {
+        ...state,
+        has_agreed_to_terms: true
       };
     case SET_EXHIBITION_ITEMS:
       return {
