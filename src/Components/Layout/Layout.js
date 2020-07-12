@@ -12,13 +12,12 @@ const Layout = props => {
   let title = "DEMO";
 
   function initializeReactGA() {
-    ReactGA.initialize("UA-153315241-1");
+    ReactGA.initialize("UA-153315241-2");
     ReactGA.pageview("/");
   }
-  if(1 === 0) {
+  // if(1 === 0) {
     initializeReactGA();
-  }
-
+  // }
 
   return (
     <>
