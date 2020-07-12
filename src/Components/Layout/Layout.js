@@ -16,6 +16,8 @@ const Layout = props => {
     ReactGA.pageview("/");
   }
 
+  initializeReactGA();
+
 
   return (
     <>
