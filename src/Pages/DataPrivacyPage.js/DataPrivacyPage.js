@@ -1,14 +1,13 @@
 import * as React from "react";
-import Environment from "../../Components/Environment/Environment";
 import Layout from "../../Components/Layout/Layout";
 
-const Home = () => {
+const DataPrivacyPage = () => {
 
   return (
     <Layout>
-        <Environment />
+        <p> Some text about Data Privacy</p>
     </Layout>
   );
 };
 
-export default Home;
+export default DataPrivacyPage;
