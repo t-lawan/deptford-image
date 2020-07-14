@@ -6,6 +6,7 @@ import Instruction from "../Instruction/Instruction";
 import { GlobalStyle } from "../Global/global.styles";
 import SharingUrl from "../../Assets/seo_image.jpg";
 import ReactGA from "react-ga";
+import DataPrivacy from "../DataPrivacy/DataPrivacy";
 const Layout = props => {
   let description = "DEMO moving image festival is pleased to present its first online edition, taking place from the 15th of June to the 24th of July. As a response to the Covid-19 emergency, this edition of the festival will focus on the topic of Contagion.";
   let url = "https://demomovingimage.net/";
@@ -80,6 +81,7 @@ const Layout = props => {
       <GlobalStyle />
       <Loading />
       <Modal />
+      {/* <DataPrivacy /> */}
       <Instruction />
       <div>{props.children}</div>
     </>
