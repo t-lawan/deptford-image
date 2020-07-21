@@ -15,7 +15,7 @@ const TextWrapper = styled.div`
   }
 `;
 
-const PageTitle = styled.h1`
+export const PageTitle = styled.h1`
   padding-bottom: 2rem;
   color: ${Colour.green};
   border-bottom: 1px solid ${Colour.green};

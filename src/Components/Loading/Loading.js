@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import LoadingBar from "./LoadingBar";
 import LoadingIcon from "./LoadingIcon";
 import { Colour } from "../Global/global.styles";
+import { hideInstructions, showInstructions } from "../../Store/action";
 
 const LoadingWrapper = styled.div`
   position: absolute;
@@ -38,8 +39,14 @@ const LoadingTitle = styled.h1`
 `;
 //
 const Loading = props => {
+  let isHome = true;
+
+  if(typeof window !== `undefined`) {
+    isHome = window.location.pathname === '/';
+  }
+  props.showInstructions()
   return (
-    <LoadingWrapper show={!props.has_loaded}>
+    <LoadingWrapper show={!props.has_loaded && isHome}>
       <LoadingIcon />
       <TextWrapper>
         <LoadingTitle> CONTAGION</LoadingTitle>
@@ -57,7 +64,13 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    showInstructions : () => dispatch(showInstructions())
+  };
+};
+
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(Loading);
