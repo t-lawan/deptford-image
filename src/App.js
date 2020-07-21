@@ -4,6 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { reducer } from './Store/reducer';
 import Home from './Pages/Home/Home';
+import DataPrivacyPage from './Pages/DataPrivacyPage.js/DataPrivacyPage';
 
 const store = createStore(
   reducer,
@@ -16,6 +17,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/" exact component={Home} />
+          <Route path="/privacy-policy" exact component={DataPrivacyPage} />
         </Switch>
       </Router>
     </Provider>

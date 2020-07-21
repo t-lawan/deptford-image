@@ -72,7 +72,6 @@ const Layout = props => {
       <GlobalStyle />
       <Loading />
       <Modal />
-      {/* <DataPrivacy /> */}
       <Instruction />
       <div>{props.children}</div>
     </>

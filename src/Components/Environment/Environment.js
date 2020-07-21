@@ -976,7 +976,7 @@ class Environment extends Component {
   render() {
     return (
     <EnvironmentWrapper ref={ref => (this.mount = ref)}> 
-      <DisplayContainer> <DisplayText onClick={() => this.returnHome()} show={!this.props.show_instructions}> Return </DisplayText> </DisplayContainer>  
+      <DisplayContainer> <DisplayText onClick={() => this.returnHome()} show={!this.props.show_instructions && this.props.has_agreed_to_terms}> Return </DisplayText> </DisplayContainer>  
     </EnvironmentWrapper>
     );
   }
@@ -990,6 +990,7 @@ const mapStateToProps = state => {
     pages: state.pages,
     show_instructions: state.show_instructions,
     has_loaded: state.has_loaded,
+    has_agreed_to_terms: state.has_agreed_to_terms
   };
 };
 

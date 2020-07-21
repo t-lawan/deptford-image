@@ -18,11 +18,21 @@ const DataPrivacyWrapper = styled.div`
     bottom: 0;
     left: 0%;
     position: fixed;
-
+    justify-content: space-around;
 `;
 
 const DataPrivacyText = styled.p`
-    display: inline-flex;
+    /* display: inline-flex; */
+`
+
+const TextWrapper = styled.div`
+  width: 80%;
+`
+
+const DataPrivacyButton = styled(DataPrivacyText)`
+  :hover {
+    color: white;
+  }
 `
 class DataPrivacy extends React.Component {
   componentDidMount() {
@@ -47,6 +57,7 @@ class DataPrivacy extends React.Component {
       if (typeof window !== `undefined`) {
         if (!window.sessionStorage.getItem("AGREED_TO_PRIVACY")) {
           window.sessionStorage.setItem("AGREED_TO_PRIVACY", true);
+
           this.initializeReactGA();
         }
       }
@@ -56,10 +67,10 @@ class DataPrivacy extends React.Component {
   render() {
     return (
       <DataPrivacyWrapper show={!this.props.has_agreed_to_terms && !this.props.show_instructions}>
-      <div>
-        <DataPrivacyText> By using this website you agree to the use of cookies in accordance with our <Link to={'/data-privacy'}>data privacy policy</Link>. </DataPrivacyText>
-      </div>
-        <DataPrivacyText> Okay</DataPrivacyText>
+      <TextWrapper>
+        <DataPrivacyText> By using this website you agree to the use of cookies in accordance with our <Link to={'/privacy-policy'}>data privacy policy</Link>. </DataPrivacyText>
+      </TextWrapper>
+        <DataPrivacyButton onClick={() => this.setAgreedToTrue()}> Okay</DataPrivacyButton>
       </DataPrivacyWrapper>
     );
   }
@@ -67,7 +78,7 @@ class DataPrivacy extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    has_agreed_to_terms: state.agreed_to_terms,
+    has_agreed_to_terms: state.has_agreed_to_terms,
     show_instructions: state.show_instructions
   };
 };
